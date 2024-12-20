@@ -13,6 +13,10 @@ void setcurrentchannels(unsigned, unsigned, unsigned);
 void setcurrentchannels(unsigned, unsigned, unsigned, unsigned, unsigned, unsigned);
 void setcurrentoffset(double, double, double);
 
+extern struct lexercontext {
+    int linenum;
+} LCX;
+
 extern struct parsercontext {
     int jointlevel;
     int framenum;

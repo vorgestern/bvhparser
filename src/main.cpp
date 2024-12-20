@@ -13,8 +13,8 @@ bool has_floor=false, headlight=false;
 
 int yyparse();
 extern FILE*xxin;
-extern int linenum;
 
+lexercontext LCX;
 parsercontext PCX;
 
 // Flex will not create yylex() directly, because we used -prefix=xx to set the name to xxlex
@@ -93,7 +93,7 @@ extern "C" int xxwrap(){ return 1; }
 
 void yyerror(char const*s)
 {
-    fprintf(stderr, "\n[Line linenum %d] >>>>>> %s\n", linenum, s);
+    fprintf(stderr, "\n[Line linenum %d] >>>>>> %s\n", LCX.linenum, s);
 }
 
 void ateof(){}

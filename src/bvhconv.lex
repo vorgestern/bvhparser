@@ -9,7 +9,6 @@
   #define ASSTR(s)  { strcpy(yylval.S, yytext); return s; }
   #define ASNONE(s) { return s; }
   void ateof();
-  int linenum=0;
   // {INT} { yylval.I=atoi(yytext); return INT; }
 
 WS                [ \t]
@@ -42,7 +41,7 @@ Zrotation { yylval.I=ZROTATION; ASNONE(ZROTATION); }
 MOTION { BEGIN(animationtable); ASNONE(MOTION); }
 
 <*>{WS}+ {}
-<*>{WS}*{NL} { linenum++; }
+<*>{WS}*{NL} { LCX.linenum++; }
 \{ { ASNONE(OPENBRACE); }
 \} { ASNONE(CLOSEBRACE); }
 \* { ASNONE(ASTERISK); }
