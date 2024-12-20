@@ -28,10 +28,10 @@
 
 input: HIERARCHY startroot root MOTION framenumspec frametimespec motiontable { dumphumanoid(); }
 
-startroot: ROOT { pushjoint($1); }
+startroot: ROOT { PCX.pushjoint($1); }
 
-root: OPENBRACE offsetspec channels joints CLOSEBRACE { popjoint(); }
-    | OPENBRACE offsetspec channels endsite CLOSEBRACE { popjoint(); }
+root: OPENBRACE offsetspec channels joints CLOSEBRACE { PCX.popjoint(); }
+    | OPENBRACE offsetspec channels endsite CLOSEBRACE { PCX.popjoint(); }
 
 framenumspec: FRAMES { PCX.framenum=$1; }
 frametimespec: FRAMETIME { PCX.framesep=$1; }
@@ -40,16 +40,16 @@ joints: joint {}
       | endsite {}
       | joint joints {}
 
-joint: startjoint OPENBRACE offsetspec channels joints CLOSEBRACE { popjoint(); }
-     | startjoint OPENBRACE offsetspec channels endsite CLOSEBRACE { popjoint(); }
+joint: startjoint OPENBRACE offsetspec channels joints CLOSEBRACE { PCX.popjoint(); }
+     | startjoint OPENBRACE offsetspec channels endsite CLOSEBRACE { PCX.popjoint(); }
 
-startjoint: JOINT { pushjoint($1); }
+startjoint: JOINT { PCX.pushjoint($1); }
 
-endsite: endsitespec { popjoint(); endsite(); }
-       | endsitespec OPENBRACE CLOSEBRACE { popjoint(); endsite(); }
-       | endsitespec OPENBRACE offsetspec CLOSEBRACE { popjoint(); endsite(); }
+endsite: endsitespec { PCX.popjoint(); PCX.endsite(); }
+       | endsitespec OPENBRACE CLOSEBRACE { PCX.popjoint(); PCX.endsite(); }
+       | endsitespec OPENBRACE offsetspec CLOSEBRACE { PCX.popjoint(); PCX.endsite(); }
 
-endsitespec: ENDSITE { pushjoint(nullptr); }
+endsitespec: ENDSITE { PCX.pushjoint(nullptr); }
 
 offsetspec: OFFSET number number number { setcurrentoffset($2,$3,$4); }
 

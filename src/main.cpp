@@ -101,26 +101,24 @@ void ateof(){}
 hanimjoint HUMANOID[1000];
 unsigned HLEN=0;
 
-const bool mylog=false;
-
-void pushjoint(const char name[])
+void parsercontext::pushjoint(const char name[])
 {
-    if (mylog) printf("\n%*sjoint %s {", 2*PCX.jointlevel, "", name);
-    HUMANOID[HLEN]=hanimjoint(PCX.jointlevel);
+    if (mylog) printf("\n%*sjoint %s {", 2*jointlevel, "", name);
+    HUMANOID[HLEN]=hanimjoint(jointlevel);
     if (name!=nullptr) HUMANOID[HLEN].setname(name);
     HLEN++;
-    PCX.jointlevel++;
+    jointlevel++;
 }
 
-void popjoint()
+void parsercontext::popjoint()
 {
-    PCX.jointlevel--;
-    if (mylog) printf("\n%*s}", 2*PCX.jointlevel, "");
+    jointlevel--;
+    if (mylog) printf("\n%*s}", 2*jointlevel, "");
 }
 
-void endsite()
+void parsercontext::endsite()
 {
-    if (mylog) printf("\n%*s endsite", 2*PCX.jointlevel, "");
+    if (mylog) printf("\n%*s endsite", 2*jointlevel, "");
 }
 
 static unsigned char channelcode(unsigned c)

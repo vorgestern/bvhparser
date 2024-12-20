@@ -7,8 +7,6 @@ int scanline(const char[]);
 void storetableline(unsigned columns);
 void getmotiontable(const double**table, unsigned*lines, unsigned*columns);
 
-void pushjoint(const char[]), popjoint();
-void endsite();
 void setcurrentchannels(unsigned, unsigned, unsigned);
 void setcurrentchannels(unsigned, unsigned, unsigned, unsigned, unsigned, unsigned);
 void setcurrentoffset(double, double, double);
@@ -18,10 +16,13 @@ extern struct lexercontext {
 } LCX;
 
 extern struct parsercontext {
+    bool mylog {false};
     int jointlevel;
     int framenum;
     double framesep;
     double totaltime;
+    void pushjoint(const char name[]), popjoint();
+    void endsite();
 } PCX;
 
 // Setup indices for following channels.

@@ -1414,19 +1414,19 @@ yyreduce:
   case 3:
 /* Line 1792 of yacc.c  */
 #line 31 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.y"
-    { pushjoint((yyvsp[(1) - (1)].S)); }
+    { PCX.pushjoint((yyvsp[(1) - (1)].S)); }
     break;
 
   case 4:
 /* Line 1792 of yacc.c  */
 #line 33 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.y"
-    { popjoint(); }
+    { PCX.popjoint(); }
     break;
 
   case 5:
 /* Line 1792 of yacc.c  */
 #line 34 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.y"
-    { popjoint(); }
+    { PCX.popjoint(); }
     break;
 
   case 6:
@@ -1462,43 +1462,43 @@ yyreduce:
   case 11:
 /* Line 1792 of yacc.c  */
 #line 43 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.y"
-    { popjoint(); }
+    { PCX.popjoint(); }
     break;
 
   case 12:
 /* Line 1792 of yacc.c  */
 #line 44 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.y"
-    { popjoint(); }
+    { PCX.popjoint(); }
     break;
 
   case 13:
 /* Line 1792 of yacc.c  */
 #line 46 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.y"
-    { pushjoint((yyvsp[(1) - (1)].S)); }
+    { PCX.pushjoint((yyvsp[(1) - (1)].S)); }
     break;
 
   case 14:
 /* Line 1792 of yacc.c  */
 #line 48 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.y"
-    { popjoint(); endsite(); }
+    { PCX.popjoint(); PCX.endsite(); }
     break;
 
   case 15:
 /* Line 1792 of yacc.c  */
 #line 49 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.y"
-    { popjoint(); endsite(); }
+    { PCX.popjoint(); PCX.endsite(); }
     break;
 
   case 16:
 /* Line 1792 of yacc.c  */
 #line 50 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.y"
-    { popjoint(); endsite(); }
+    { PCX.popjoint(); PCX.endsite(); }
     break;
 
   case 17:
 /* Line 1792 of yacc.c  */
 #line 52 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.y"
-    { pushjoint(nullptr); }
+    { PCX.pushjoint(nullptr); }
     break;
 
   case 18:
