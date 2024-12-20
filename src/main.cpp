@@ -9,7 +9,7 @@
 
 static int func=0;
 int segmentform=2;
-bool has_floor=false, headlight=false;
+bool has_floor=false, headlight_on=false;
 
 int yyparse();
 extern FILE*xxin;
@@ -173,7 +173,7 @@ void dumphumanoid()
         "\n<Scene>"
         "\n<NavigationInfo DEF='nistart' type='\"EXAMINE\" \"ANY\"' headlight='%s' speed='1'/>"
         "\n<Viewpoint position='0 20 200'/>"
-        , headlight?"true":"false"
+        , headlight_on?"true":"false"
     );
     if (has_floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
     dumphumanoid_x3d(HUMANOID, HLEN);
