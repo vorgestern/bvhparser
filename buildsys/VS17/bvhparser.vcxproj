@@ -24,6 +24,7 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="UseGlm.props" />
+    <Import Project="bvhparser.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -37,12 +38,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\bvhconv.lex">
-      <Command>win_flex -8 --nounistd --prefix=xx --outfile=$(ProjectDir)lex-%(Filename).cpp %(FullPath)</Command>
+      <Command>$(FLEX) -8 --nounistd --prefix=xx --outfile=$(ProjectDir)lex-%(Filename).cpp %(FullPath)</Command>
       <Message>Generating lexer source from %(Identity)</Message>
       <Outputs>$(ProjectDir)lex-%(Filename).cpp</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\..\src\bvhconv.y">
-      <Command>win_bison --defines="%(Filename).h" --output=bison-%(Filename).cpp %(FullPath)</Command>
+      <Command>$(BISON) --defines="%(Filename).h" --output=bison-%(Filename).cpp %(FullPath)</Command>
       <Message>Generating parser source from %(Identity)</Message>
       <Outputs>$(ProjectDir)bison-%(Filename).cpp</Outputs>
     </CustomBuild>
