@@ -2,9 +2,9 @@
 %option never-interactive
 %option outfile="lex-bvhconv.cpp"
 
-  #include<ctype.h>
-  #include"bvhhelp.h"
-  #include"bvhconv.h"
+  #include <ctype.h>
+  #include "bvhhelp.h"
+  #include "bvhconv.h"
   #define OUTNL {}
   #define ASSTR(s)  { strcpy(yylval.S, yytext); return s; }
   #define ASNONE(s) { return s; }

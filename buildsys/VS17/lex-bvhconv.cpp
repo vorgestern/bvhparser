@@ -673,9 +673,9 @@ int xx_flex_debug = 0;
 char *xxtext;
 #line 1 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
 #line 6 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
-  #include<ctype.h>
-  #include"bvhhelp.h"
-  #include"bvhconv.h"
+  #include <ctype.h>
+  #include "bvhhelp.h"
+  #include "bvhconv.h"
   #define OUTNL {}
   #define ASSTR(s)  { strcpy(yylval.S, yytext); return s; }
   #define ASNONE(s) { return s; }
