@@ -1,50 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="source">
-      <UniqueIdentifier>{efdfde96-0f47-42dc-87bb-3a688dce2c3a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="generated">
       <UniqueIdentifier>{baec010f-36b6-4e14-8117-5038aab51010}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="extern\bvhconverter.h">
-      <Filter>source</Filter>
-    </ClInclude>
     <ClInclude Include="bvhconv.h">
       <Filter>generated</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="euler to axisangle.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="hanimjoint.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="tools.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="x3d.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="bison-bvhconv.cpp">
       <Filter>generated</Filter>
     </ClCompile>
     <ClCompile Include="lex-bvhconv.cpp">
       <Filter>generated</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="bvhconv.lex">
-      <Filter>source</Filter>
-    </CustomBuild>
-    <CustomBuild Include="bvhconv.y">
-      <Filter>source</Filter>
-    </CustomBuild>
   </ItemGroup>
 </Project>
