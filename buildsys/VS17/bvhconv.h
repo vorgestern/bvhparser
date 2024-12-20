@@ -80,9 +80,9 @@ typedef union YYSTYPE
 /* Line 2058 of yacc.c  */
 #line 8 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.y"
 
-  int I;
-  double D;
-  char S[1000];
+    int I;
+    double D;
+    char S[1000];
 
 
 /* Line 2058 of yacc.c  */

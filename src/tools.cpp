@@ -42,7 +42,7 @@ int scanline(const char pad[])
   return numfloat;
 }
 
-double*motiontable=0L;
+double*motiontable=nullptr;
 int tablelinesfilled=0;
 static unsigned tablecolumns=0;
 

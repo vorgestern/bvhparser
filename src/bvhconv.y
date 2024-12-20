@@ -6,9 +6,9 @@
 %}
 
 %union {
-  int I;
-  double D;
-  char S[1000];
+    int I;
+    double D;
+    char S[1000];
 }
 
 %token <I> OPENBRACE CLOSEBRACE OPENPAREN CLOSEPAREN
@@ -49,7 +49,7 @@ endsite: endsitespec { popjoint(); endsite(); }
        | endsitespec OPENBRACE CLOSEBRACE { popjoint(); endsite(); }
        | endsitespec OPENBRACE offsetspec CLOSEBRACE { popjoint(); endsite(); }
 
-endsitespec: ENDSITE { pushjoint(0L); }
+endsitespec: ENDSITE { pushjoint(nullptr); }
 
 offsetspec: OFFSET number number number { setcurrentoffset($2,$3,$4); }
 

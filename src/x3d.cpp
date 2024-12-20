@@ -34,13 +34,13 @@ void dumphumanoid_x3d(const hanimjoint JOINTS[], unsigned NJ)
           case 1:
           {
             // Draw a line
-            if (T!=0L) printf("\n%*s<Shape><LineSet vertexCount='2'><Coordinate point='0 0 0,%g %g %g'/></LineSet></Shape>", 2*lev, "", T[0],T[1],T[2]);
+            if (T!=nullptr) printf("\n%*s<Shape><LineSet vertexCount='2'><Coordinate point='0 0 0,%g %g %g'/></LineSet></Shape>", 2*lev, "", T[0],T[1],T[2]);
             break;
           }
           case 2:
           {
             // Zeichne einen Zylinder
-            if (T!=0L)
+            if (T!=nullptr)
             {
               const double hei=sqrt(T[0]*T[0]+T[1]*T[1]+T[2]*T[2]);
               const double rad=0.1*sqrt(T[0]*T[0]+T[1]*T[1]+T[2]*T[2]);
@@ -73,8 +73,8 @@ void dumphumanoid_x3d(const hanimjoint JOINTS[], unsigned NJ)
     }
 
     printf("\n%*s<%s", 2*lev, "", lev>0?"Transform":"Transform");
-    if (T!=0L) printf(" translation='%g %g %g'", T[0],T[1],T[2]);
-    if (nam!=0L)
+    if (T!=nullptr) printf(" translation='%g %g %g'", T[0],T[1],T[2]);
+    if (nam!=nullptr)
     {
       printf(" DEF='%s'>", nam);
     }
@@ -82,7 +82,7 @@ void dumphumanoid_x3d(const hanimjoint JOINTS[], unsigned NJ)
     {
       printf(">");
     }
-    const double rad=T==0L?1:0.10*sqrt(T[0]*T[0]+T[1]*T[1]+T[2]*T[2]);
+    const double rad=T==nullptr?1:0.10*sqrt(T[0]*T[0]+T[1]*T[1]+T[2]*T[2]);
     if (nummat==0)
     {
       printf("<Shape><Appearance DEF='app1'><Material DEF='mat1' diffuseColor='0 0 0' specularColor='1 1 1' shininess='1.0'/></Appearance><Sphere radius='%g'/></Shape>", rad);
@@ -99,10 +99,10 @@ void dumphumanoid_x3d(const hanimjoint JOINTS[], unsigned NJ)
 
 void dumpmotiontable_x3d(const hanimjoint joints[], unsigned nj)
 {
-  const double*table=0L;
+  const double*table=nullptr;
   unsigned lines=0, columns=0;
   getmotiontable(&table, &lines, &columns);
-  if (table!=0L && lines>0 && columns>0)
+  if (table!=nullptr && lines>0 && columns>0)
   {
     printf("\n<!-- Interpolatoren -->");
     for (unsigned n=0; n<nj; n++) joints[n].dumpmotiontables_x3d(table,lines,columns);
@@ -111,10 +111,10 @@ void dumpmotiontable_x3d(const hanimjoint joints[], unsigned nj)
 
 void dumpmotionroutes_x3d(const hanimjoint joints[], unsigned nj)
 {
-  const double*table=0L;
+  const double*table=nullptr;
   unsigned lines=0, columns=0;
   getmotiontable(&table, &lines, &columns);
-  if (table!=0L && lines>0 && columns>0)
+  if (table!=nullptr && lines>0 && columns>0)
   {
     printf("\n<!-- Routen -->");
     for (unsigned n=0; n<nj; n++) joints[n].dumpmotionroutes_x3d();

@@ -32,7 +32,7 @@ int yylex()
 
 int main(int argc, const char*argv[])
 {
-    const char*fninput=0L;
+    const char*fninput=nullptr;
 
     for (int a=1; a<argc; a++)
     {
@@ -49,7 +49,7 @@ int main(int argc, const char*argv[])
         }
     }
 
-    if (fninput!=0L)
+    if (fninput!=nullptr)
     {
         // printf("\nfninput=%s", fninput);
         xxin=fopen(fninput, "r");
@@ -87,7 +87,7 @@ int main(int argc, const char*argv[])
         default: rc=1;
     }
 
-    if (fninput!=0L && xxin!=0L) fclose(xxin);
+    if (fninput!=nullptr && xxin!=nullptr) fclose(xxin);
 
     return rc;
 }
@@ -110,7 +110,7 @@ void pushjoint(const char name[])
 {
     if (mylog) printf("\n%*sjoint %s {", 2*jointlevel, "", name);
     HUMANOID[HLEN]=hanimjoint(jointlevel);
-    if (name!=0L) HUMANOID[HLEN].setname(name);
+    if (name!=nullptr) HUMANOID[HLEN].setname(name);
     HLEN++;
     jointlevel++;
 }

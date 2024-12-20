@@ -5,19 +5,19 @@
 
 const double deg=std::numbers::pi_v<double>/180.0;
 
-static char*sfixcp(const char q[])
+static char*xcp(const char q[])
 {
-    if (q==0L) return 0L;
+    if (q==nullptr) return nullptr;
     int n=strlen(q);
     char*s=new char[n+1];
-    if (s!=0L) strcpy(s, q);
+    if (s!=nullptr) strcpy(s, q);
     return s;
 }
 
 void hanimjoint::setname(const char s[])
 {
-    if (name!=0L) delete[]name;
-    name=sfixcp(s);
+    if (name!=nullptr) delete[]name;
+    name=xcp(s);
 }
 
 void hanimjoint::getpositionindexes(int index[])const
