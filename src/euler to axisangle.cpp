@@ -40,8 +40,8 @@ void ZYXAngleToAxisAngle(double axis[], double*angle, double xangle, double yang
 
 void AnglesToAxisAngle(double axis[], double*angle, const double A[], const int D[], unsigned num)
 {
-  dvec3 myaxis;
-  double myangle;
+  dvec3 myaxis {0,0,1};
+  double myangle=0;
   switch (num)
   {
     case 1:

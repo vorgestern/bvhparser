@@ -1,11 +1,9 @@
 
 #include <string>
+#include <numbers>
 #include "bvhhelp.h"
 
-const double mpi=3.1415926535897932384626433832795;
-// const double mexp1=2.7182818284590452353602874713527;
-// const double mln2= 0.69314718055994530941723212145818;
-const double useful_deg=mpi/180.0;
+const double deg=std::numbers::pi_v<double>/180.0;
 
 static char*sfixcp(const char q[])
 {
@@ -83,7 +81,7 @@ void hanimjoint::dumpmotiontables_x3d(const double table[], unsigned lines, unsi
     for (unsigned n=0; n<lines; n++)
     {
       const double*T=table+n*columns; //!< Tabellenzeile
-      const double ANGLE[3]={TI(0)*useful_deg,TI(1)*useful_deg,TI(2)*useful_deg};
+      const double ANGLE[3]={TI(0)*deg,TI(1)*deg,TI(2)*deg};
       double axis[3], angle;
       AnglesToAxisAngle(axis,&angle,ANGLE,DIR,num);
       printf("%g %g %g %g%s", axis[0],axis[1],axis[2],angle, n<lines-1?",":"");

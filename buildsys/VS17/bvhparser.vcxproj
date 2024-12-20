@@ -40,6 +40,7 @@
     </PostBuildEvent>
     <ClCompile>
       <AdditionalIncludeDirectories>..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -66,9 +67,7 @@
     <ClCompile Include="bison-bvhconv.cpp" />
     <ClCompile Include="lex-bvhconv.cpp" />
     <ClCompile Include="..\..\src\euler to axisangle.cpp" />
-    <ClCompile Include="..\..\src\hanimjoint.cpp">
-      <DisableSpecificWarnings>4018;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-    </ClCompile>
+    <ClCompile Include="..\..\src\hanimjoint.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\tools.cpp" />
     <ClCompile Include="..\..\src\x3d.cpp" />
