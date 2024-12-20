@@ -1432,13 +1432,13 @@ yyreduce:
   case 6:
 /* Line 1792 of yacc.c  */
 #line 36 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.y"
-    { framenum=(yyvsp[(1) - (1)].I); }
+    { PCX.framenum=(yyvsp[(1) - (1)].I); }
     break;
 
   case 7:
 /* Line 1792 of yacc.c  */
 #line 37 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.y"
-    { framesep=(yyvsp[(1) - (1)].D); }
+    { PCX.framesep=(yyvsp[(1) - (1)].D); }
     break;
 
   case 8:

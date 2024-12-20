@@ -15,10 +15,7 @@ int yyparse();
 extern FILE*xxin;
 extern int linenum;
 
-int jointlevel=0;
-int framenum=0;
-double framesep=0;
-double totaltime=0;
+parsercontext PCX;
 
 // Flex will not create yylex() directly, because we used -prefix=xx to set the name to xxlex
 // and provide this wrapper for the parser. 
@@ -108,22 +105,22 @@ const bool mylog=false;
 
 void pushjoint(const char name[])
 {
-    if (mylog) printf("\n%*sjoint %s {", 2*jointlevel, "", name);
-    HUMANOID[HLEN]=hanimjoint(jointlevel);
+    if (mylog) printf("\n%*sjoint %s {", 2*PCX.jointlevel, "", name);
+    HUMANOID[HLEN]=hanimjoint(PCX.jointlevel);
     if (name!=nullptr) HUMANOID[HLEN].setname(name);
     HLEN++;
-    jointlevel++;
+    PCX.jointlevel++;
 }
 
 void popjoint()
 {
-    jointlevel--;
-    if (mylog) printf("\n%*s}", 2*jointlevel, "");
+    PCX.jointlevel--;
+    if (mylog) printf("\n%*s}", 2*PCX.jointlevel, "");
 }
 
 void endsite()
 {
-    if (mylog) printf("\n%*s endsite", 2*jointlevel, "");
+    if (mylog) printf("\n%*s endsite", 2*PCX.jointlevel, "");
 }
 
 static unsigned char channelcode(unsigned c)
@@ -183,7 +180,7 @@ void dumphumanoid()
     if (has_floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
     dumphumanoid_x3d(HUMANOID, HLEN);
     dumpmotiontable_x3d(HUMANOID, HLEN);
-    printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", framesep*(framenum+1));
+    printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", PCX.framesep*(PCX.framenum+1));
     dumpmotionroutes_x3d(HUMANOID, HLEN);
     printf("\n</Scene>\n</X3D>\n");
 #endif

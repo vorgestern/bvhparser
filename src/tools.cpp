@@ -48,14 +48,14 @@ static unsigned tablecolumns=0;
 
 void storetableline(unsigned columns)
 {
-  if (tablelinesfilled==0 && framenum>0)
+  if (tablelinesfilled==0 && PCX.framenum>0)
   {
     if (tablecolumns==0)
     {
       tablecolumns=channelsused();
-      totaltime=framenum-1*framesep;
+      PCX.totaltime=PCX.framenum-1*PCX.framesep;
     }
-    if (tablecolumns>0) motiontable=new double[framenum*tablecolumns];
+    if (tablecolumns>0) motiontable=new double[PCX.framenum*tablecolumns];
   }
 
   if (tablecolumns>0)

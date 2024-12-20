@@ -13,10 +13,12 @@ void setcurrentchannels(unsigned, unsigned, unsigned);
 void setcurrentchannels(unsigned, unsigned, unsigned, unsigned, unsigned, unsigned);
 void setcurrentoffset(double, double, double);
 
-extern int jointlevel;
-extern int framenum;
-extern double framesep;
-extern double totaltime;
+extern struct parsercontext {
+    int jointlevel;
+    int framenum;
+    double framesep;
+    double totaltime;
+} PCX;
 
 // Setup indices for following channels.
 unsigned getchannelrange(unsigned numchannels);

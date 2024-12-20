@@ -33,8 +33,8 @@ startroot: ROOT { pushjoint($1); }
 root: OPENBRACE offsetspec channels joints CLOSEBRACE { popjoint(); }
     | OPENBRACE offsetspec channels endsite CLOSEBRACE { popjoint(); }
 
-framenumspec: FRAMES { framenum=$1; }
-frametimespec: FRAMETIME { framesep=$1; }
+framenumspec: FRAMES { PCX.framenum=$1; }
+frametimespec: FRAMETIME { PCX.framesep=$1; }
 
 joints: joint {}
       | endsite {}
