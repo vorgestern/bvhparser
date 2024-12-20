@@ -1,7 +1,5 @@
 
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
+#include <string>
 #include "bvhhelp.h"
 
 void dumphumanoid_x3d(const hanimjoint JOINTS[], unsigned NJ)

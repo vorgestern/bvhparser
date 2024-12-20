@@ -1,6 +1,5 @@
 
-#include <stdio.h>
-#include <string.h>
+#include <string>
 #include "bvhhelp.h"
 #include "bvhconv.h"
 
@@ -10,7 +9,7 @@
 
 static int func=0;
 int segmentform=2;
-bool floor=false, headlight=false;
+bool has_floor=false, headlight=false;
 
 int yyparse();
 extern FILE*xxin;
@@ -181,7 +180,7 @@ void dumphumanoid()
         "\n<Viewpoint position='0 20 200'/>"
         , headlight?"true":"false"
     );
-    if (floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
+    if (has_floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
     dumphumanoid_x3d(HUMANOID, HLEN);
     dumpmotiontable_x3d(HUMANOID, HLEN);
     printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", framesep*(framenum+1));

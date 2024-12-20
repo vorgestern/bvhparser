@@ -1,8 +1,6 @@
 
-#include <stdio.h>
-#include <string.h>
+#include <string>
 #include "bvhhelp.h"
-#include "bvhconv.h"
 
 const double mpi=3.1415926535897932384626433832795;
 // const double mexp1=2.7182818284590452353602874713527;

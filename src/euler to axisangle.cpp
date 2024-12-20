@@ -2,12 +2,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_precision.hpp>
 #include <glm/gtx/euler_angles.hpp>
-//#include<glm/gtc/quaternion.hpp>
-//#include<glm/gtx/quaternion.hpp>
-//#include<glm/gtx/constants.hpp>
-//#include<glm/gtx/euler_angles.hpp>
+// #include<glm/gtc/quaternion.hpp>
+// #include<glm/gtx/quaternion.hpp>
+// #include<glm/gtx/constants.hpp>
+// #include<glm/gtx/euler_angles.hpp>
 #include <glm/gtx/matrix_interpolation.hpp>
-#include "bvhhelp.h"
 
 using namespace glm;
 
