@@ -12,9 +12,9 @@ using fspath=filesystem::path;
 // https://en.wikipedia.org/wiki/Biovision_Hierarchy
 // http://research.cs.wisc.edu/graphics/Courses/cs-838-1999/Jeff/Example1.bvh
 
-static int func=0;
-int segmentform=2;
-bool has_floor=false, headlight_on=false;
+static enum OutputType {ffregular, ffmix=1, ffvartable=2, fflexeroutput=3} func=ffregular;
+enum SegmentForms segmentform=sfcylinder;
+bool has_floor=false, headlight_on=true;
 
 int yyparse();
 extern FILE*xxin;
@@ -29,7 +29,7 @@ int xxlex();
 int yylex()
 {
     int u=xxlex();
-    if (func==1) dumptoken(u);
+    if (func==ffmix) dumptoken(u);
     return u;
 }
 
@@ -39,44 +39,29 @@ int main(int argc, const char*argv[])
 
     for (int a=1; a<argc; a++)
     {
-        if (0==strcmp(argv[a], "-lex")) func=3;               // Output lexer results
-        else if (0==strcmp(argv[a], "-mix")) func=1;          // Mix output from lexer and parser.
-        else if (0==strcmp(argv[a], "-s")) func=2;            // Output a simple table of variables.
+        if (0==strcmp(argv[a], "-lex")) func=fflexeroutput;   // Output lexer results
+        else if (0==strcmp(argv[a], "-mix")) func=ffmix;      // Mix output from lexer and parser.
+        else if (0==strcmp(argv[a], "-s")) func=ffvartable;   // Output a simple table of variables.
         else if (0==strcmp(argv[a], "-f") && a<argc-1) fninput=argv[++a];
         else if (0==strcmp(argv[a], "-segments") && a<argc-1)
         {
             const char*form=argv[++a];
-            if (0==strcmp(form, "none")) segmentform=0;
-            else if (0==strcmp(form, "lines")) segmentform=1;
-            else if (0==strcmp(form, "cylinder")) segmentform=2;
+            if (0==strcmp(form, "none")) segmentform=sfnone;
+            else if (0==strcmp(form, "lines")) segmentform=sfline;
+            else if (0==strcmp(form, "cylinder")) segmentform=sfcylinder;
         }
     }
 
-    if (!fninput.empty())
-    {
-        xxin=fopen(fninput.string().c_str(), "r");
-    }
+    if (!fninput.empty()) xxin=fopen(fninput.string().c_str(), "r");
 
-    int rc=0;
+    int rc=1;
 
     switch (func)
     {
-        case 0:
-        case 1:
-        case 2:
-        {
-            rc=yyparse();
-            switch (func)
-            {
-                case 1:
-                case 2:
-                case 3: break;
-            }
-            //    printf("\n");
-            break;
-        }
-
-        case 3:
+        case ffregular:
+        case ffmix:
+        case ffvartable: rc=yyparse(); break;
+        case fflexeroutput:
         {
             int u=1;
             while (u!=0)
@@ -87,8 +72,6 @@ int main(int argc, const char*argv[])
             rc=0;
             break;
         }
-
-        default: rc=1;
     }
 
     if (!fninput.empty() && xxin!=nullptr) fclose(xxin);

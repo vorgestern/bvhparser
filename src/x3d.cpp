@@ -60,7 +60,7 @@ void dumphumanoid_x3d(const hanimjoint JOINTS[], unsigned NJ)
               {
                 printf("\n<Transform translation='%g %g %g'>", .5*T[0],.5*T[1],.5*T[2]);
               }
-              if (nummat==0) printf("\n<Shape><Appearance DEF='app1'><Material DEF='mat1' diffuseColor='0 0 0' specularColor='1 1 1' shininess='1.0'/></Appearance>");
+              if (nummat==0) printf("\n<Shape><Appearance DEF='app1'><Material DEF='mat1' diffuseColor='1 1 1' specularColor='1 1 1' shininess='1.0'/></Appearance>");
               else           printf("\n<Shape><Appearance USE='app1'/>");
               printf("<Cylinder height='%g' radius='%g'/></Shape>", hei, rad);
               printf("</Transform>");
@@ -86,7 +86,7 @@ void dumphumanoid_x3d(const hanimjoint JOINTS[], unsigned NJ)
     const double rad=T==nullptr?1:0.10*sqrt(T[0]*T[0]+T[1]*T[1]+T[2]*T[2]);
     if (nummat==0)
     {
-      printf("<Shape><Appearance DEF='app1'><Material DEF='mat1' diffuseColor='0 0 0' specularColor='1 1 1' shininess='1.0'/></Appearance><Sphere radius='%g'/></Shape>", rad);
+      printf("<Shape><Appearance DEF='app1'><Material DEF='mat1' diffuseColor='1 1 1' specularColor='1 1 1' shininess='1.0'/></Appearance><Sphere radius='%g'/></Shape>", rad);
     }
     else
     {

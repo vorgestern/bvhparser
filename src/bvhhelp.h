@@ -1,6 +1,6 @@
 
 // Commandline arguments -segments none|line|cylinder  ==> 0|1|2
-extern int segmentform;
+extern enum SegmentForms {sfnone,sfline,sfcylinder} segmentform;
 
 void dumptoken(int token);
 int scanline(const char[]);
