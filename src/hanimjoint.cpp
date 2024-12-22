@@ -48,6 +48,7 @@ unsigned hanimjoint::getrotationindexes(int index[], int dir[])const
 void hanimjoint::dumpmotiontables_x3d(const double table[], unsigned lines, unsigned columns)const
 {
 #define TI(n) (index[n]<0?0.0:T[index[n]])
+    size_t col=0;
     if (haspositionchannels())
     {
         int index[3];
@@ -55,37 +56,47 @@ void hanimjoint::dumpmotiontables_x3d(const double table[], unsigned lines, unsi
         printf("\n<!-- positionindex %d %d %d:", index[0],index[1],index[2]);
         for (unsigned n=0; n<channelnum; n++) printf(" %d", channels[n]);
         printf(" -->");
-        printf("\n<PositionInterpolator DEF='nppos_%s'", name);
-        printf(" key='");
-        for (unsigned n=0; n<lines; n++) printf("%s%g", n>0?" ":"", n*1.0/(lines-1));
-        printf("'");
-        printf(" keyValue='");
+        col=printf("\n<PositionInterpolator DEF='nppos_%s'", name);
+        col+=printf(" key='");
+        for (unsigned n=0; n<lines; n++)
+        {
+            col+=printf("%s%g", n>0?" ":"", n*1.0/(lines-1));
+            if (col>128){ printf("\n"); col=0; }
+        }
+        col+=printf("'");
+        col+=printf(" keyValue='");
         for (unsigned n=0; n<lines; n++)
         {
             const double*T=table+n*columns;
-            printf("%g %g %g%s", TI(0),TI(1),TI(2), n<lines-1?",":"");
+            col+=printf("%g %g %g%s", TI(0),TI(1),TI(2), n<lines-1?",":"");
+            if (col>128 && n+1<lines){ printf("\n"); col=0; }
         }
-        printf("'/>");
+        col+=printf("'/>");
     }
     if (hasrotationchannels())
     {
         int index[3], DIR[3];
         const unsigned num=getrotationindexes(index, DIR);
-        printf("\n<!-- orientationindex %d(%d)  %d(%d)  %d(%d):", index[0],DIR[0],index[1],DIR[1],index[2],DIR[2]);
-        for (unsigned n=0; n<channelnum; n++) printf(" %c", channels[n]);
-        printf(" -->");
-        printf("\n<OrientationInterpolator DEF='nprot_%s'", name);
-        printf(" key='");
-        for (unsigned n=0; n<lines; n++) printf("%s%g", n>0?" ":"", n*1.0/(lines-1));
-        printf("'");
-        printf(" keyValue='");
+        col=printf("\n<!-- orientationindex %d(%d)  %d(%d)  %d(%d):", index[0],DIR[0],index[1],DIR[1],index[2],DIR[2]);
+        for (unsigned n=0; n<channelnum; n++) col+=printf(" %c", channels[n]);
+        col+=printf(" -->");
+        col=printf("\n<OrientationInterpolator DEF='nprot_%s'", name);
+        col+=printf(" key='");
+        for (unsigned n=0; n<lines; n++)
+        {
+            col+=printf("%s%g", n>0?" ":"", n*1.0/(lines-1));
+            if (col>128){ printf("\n"); col=0; }
+        }
+        col+=printf("'");
+        col+=printf(" keyValue='");
         for (unsigned n=0; n<lines; n++)
         {
             const double*T=table+n*columns; //!< Tabellenzeile
             const double ANGLE[3]={TI(0)*deg,TI(1)*deg,TI(2)*deg};
             double axis[3], angle;
             AnglesToAxisAngle(axis,&angle,ANGLE,DIR,num);
-            printf("%g %g %g %g%s", axis[0],axis[1],axis[2],angle, n<lines-1?",":"");
+            col+=printf("%g %g %g %g%s", axis[0],axis[1],axis[2],angle, n<lines-1?",":"");
+            if (col>128 && n+1<lines){ printf("\n"); col=0; }
         }
         printf("'/>");
     }
