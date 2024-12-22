@@ -12,7 +12,7 @@ using fspath=filesystem::path;
 // https://en.wikipedia.org/wiki/Biovision_Hierarchy
 // http://research.cs.wisc.edu/graphics/Courses/cs-838-1999/Jeff/Example1.bvh
 
-static enum OutputType {ffregular, ffmix=1, ffvartable=2, fflexeroutput=3} func=ffregular;
+static enum OutputType {ffregular, ffmix, ffvartable, fflexeroutput, fftext} func=ffregular;
 enum SegmentForms segmentform=sfcylinder;
 bool has_floor=false, headlight_on=true;
 
@@ -42,6 +42,7 @@ int main(int argc, const char*argv[])
         if (0==strcmp(argv[a], "-lex")) func=fflexeroutput;   // Output lexer results
         else if (0==strcmp(argv[a], "-mix")) func=ffmix;      // Mix output from lexer and parser.
         else if (0==strcmp(argv[a], "-s")) func=ffvartable;   // Output a simple table of variables.
+        else if (0==strcmp(argv[a], "-t")) func=fftext;
         else if (0==strcmp(argv[a], "-f") && a<argc-1) fninput=argv[++a];
         else if (0==strcmp(argv[a], "-segments") && a<argc-1)
         {
@@ -60,7 +61,9 @@ int main(int argc, const char*argv[])
     {
         case ffregular:
         case ffmix:
-        case ffvartable: rc=yyparse(); break;
+        case ffvartable:
+        case fftext: rc=yyparse(); break;
+
         case fflexeroutput:
         {
             int u=1;
@@ -139,7 +142,7 @@ void dumphumanoid_txt(const hanimjoint JOINTS[], unsigned NJ)
     for (unsigned n=0; n<NJ; n++)
     {
         const hanimjoint&J=JOINTS[n];
-        printf("\n%*s", 2*level(J), "");
+        printf("\n%*s", 4*level(J), "");
         printf("%s", name(J));
         const unsigned m1=channelnum(J);
         if (m1>0)
@@ -153,25 +156,25 @@ void dumphumanoid_txt(const hanimjoint JOINTS[], unsigned NJ)
 
 void dumphumanoid()
 {
-#if 0
-    dumphumanoid_txt(HUMANOID, HLEN);
-#else
-    printf(
-        "<?xml version='1.0' encoding='iso-8859-1'?>"
-        "\n<!DOCTYPE X3D PUBLIC 'ISO//Web3D//DTD X3D 3.1//EN' 'http://www.web3d.org/specifications/x3d-3.1.dtd'>"
-        "\n<X3D version='3.1' profile='Full'>"
-        "\n<Scene>"
-        "\n<NavigationInfo DEF='nistart' type='\"EXAMINE\" \"ANY\"' headlight='%s' speed='1'/>"
-        "\n<Viewpoint position='0 20 200'/>"
-        , headlight_on?"true":"false"
-    );
-    if (has_floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
-    dumphumanoid_x3d(HUMANOID, HLEN);
-    dumpmotiontable_x3d(HUMANOID, HLEN);
-    printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", PCX.framesep*(PCX.framenum+1));
-    dumpmotionroutes_x3d(HUMANOID, HLEN);
-    printf("\n</Scene>\n</X3D>\n");
-#endif
+    if (func==fftext) dumphumanoid_txt(HUMANOID, HLEN);
+    else
+    {
+        printf(
+            "<?xml version='1.0' encoding='iso-8859-1'?>"
+            "\n<!DOCTYPE X3D PUBLIC 'ISO//Web3D//DTD X3D 3.1//EN' 'http://www.web3d.org/specifications/x3d-3.1.dtd'>"
+            "\n<X3D version='3.1' profile='Full'>"
+            "\n<Scene>"
+            "\n<NavigationInfo DEF='nistart' type='\"EXAMINE\" \"ANY\"' headlight='%s' speed='1'/>"
+            "\n<Viewpoint position='0 20 200'/>"
+            , headlight_on?"true":"false"
+        );
+        if (has_floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
+        dumphumanoid_x3d(HUMANOID, HLEN);
+        dumpmotiontable_x3d(HUMANOID, HLEN);
+        printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", PCX.framesep*(PCX.framenum+1));
+        dumpmotionroutes_x3d(HUMANOID, HLEN);
+        printf("\n</Scene>\n</X3D>\n");
+    }
 }
 
 static unsigned nextchannel=0;
