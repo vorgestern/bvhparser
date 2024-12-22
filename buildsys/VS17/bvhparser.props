@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <PropertyGroup Label="UserMacros">
-    <FLEX>win_flex</FLEX>
-    <BISON>win_bison</BISON>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+        <OutDir>..\..\</OutDir>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <BuildMacro Include="FLEX"><Value>$(FLEX)</Value></BuildMacro>
-    <BuildMacro Include="BISON"><Value>$(BISON)</Value></BuildMacro>
-  </ItemGroup>
+    <PropertyGroup Label="UserMacros">
+        <FLEX>win_flex</FLEX>
+        <BISON>win_bison</BISON>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <BuildMacro Include="FLEX"><Value>$(FLEX)</Value></BuildMacro>
+        <BuildMacro Include="BISON"><Value>$(BISON)</Value></BuildMacro>
+    </ItemGroup>
 
 </Project>
