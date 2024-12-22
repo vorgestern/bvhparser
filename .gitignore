@@ -2,6 +2,9 @@
 bvhparser
 b/*
 
+*.exe
+*.ilk
+*.pdb
 buildsys/VS17/.vs
 buildsys/VS17/*.user
 buildsys/VS17/Release
