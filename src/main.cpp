@@ -1,5 +1,6 @@
 
-#include <string>
+#include <cstdio>
+#include <cstring>
 #include "bvhhelp.h"
 #include "bvhconv.h"
 
@@ -17,11 +18,12 @@ extern FILE*xxin;
 lexercontext LCX;
 parsercontext PCX;
 
+int xxlex();
+
 // Flex will not create yylex() directly, because we used -prefix=xx to set the name to xxlex
 // and provide this wrapper for the parser. 
 int yylex()
 {
-    int xxlex();
     int u=xxlex();
     if (func==1) dumptoken(u);
     return u;

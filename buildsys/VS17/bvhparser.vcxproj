@@ -55,7 +55,7 @@
   <ItemGroup>
     <ClCompile Include="bison-bvhconv.cpp" />
     <ClCompile Include="lex-bvhconv.cpp" />
-    <ClCompile Include="..\..\src\euler to axisangle.cpp" />
+    <ClCompile Include="..\..\src\euler_to_axisangle.cpp" />
     <ClCompile Include="..\..\src\hanimjoint.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\tools.cpp" />

@@ -1,4 +1,5 @@
 
+#include <cstring>
 #include <string>
 #include <numbers>
 #include "bvhhelp.h"

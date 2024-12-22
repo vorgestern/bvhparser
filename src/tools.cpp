@@ -1,5 +1,6 @@
 
-#include <string>
+#include <cstdio>
+#include <cstring>
 #include "bvhhelp.h"
 #include "bvhconv.h"
 
