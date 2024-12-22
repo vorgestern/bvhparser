@@ -105,7 +105,7 @@ void dumpmotiontable_x3d(const hanimjoint joints[], unsigned nj)
   getmotiontable(&table, &lines, &columns);
   if (table!=nullptr && lines>0 && columns>0)
   {
-    printf("\n<!-- Interpolatoren -->");
+    printf("\n<!-- Interpolators -->");
     for (unsigned n=0; n<nj; n++) joints[n].dumpmotiontables_x3d(table,lines,columns);
   }
 }
@@ -117,7 +117,7 @@ void dumpmotionroutes_x3d(const hanimjoint joints[], unsigned nj)
   getmotiontable(&table, &lines, &columns);
   if (table!=nullptr && lines>0 && columns>0)
   {
-    printf("\n<!-- Routen -->");
+    printf("\n<!-- Routes -->");
     for (unsigned n=0; n<nj; n++) joints[n].dumpmotionroutes_x3d();
   }
 }

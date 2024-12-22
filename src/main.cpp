@@ -137,7 +137,7 @@ void setcurrentoffset(double x, double y, double z)
     else fprintf(stderr, "\nFehler: offsetspec ohne offenen joint");
 }
 
-void dumphumanoid_txt(const hanimjoint JOINTS[], unsigned NJ)
+static void dumphumanoid_txt(const hanimjoint JOINTS[], unsigned NJ)
 {
     for (unsigned n=0; n<NJ; n++)
     {
@@ -154,27 +154,28 @@ void dumphumanoid_txt(const hanimjoint JOINTS[], unsigned NJ)
     printf("\n");
 }
 
+static void dumphumanoid_xml(const hanimjoint JOINTS[], unsigned NJ)
+{
+    printf(
+        "<?xml version='1.0' encoding='iso-8859-1'?>"
+        "\n<!DOCTYPE X3D PUBLIC 'ISO//Web3D//DTD X3D 3.1//EN' 'http://www.web3d.org/specifications/x3d-3.1.dtd'>"
+        "\n<X3D version='3.1' profile='Full'>"
+        "\n<Scene>"
+        "\n<NavigationInfo DEF='nistart' type='\"EXAMINE\" \"ANY\"' headlight='%s' speed='1'/>"
+        "\n<Viewpoint position='0 20 200'/>", headlight_on?"true":"false"
+    );
+    if (has_floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
+    dumphumanoid_x3d(HUMANOID, HLEN);
+    dumpmotiontable_x3d(HUMANOID, HLEN);
+    printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", PCX.framesep*(PCX.framenum+1));
+    dumpmotionroutes_x3d(HUMANOID, HLEN);
+    printf("\n</Scene>\n</X3D>\n");
+}
+
 void dumphumanoid()
 {
     if (func==fftext) dumphumanoid_txt(HUMANOID, HLEN);
-    else
-    {
-        printf(
-            "<?xml version='1.0' encoding='iso-8859-1'?>"
-            "\n<!DOCTYPE X3D PUBLIC 'ISO//Web3D//DTD X3D 3.1//EN' 'http://www.web3d.org/specifications/x3d-3.1.dtd'>"
-            "\n<X3D version='3.1' profile='Full'>"
-            "\n<Scene>"
-            "\n<NavigationInfo DEF='nistart' type='\"EXAMINE\" \"ANY\"' headlight='%s' speed='1'/>"
-            "\n<Viewpoint position='0 20 200'/>"
-            , headlight_on?"true":"false"
-        );
-        if (has_floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
-        dumphumanoid_x3d(HUMANOID, HLEN);
-        dumpmotiontable_x3d(HUMANOID, HLEN);
-        printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", PCX.framesep*(PCX.framenum+1));
-        dumpmotionroutes_x3d(HUMANOID, HLEN);
-        printf("\n</Scene>\n</X3D>\n");
-    }
+    else dumphumanoid_xml(HUMANOID, HLEN);
 }
 
 static unsigned nextchannel=0;
