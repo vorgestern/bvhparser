@@ -1,8 +1,12 @@
 
 #include <cstdio>
-#include <cstring>
+#include <string>
+#include <filesystem>
 #include "bvhhelp.h"
 #include "bvhconv.h"
+
+using namespace std;
+using fspath=filesystem::path;
 
 // https://github.com/g-truc/glm.git
 // https://en.wikipedia.org/wiki/Biovision_Hierarchy
@@ -31,7 +35,7 @@ int yylex()
 
 int main(int argc, const char*argv[])
 {
-    const char*fninput=nullptr;
+    fspath fninput {};
 
     for (int a=1; a<argc; a++)
     {
@@ -48,10 +52,9 @@ int main(int argc, const char*argv[])
         }
     }
 
-    if (fninput!=nullptr)
+    if (!fninput.empty())
     {
-        // printf("\nfninput=%s", fninput);
-        xxin=fopen(fninput, "r");
+        xxin=fopen(fninput.string().c_str(), "r");
     }
 
     int rc=0;
@@ -65,7 +68,9 @@ int main(int argc, const char*argv[])
             rc=yyparse();
             switch (func)
             {
-                case 1: case 2: case 3: break;
+                case 1:
+                case 2:
+                case 3: break;
             }
             //    printf("\n");
             break;
@@ -86,7 +91,7 @@ int main(int argc, const char*argv[])
         default: rc=1;
     }
 
-    if (fninput!=nullptr && xxin!=nullptr) fclose(xxin);
+    if (!fninput.empty() && xxin!=nullptr) fclose(xxin);
 
     return rc;
 }
