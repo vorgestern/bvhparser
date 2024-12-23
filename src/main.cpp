@@ -1,6 +1,4 @@
 
-// #include <cstdio>
-// #include <string>
 #include <string_view>
 #include <vector>
 #include <filesystem>
@@ -16,7 +14,7 @@ using fspath=filesystem::path;
 // http://research.cs.wisc.edu/graphics/Courses/cs-838-1999/Jeff/Example1.bvh
 
 static enum class OutputType {ffregular, ffmix, ffvartable, fflexeroutput, fftext} func=OutputType::ffregular;
-static SegmentForms segmentform=SegmentForms::cylinder;
+static SegmentForms segmentshape=SegmentForms::cylinder;
 bool has_floor=false, headlight_on=true;
 
 int yyparse();
@@ -51,9 +49,9 @@ int main(int argc, const char*argv[])
         else if (arg=="-segments" && a<argc-1)
         {
             const string_view form=argv[++a];
-            if (form=="none") segmentform=SegmentForms::none;
-            else if (form=="lines") segmentform=SegmentForms::line;
-            else if (form=="cylinder") segmentform=SegmentForms::cylinder;
+            if (form=="none") segmentshape=SegmentForms::none;
+            else if (form=="lines") segmentshape=SegmentForms::line;
+            else if (form=="cylinder") segmentshape=SegmentForms::cylinder;
         }
     }
 
@@ -166,7 +164,7 @@ static void dumphumanoid_xml(const vector<hanimjoint>&JOINTS)
         "\n<Viewpoint position='0 20 200'/>", headlight_on?"true":"false"
     );
     if (has_floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
-    dumphumanoid_x3d(HUMANOID, segmentform);
+    dumphumanoid_x3d(HUMANOID, segmentshape);
     dumpmotiontable_x3d(HUMANOID, MotionTable);
     printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", PCX.framesep*(PCX.framenum+1));
     if (MotionTable.size()>0) dumpmotionroutes_x3d(HUMANOID);

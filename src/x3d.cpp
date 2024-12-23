@@ -6,7 +6,7 @@
 
 using namespace std;
 
-void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS, SegmentForms segmentform)
+void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS, SegmentForms segmentshape)
 {
   const auto NJ=JOINTS.size();
   int merklev=0;
@@ -32,7 +32,7 @@ void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS, SegmentForms segmentform)
       case jtype::joint:
       case jtype::endsite:
       {
-        switch (segmentform)
+        switch (segmentshape)
         {
           case SegmentForms::none: break;
           case SegmentForms::line:
