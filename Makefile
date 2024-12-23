@@ -14,7 +14,7 @@ dirs:
 b/bison-bvhconv.cpp: src/bvhconv.y
 	bison --defines=b/bvhconv.h --output=$@ -Wcounterexamples $<
 
-b/lex-bvhconv.cpp: src/bvhconv.lex
+b/lex-bvhconv.cpp: src/bvhconv.l
 	flex -8 --nounistd --prefix=xx -o $@ $<
 
 b/%.o: src/%.cpp src/bvhhelp.h
