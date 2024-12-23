@@ -7,6 +7,8 @@ void dumptoken(int token);
 // Setup indices for following channels.
 unsigned getchannelrange(unsigned numchannels);
 
+enum class jtype {root,joint,endsite};
+
 // Represent a joint (or root) of the model.
 // The parser creates a list of objects of this type.
 class hanimjoint
@@ -27,7 +29,7 @@ class hanimjoint
     friend unsigned firstchannel(const hanimjoint&X){ return X.firstchannelindex; }
     friend unsigned lastchannel(const hanimjoint&X){ return X.firstchannelindex+X.channelnum-1; }
     friend const double*offset(const hanimjoint&X){ return X.offset; }
-    friend unsigned type(const hanimjoint&X); // { return X.level==0?0:X.name!=0L?1:2; } // type 0=Root, 1=Joint, 2=End Site
+    friend jtype type(const hanimjoint&);
 public:
     hanimjoint(unsigned level1=0): channelnum(0), level(level1), firstchannelindex(0xffffffff)
     {

@@ -14,7 +14,6 @@ void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS)
   for (unsigned n=0; n<NJ; n++)
   {
     const hanimjoint&J=JOINTS[n];
-    const unsigned t=type(J);
     const int lev=level(J);
     const double*T=offset(J);
     const char*nam=name(J);
@@ -27,11 +26,11 @@ void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS)
         printf("\n%*s</%s>", 2*d, "", d>0?"Transform":"Transform");
     }
 
-    switch (t)
+    switch (type(J))
     {
       // Joints and End Sites
-      case 1:
-      case 2:
+      case jtype::joint:
+      case jtype::endsite:
       {
         switch (segmentform)
         {
