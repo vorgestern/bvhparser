@@ -10,6 +10,15 @@
         <BISON>win_bison</BISON>
     </PropertyGroup>
 
+    <ItemDefinitionGroup>
+        <ClCompile>
+            <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <AdditionalIncludeDirectories>..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+            <LanguageStandard>stdcpp20</LanguageStandard>
+            <WarningLevel>Level3</WarningLevel>
+        </ClCompile>
+    </ItemDefinitionGroup>
+
     <ItemGroup>
         <BuildMacro Include="FLEX"><Value>$(FLEX)</Value></BuildMacro>
         <BuildMacro Include="BISON"><Value>$(BISON)</Value></BuildMacro>
