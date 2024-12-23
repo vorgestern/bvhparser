@@ -50,8 +50,7 @@ public:
 
 extern std::vector<hanimjoint>HUMANOID;
 
-void dumphumanoid_txt(const std::vector<hanimjoint>&),
-    dumphumanoid_x3d(const std::vector<hanimjoint>&),
+void dumphumanoid_x3d(const std::vector<hanimjoint>&),
     dumpmotiontable_x3d(const std::vector<hanimjoint>&),
     dumpmotionroutes_x3d(const std::vector<hanimjoint>&);
 

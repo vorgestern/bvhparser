@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <string>
 #include <vector>
+#include <cstring>
 #include "bvhhelp.h"
 #include "bvhconv.h"
 #include "parsercontext.h"

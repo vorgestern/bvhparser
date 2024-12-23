@@ -1,6 +1,7 @@
 
 #include <cstdio>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <filesystem>
 #include "bvhhelp.h"
@@ -41,17 +42,18 @@ int main(int argc, const char*argv[])
 
     for (int a=1; a<argc; a++)
     {
-        if (0==strcmp(argv[a], "-lex")) func=fflexeroutput;   // Output lexer results
-        else if (0==strcmp(argv[a], "-mix")) func=ffmix;      // Mix output from lexer and parser.
-        else if (0==strcmp(argv[a], "-s")) func=ffvartable;   // Output a simple table of variables.
-        else if (0==strcmp(argv[a], "-t")) func=fftext;
-        else if (0==strcmp(argv[a], "-f") && a<argc-1) fninput=argv[++a];
-        else if (0==strcmp(argv[a], "-segments") && a<argc-1)
+        const string_view arg=argv[a];
+        if (arg=="-lex") func=fflexeroutput;   // Output lexer results
+        else if (arg=="-mix") func=ffmix;      // Mix output from lexer and parser.
+        else if (arg=="-s") func=ffvartable;   // Output a simple table of variables.
+        else if (arg=="-t") func=fftext;
+        else if (arg=="-f" && a<argc-1) fninput=argv[++a];
+        else if (arg=="-segments" && a<argc-1)
         {
-            const char*form=argv[++a];
-            if (0==strcmp(form, "none")) segmentform=sfnone;
-            else if (0==strcmp(form, "lines")) segmentform=sfline;
-            else if (0==strcmp(form, "cylinder")) segmentform=sfcylinder;
+            const string_view form=argv[++a];
+            if (form=="none") segmentform=sfnone;
+            else if (form=="lines") segmentform=sfline;
+            else if (form=="cylinder") segmentform=sfcylinder;
         }
     }
 
