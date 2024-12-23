@@ -15,8 +15,8 @@ using fspath=filesystem::path;
 // https://en.wikipedia.org/wiki/Biovision_Hierarchy
 // http://research.cs.wisc.edu/graphics/Courses/cs-838-1999/Jeff/Example1.bvh
 
-static enum OutputType {ffregular, ffmix, ffvartable, fflexeroutput, fftext} func=ffregular;
-enum SegmentForms segmentform=sfcylinder;
+static enum class OutputType {ffregular, ffmix, ffvartable, fflexeroutput, fftext} func=OutputType::ffregular;
+static SegmentForms segmentform=SegmentForms::cylinder;
 bool has_floor=false, headlight_on=true;
 
 int yyparse();
@@ -32,7 +32,7 @@ int xxlex();
 int yylex()
 {
     int u=xxlex();
-    if (func==ffmix) dumptoken(u);
+    if (func==OutputType::ffmix) dumptoken(u);
     return u;
 }
 
@@ -43,17 +43,17 @@ int main(int argc, const char*argv[])
     for (int a=1; a<argc; a++)
     {
         const string_view arg=argv[a];
-        if (arg=="-lex") func=fflexeroutput;   // Output lexer results
-        else if (arg=="-mix") func=ffmix;      // Mix output from lexer and parser.
-        else if (arg=="-s") func=ffvartable;   // Output a simple table of variables.
-        else if (arg=="-t") func=fftext;
+        if (arg=="-lex") func=OutputType::fflexeroutput;   // Output lexer results
+        else if (arg=="-mix") func=OutputType::ffmix;      // Mix output from lexer and parser.
+        else if (arg=="-s") func=OutputType::ffvartable;   // Output a simple table of variables.
+        else if (arg=="-t") func=OutputType::fftext;
         else if (arg=="-f" && a<argc-1) fninput=argv[++a];
         else if (arg=="-segments" && a<argc-1)
         {
             const string_view form=argv[++a];
-            if (form=="none") segmentform=sfnone;
-            else if (form=="lines") segmentform=sfline;
-            else if (form=="cylinder") segmentform=sfcylinder;
+            if (form=="none") segmentform=SegmentForms::none;
+            else if (form=="lines") segmentform=SegmentForms::line;
+            else if (form=="cylinder") segmentform=SegmentForms::cylinder;
         }
     }
 
@@ -63,12 +63,12 @@ int main(int argc, const char*argv[])
 
     switch (func)
     {
-        case ffregular:
-        case ffmix:
-        case ffvartable:
-        case fftext: rc=yyparse(); break;
+        case OutputType::ffregular:
+        case OutputType::ffmix:
+        case OutputType::ffvartable:
+        case OutputType::fftext: rc=yyparse(); break;
 
-        case fflexeroutput:
+        case OutputType::fflexeroutput:
         {
             int u=1;
             while (u!=0)
@@ -166,7 +166,7 @@ static void dumphumanoid_xml(const vector<hanimjoint>&JOINTS)
         "\n<Viewpoint position='0 20 200'/>", headlight_on?"true":"false"
     );
     if (has_floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
-    dumphumanoid_x3d(HUMANOID);
+    dumphumanoid_x3d(HUMANOID, segmentform);
     dumpmotiontable_x3d(HUMANOID, MotionTable);
     printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", PCX.framesep*(PCX.framenum+1));
     if (MotionTable.size()>0) dumpmotionroutes_x3d(HUMANOID);
@@ -175,7 +175,7 @@ static void dumphumanoid_xml(const vector<hanimjoint>&JOINTS)
 
 void dumphumanoid()
 {
-    if (func==fftext) dumphumanoid_txt(HUMANOID);
+    if (func==OutputType::fftext) dumphumanoid_txt(HUMANOID);
     else dumphumanoid_xml(HUMANOID);
 }
 

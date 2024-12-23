@@ -1,6 +1,6 @@
 
-// Commandline arguments -segments none|line|cylinder  ==> 0|1|2
-extern enum SegmentForms {sfnone,sfline,sfcylinder} segmentform;
+// Commandline arguments -segments none|line|cylinder
+enum class SegmentForms {none,line,cylinder};
 
 void dumptoken(int token);
 
@@ -35,8 +35,6 @@ public:
     {
         offset[0]=offset[1]=offset[2]=0;
     }
-// ~hanimjoint(); // { if (name!=0L) delete[]name; }
-//  hanimjoint(const hanimjoint&)=delete;
     unsigned char operator[](int n)const{ return n<0?0:n<(int)channelnum?channels[n]:0; }
     void setchannels(unsigned char c0, unsigned char c1, unsigned char c2){ channelnum=3; channels[0]=c0; channels[1]=c1; channels[2]=c2; firstchannelindex=getchannelrange(3); }
     void setchannels(unsigned char c0, unsigned char c1, unsigned char c2, unsigned char c3, unsigned char c4, unsigned char c5){ channelnum=6; channels[0]=c0; channels[1]=c1; channels[2]=c2; channels[3]=c3; channels[4]=c4; channels[5]=c5; firstchannelindex=getchannelrange(6); }
@@ -49,7 +47,7 @@ public:
 extern std::vector<hanimjoint>HUMANOID;
 extern std::vector<std::vector<double>>MotionTable;
 
-void dumphumanoid_x3d(const std::vector<hanimjoint>&),
+void dumphumanoid_x3d(const std::vector<hanimjoint>&, SegmentForms),
     dumpmotiontable_x3d(const std::vector<hanimjoint>&, const std::vector<std::vector<double>>&),
     dumpmotionroutes_x3d(const std::vector<hanimjoint>&);
 

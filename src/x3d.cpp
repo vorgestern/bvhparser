@@ -6,7 +6,7 @@
 
 using namespace std;
 
-void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS)
+void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS, SegmentForms segmentform)
 {
   const auto NJ=JOINTS.size();
   int merklev=0;
@@ -34,14 +34,14 @@ void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS)
       {
         switch (segmentform)
         {
-          case 0: break;
-          case 1:
+          case SegmentForms::none: break;
+          case SegmentForms::line:
           {
             // Draw a line
             if (T!=nullptr) printf("\n%*s<Shape><LineSet vertexCount='2'><Coordinate point='0 0 0,%g %g %g'/></LineSet></Shape>", 2*lev, "", T[0],T[1],T[2]);
             break;
           }
-          case 2:
+          case SegmentForms::cylinder:
           {
             // Zeichne einen Zylinder
             if (T!=nullptr)
