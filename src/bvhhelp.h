@@ -15,12 +15,26 @@ class hanimjoint
 {
     std::string name {};
     double offset[3];
-    unsigned char channels[6];     //!< XYZ for translation, xyz for rotation
+    char channels[6];              //!< XYZ for translation, xyz for rotation
     unsigned channelnum;           //!< Number of channels, 0,3,6
     unsigned level;                //!< Hierarchy level
     unsigned firstchannelindex;    //!< Index of the first associated channel in the MOTION table
-    bool haspositionchannels()const{ for (unsigned c=0; c<channelnum; c++) switch (channels[c]){ case 'X': case 'Y': case 'Z': return true; } return false; }
-    bool hasrotationchannels()const{ for (unsigned c=0; c<channelnum; c++) switch (channels[c]){ case 'x': case 'y': case 'z': return true; } return false; }
+    bool haspositionchannels()const
+    {
+        for (unsigned c=0; c<channelnum; c++) switch (channels[c])
+        {
+            case 'X': case 'Y': case 'Z': return true;
+        }
+        return false;
+    }
+    bool hasrotationchannels()const
+    {
+        for (unsigned c=0; c<channelnum; c++) switch (channels[c])
+        {
+            case 'x': case 'y': case 'z': return true;
+        }
+        return false;
+    }
     void getpositionindexes(int index[])const;
     unsigned getrotationindexes(int index[], int dir[])const; //!< Return columns and axes to which they refer in the specified order.
     friend unsigned channelnum(const hanimjoint&X){ return X.channelnum; }

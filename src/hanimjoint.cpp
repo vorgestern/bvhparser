@@ -6,8 +6,11 @@
 
 const double deg=std::numbers::pi_v<double>/180.0;
 
-jtype type(const hanimjoint&X){ return X.level==0?jtype::root:X.name.empty()?jtype::endsite:jtype::joint; }
-// type 0=Root, 1=Joint, 2=End Site
+jtype type(const hanimjoint&X)
+{
+    return X.level==0?jtype::root
+        :X.name.empty()?jtype::endsite:jtype::joint; // regular joints are expected to be named
+}
 
 void hanimjoint::setname(const char s[])
 {
