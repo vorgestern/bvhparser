@@ -7,9 +7,6 @@ void dumptoken(int token);
 // Setup indices for following channels.
 unsigned getchannelrange(unsigned numchannels);
 
-// Number of channels required by the hierarchy.
-unsigned channelsused();
-
 // Represent a joint (or root) of the model.
 // The parser creates a list of objects of this type.
 class hanimjoint

@@ -187,5 +187,3 @@ unsigned getchannelrange(unsigned channels)
     nextchannel+=channels;
     return n;
 }
-
-unsigned channelsused(){ return nextchannel; }
