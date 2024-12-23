@@ -50,8 +50,18 @@ public:
         offset[0]=offset[1]=offset[2]=0;
     }
     unsigned char operator[](int n)const{ return n<0?0:n<(int)channelnum?channels[n]:0; }
-    void setchannels(unsigned char c0, unsigned char c1, unsigned char c2){ channelnum=3; channels[0]=c0; channels[1]=c1; channels[2]=c2; firstchannelindex=getchannelrange(3); }
-    void setchannels(unsigned char c0, unsigned char c1, unsigned char c2, unsigned char c3, unsigned char c4, unsigned char c5){ channelnum=6; channels[0]=c0; channels[1]=c1; channels[2]=c2; channels[3]=c3; channels[4]=c4; channels[5]=c5; firstchannelindex=getchannelrange(6); }
+    void setchannels(unsigned char c0, unsigned char c1, unsigned char c2)
+    {
+        channelnum=3;
+        channels[0]=c0; channels[1]=c1; channels[2]=c2;
+        firstchannelindex=getchannelrange(3);
+    }
+    void setchannels(unsigned char c0, unsigned char c1, unsigned char c2, unsigned char c3, unsigned char c4, unsigned char c5)
+    {
+        channelnum=6;
+        channels[0]=c0; channels[1]=c1; channels[2]=c2; channels[3]=c3; channels[4]=c4; channels[5]=c5;
+        firstchannelindex=getchannelrange(6);
+    }
     void setoffset(double x, double y, double z){ offset[0]=x; offset[1]=y; offset[2]=z;  }
     void setname(const char name[]);
     void dumpmotiontables_x3d(const std::vector<std::vector<double>>&)const;
