@@ -1,9 +1,11 @@
 
 #include <cstdio>
 #include <string>
+#include <vector>
 #include <filesystem>
 #include "bvhhelp.h"
 #include "bvhconv.h"
+#include "parsercontext.h"
 
 using namespace std;
 using fspath=filesystem::path;
@@ -91,15 +93,13 @@ void yyerror(char const*s)
 
 void ateof(){}
 
-hanimjoint HUMANOID[1000];
-unsigned HLEN=0;
+vector<hanimjoint>HUMANOID;
 
 void parsercontext::pushjoint(const char name[])
 {
     if (mylog) printf("\n%*sjoint %s {", 2*jointlevel, "", name);
-    HUMANOID[HLEN]=hanimjoint(jointlevel);
-    if (name!=nullptr) HUMANOID[HLEN].setname(name);
-    HLEN++;
+    HUMANOID.emplace_back(jointlevel);
+    if (name!=nullptr && name[0]!=0) HUMANOID.back().setname(name);
     jointlevel++;
 }
 
@@ -121,27 +121,26 @@ static unsigned char channelcode(unsigned c)
 
 void setcurrentchannels(unsigned c0, unsigned c1, unsigned c2)
 {
-    if (HLEN>0) HUMANOID[HLEN-1].setchannels(channelcode(c0),channelcode(c1),channelcode(c2));
+    if (HUMANOID.size()>0) HUMANOID.back().setchannels(channelcode(c0),channelcode(c1),channelcode(c2));
     else fprintf(stderr, "\nFehler: channelspec ohne offenen joint");
 }
 
 void setcurrentchannels(unsigned c0, unsigned c1, unsigned c2, unsigned c3, unsigned c4, unsigned c5)
 {
-    if (HLEN>0) HUMANOID[HLEN-1].setchannels(channelcode(c0),channelcode(c1),channelcode(c2),channelcode(c3),channelcode(c4),channelcode(c5));
+    if (HUMANOID.size()>0) HUMANOID.back().setchannels(channelcode(c0),channelcode(c1),channelcode(c2),channelcode(c3),channelcode(c4),channelcode(c5));
     else fprintf(stderr, "\nFehler: channelspec ohne offenen joint");
 }
 
 void setcurrentoffset(double x, double y, double z)
 {
-    if (HLEN>0) HUMANOID[HLEN-1].setoffset(x,y,z);
+    if (HUMANOID.size()>0) HUMANOID.back().setoffset(x,y,z);
     else fprintf(stderr, "\nFehler: offsetspec ohne offenen joint");
 }
 
-static void dumphumanoid_txt(const hanimjoint JOINTS[], unsigned NJ)
+static void dumphumanoid_txt(const vector<hanimjoint>&JOINTS)
 {
-    for (unsigned n=0; n<NJ; n++)
+    for (const auto&J: JOINTS)
     {
-        const hanimjoint&J=JOINTS[n];
         printf("\n%*s", 4*level(J), "");
         printf("%s", name(J));
         const unsigned m1=channelnum(J);
@@ -154,7 +153,7 @@ static void dumphumanoid_txt(const hanimjoint JOINTS[], unsigned NJ)
     printf("\n");
 }
 
-static void dumphumanoid_xml(const hanimjoint JOINTS[], unsigned NJ)
+static void dumphumanoid_xml(const vector<hanimjoint>&JOINTS)
 {
     printf(
         "<?xml version='1.0' encoding='iso-8859-1'?>"
@@ -165,17 +164,17 @@ static void dumphumanoid_xml(const hanimjoint JOINTS[], unsigned NJ)
         "\n<Viewpoint position='0 20 200'/>", headlight_on?"true":"false"
     );
     if (has_floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
-    dumphumanoid_x3d(HUMANOID, HLEN);
-    dumpmotiontable_x3d(HUMANOID, HLEN);
+    dumphumanoid_x3d(HUMANOID);
+    dumpmotiontable_x3d(HUMANOID);
     printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", PCX.framesep*(PCX.framenum+1));
-    dumpmotionroutes_x3d(HUMANOID, HLEN);
+    dumpmotionroutes_x3d(HUMANOID);
     printf("\n</Scene>\n</X3D>\n");
 }
 
 void dumphumanoid()
 {
-    if (func==fftext) dumphumanoid_txt(HUMANOID, HLEN);
-    else dumphumanoid_xml(HUMANOID, HLEN);
+    if (func==fftext) dumphumanoid_txt(HUMANOID);
+    else dumphumanoid_xml(HUMANOID);
 }
 
 static unsigned nextchannel=0;

@@ -1,10 +1,14 @@
 
 #include <string>
 #include <cmath>
+#include <vector>
 #include "bvhhelp.h"
 
-void dumphumanoid_x3d(const hanimjoint JOINTS[], unsigned NJ)
+using namespace std;
+
+void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS)
 {
+  const auto NJ=JOINTS.size();
   int merklev=0;
   unsigned nummat=0;
   for (unsigned n=0; n<NJ; n++)
@@ -98,7 +102,7 @@ void dumphumanoid_x3d(const hanimjoint JOINTS[], unsigned NJ)
   for (int d=merklev; d>=0; d--) printf("\n%*s</%s>", 2*d, "", d>0?"Transform":"Transform");
 }
 
-void dumpmotiontable_x3d(const hanimjoint joints[], unsigned nj)
+void dumpmotiontable_x3d(const vector<hanimjoint>&joints)
 {
   const double*table=nullptr;
   unsigned lines=0, columns=0;
@@ -106,11 +110,11 @@ void dumpmotiontable_x3d(const hanimjoint joints[], unsigned nj)
   if (table!=nullptr && lines>0 && columns>0)
   {
     printf("\n<!-- Interpolators -->");
-    for (unsigned n=0; n<nj; n++) joints[n].dumpmotiontables_x3d(table,lines,columns);
+    for (const auto&j: joints) j.dumpmotiontables_x3d(table,lines,columns);
   }
 }
 
-void dumpmotionroutes_x3d(const hanimjoint joints[], unsigned nj)
+void dumpmotionroutes_x3d(const vector<hanimjoint>&joints)
 {
   const double*table=nullptr;
   unsigned lines=0, columns=0;
@@ -118,6 +122,6 @@ void dumpmotionroutes_x3d(const hanimjoint joints[], unsigned nj)
   if (table!=nullptr && lines>0 && columns>0)
   {
     printf("\n<!-- Routes -->");
-    for (unsigned n=0; n<nj; n++) joints[n].dumpmotionroutes_x3d();
+    for (const auto&j: joints) j.dumpmotionroutes_x3d();
   }
 }

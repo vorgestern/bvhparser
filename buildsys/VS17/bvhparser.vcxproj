@@ -51,6 +51,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\bvhconv.h" />
     <ClInclude Include="..\..\src\bvhhelp.h" />
+    <ClInclude Include="..\..\src\parsercontext.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bison-bvhconv.cpp" />

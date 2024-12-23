@@ -1,8 +1,10 @@
 
 #include <cstdio>
-#include <cstring>
+#include <string>
+#include <vector>
 #include "bvhhelp.h"
 #include "bvhconv.h"
+#include "parsercontext.h"
 
 void dumptoken(int u)
 {

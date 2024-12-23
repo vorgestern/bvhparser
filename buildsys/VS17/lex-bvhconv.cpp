@@ -443,8 +443,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 26
-#define YY_END_OF_BUFFER 27
+#define YY_NUM_RULES 27
+#define YY_END_OF_BUFFER 28
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -454,25 +454,25 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[180] =
     {   0,
-        0,    0,    0,    0,   27,   26,   15,   16,   26,   20,
-       21,   19,   26,   26,   13,   26,   26,   26,   26,   26,
-       26,   26,   26,   26,   26,   17,   18,   26,   15,   16,
+        0,    0,    0,   26,   28,   27,   15,   16,   27,   20,
+       21,   19,   27,   27,   13,   27,   27,   27,   27,   27,
+       27,   27,   27,   27,   27,   17,   18,   26,   15,   16,
        26,   15,   16,    0,   22,    0,    0,    0,   13,   13,
        13,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,   25,   15,   16,    0,    0,
+        0,    0,    0,    0,   26,   25,   15,   16,   26,    0,
         0,   13,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,   13,    0,
+        0,    0,    0,    0,    0,   26,    0,    0,   13,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+        0,    0,   26,    0,    0,    0,    0,    0,    0,    0,
 
-        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+        0,    0,    0,    0,    0,    0,    0,   26,    0,    0,
         0,    0,    0,   14,    5,    2,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,    3,    2,
-        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        4,    0,    3,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    1,    7,   10,    8,   11,
-        9,   12,    0,    0,   23,    0,    6,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,   24,    0,    0
+        0,    0,   26,   26,    0,    0,    0,    0,    3,    2,
+        0,    0,    0,    0,    0,    0,   26,   26,    0,    0,
+        4,    0,    3,    0,    0,    0,    0,    0,    0,   26,
+       26,   26,   26,    0,    0,    1,    7,   10,    8,   11,
+        9,   12,   26,   26,   23,    0,    6,   26,   26,   26,
+       26,   26,   26,   26,   26,   26,   24,   26,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -674,7 +674,7 @@ char *xxtext;
 #line 1 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
 #line 6 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
   #include <ctype.h>
-  #include "bvhhelp.h"
+  #include "parsercontext.h"
   #include "bvhconv.h"
   #define OUTNL {}
   #define ASSTR(s)  { strcpy(yylval.S, yytext); return s; }
@@ -1083,17 +1083,22 @@ YY_RULE_SETUP
 #line 56 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
 { yylval.I=scanline(yytext); return TABLELINE; }
 	YY_BREAK
-case YY_STATE_EOF(INITIAL):
-case YY_STATE_EOF(animationtable):
-#line 58 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
-{ ateof(); return 0; }
-	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 60 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 57 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+{ yylval.I=scanline(yytext); return TABLELINE; }
+	YY_BREAK
+case YY_STATE_EOF(INITIAL):
+case YY_STATE_EOF(animationtable):
+#line 59 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+{ ateof(); return 0; }
+	YY_BREAK
+case 27:
+YY_RULE_SETUP
+#line 61 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
 ECHO;
 	YY_BREAK
-#line 1096 "lex-bvhconv.cpp"
+#line 1101 "lex-bvhconv.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2096,6 +2101,6 @@ void xxfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 60 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 61 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
 
 
