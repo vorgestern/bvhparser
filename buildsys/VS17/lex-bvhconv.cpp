@@ -674,7 +674,7 @@ char *xxtext;
 #line 1 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
 #line 6 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
   #include <ctype.h>
-  #include "parsercontext.h"
+  #include <parsercontext.h>
   #include "bvhconv.h"
   #define OUTNL {}
   #define ASSTR(s)  { strcpy(yylval.S, yytext); return s; }

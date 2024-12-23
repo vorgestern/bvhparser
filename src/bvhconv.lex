@@ -3,7 +3,7 @@
 %option outfile="lex-bvhconv.cpp"
 
   #include <ctype.h>
-  #include "parsercontext.h"
+  #include <parsercontext.h>
   #include "bvhconv.h"
   #define OUTNL {}
   #define ASSTR(s)  { strcpy(yylval.S, yytext); return s; }

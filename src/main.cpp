@@ -2,9 +2,9 @@
 #include <string_view>
 #include <vector>
 #include <filesystem>
-#include "bvhhelp.h"
+#include <bvhhelp.h>
+#include <parsercontext.h>
 #include "bvhconv.h"
-#include "parsercontext.h"
 
 using namespace std;
 using fspath=filesystem::path;
@@ -13,7 +13,7 @@ using fspath=filesystem::path;
 // https://en.wikipedia.org/wiki/Biovision_Hierarchy
 // http://research.cs.wisc.edu/graphics/Courses/cs-838-1999/Jeff/Example1.bvh
 
-static enum class OutputType {ffregular, ffmix, ffvartable, fflexeroutput, fftext} func=OutputType::ffregular;
+static enum class OutputType {ffregular, ffmix, fflexeroutput, fftext} func=OutputType::ffregular;
 static SegmentForms segmentshape=SegmentForms::cylinder;
 bool has_floor=false, headlight_on=true;
 
@@ -43,7 +43,6 @@ int main(int argc, const char*argv[])
         const string_view arg=argv[a];
         if (arg=="-lex") func=OutputType::fflexeroutput;   // Output lexer results
         else if (arg=="-mix") func=OutputType::ffmix;      // Mix output from lexer and parser.
-        else if (arg=="-s") func=OutputType::ffvartable;   // Output a simple table of variables.
         else if (arg=="-t") func=OutputType::fftext;
         else if (arg=="-f" && a<argc-1) fninput=argv[++a];
         else if (arg=="-segments" && a<argc-1)
@@ -63,7 +62,6 @@ int main(int argc, const char*argv[])
     {
         case OutputType::ffregular:
         case OutputType::ffmix:
-        case OutputType::ffvartable:
         case OutputType::fftext: rc=yyparse(); break;
 
         case OutputType::fflexeroutput:
