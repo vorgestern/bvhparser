@@ -45,6 +45,9 @@ int main(int argc, const char*argv[])
         else if (arg=="-mix") func=OutputType::ffmix;      // Mix output from lexer and parser.
         else if (arg=="-t") func=OutputType::fftext;
         else if (arg=="-f" && a<argc-1) fninput=argv[++a];
+        else if (arg=="-s0") segmentshape=SegmentForms::none;
+        else if (arg=="-s1") segmentshape=SegmentForms::line;
+        else if (arg=="-s2") segmentshape=SegmentForms::cylinder;
         else if (arg=="-segments" && a<argc-1)
         {
             const string_view form=argv[++a];
