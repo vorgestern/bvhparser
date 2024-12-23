@@ -28,6 +28,7 @@ void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS, SegmentForms segmentshape
 
     switch (type(J))
     {
+      case jtype::root: break;
       // Joints and End Sites
       case jtype::joint:
       case jtype::endsite:
