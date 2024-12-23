@@ -1,6 +1,5 @@
 
 #include <string>
-#include <cmath>
 #include <vector>
 #include "bvhhelp.h"
 
@@ -102,26 +101,17 @@ void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS)
   for (int d=merklev; d>=0; d--) printf("\n%*s</%s>", 2*d, "", d>0?"Transform":"Transform");
 }
 
-void dumpmotiontable_x3d(const vector<hanimjoint>&joints)
+void dumpmotiontable_x3d(const vector<hanimjoint>&joints, const vector<vector<double>>&Table)
 {
-  const double*table=nullptr;
-  unsigned lines=0, columns=0;
-  getmotiontable(&table, &lines, &columns);
-  if (table!=nullptr && lines>0 && columns>0)
-  {
-    printf("\n<!-- Interpolators -->");
-    for (const auto&j: joints) j.dumpmotiontables_x3d(table,lines,columns);
-  }
+    if (Table.size()>0)
+    {
+        printf("\n<!-- Interpolators -->");
+        for (const auto&j: joints) j.dumpmotiontables_x3d(Table);
+    }
 }
 
 void dumpmotionroutes_x3d(const vector<hanimjoint>&joints)
 {
-  const double*table=nullptr;
-  unsigned lines=0, columns=0;
-  getmotiontable(&table, &lines, &columns);
-  if (table!=nullptr && lines>0 && columns>0)
-  {
     printf("\n<!-- Routes -->");
     for (const auto&j: joints) j.dumpmotionroutes_x3d();
-  }
 }

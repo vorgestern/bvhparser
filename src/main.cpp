@@ -1,6 +1,6 @@
 
-#include <cstdio>
-#include <string>
+// #include <cstdio>
+// #include <string>
 #include <string_view>
 #include <vector>
 #include <filesystem>
@@ -167,9 +167,9 @@ static void dumphumanoid_xml(const vector<hanimjoint>&JOINTS)
     );
     if (has_floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
     dumphumanoid_x3d(HUMANOID);
-    dumpmotiontable_x3d(HUMANOID);
+    dumpmotiontable_x3d(HUMANOID, MotionTable);
     printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", PCX.framesep*(PCX.framenum+1));
-    dumpmotionroutes_x3d(HUMANOID);
+    if (MotionTable.size()>0) dumpmotionroutes_x3d(HUMANOID);
     printf("\n</Scene>\n</X3D>\n");
 }
 

@@ -1,11 +1,11 @@
 
-#include <cstdio>
 #include <string>
 #include <vector>
-#include <cstring>
 #include "bvhhelp.h"
 #include "bvhconv.h"
 #include "parsercontext.h"
+
+using namespace std;
 
 void dumptoken(int u)
 {
@@ -31,55 +31,20 @@ void dumptoken(int u)
   }
 }
 
-double lextableline[1000];
+static vector<double>MotionLine;
+vector<vector<double>>MotionTable;
 
 int scanline(const char pad[])
 {
-  int numfloat=0, offset=0, nr=0;
-  // printf("\nscanline: ");
-  while (1==sscanf(pad+offset, "%lg%n", lextableline+numfloat, &nr))
-  {
-    // printf(" %g", lextableline[numfloat]);
-    offset+=nr;
-    numfloat++;
-  } 
-  return numfloat;
-}
-
-double*motiontable=nullptr;
-int tablelinesfilled=0;
-static unsigned tablecolumns=0;
-
-void storetableline(unsigned columns)
-{
-  if (tablelinesfilled==0 && PCX.framenum>0)
-  {
-    if (tablecolumns==0)
+    MotionLine.clear();
+    int offset=0, nr=0;
+    double value=0;
+    while (1==sscanf(pad+offset, "%lg%n", &value, &nr))
     {
-      tablecolumns=channelsused();
-      PCX.totaltime=PCX.framenum-1*PCX.framesep;
-    }
-    if (tablecolumns>0) motiontable=new double[PCX.framenum*tablecolumns];
-  }
-
-  if (tablecolumns>0)
-  {
-    double*T=motiontable+tablelinesfilled*tablecolumns;
-    memcpy(T, lextableline, (columns<=tablecolumns?columns:tablecolumns)*sizeof(double));
-    for (unsigned c=columns; c<tablecolumns; c++) T[c]=0;
-
-    #if 0
-    printf("\nTable line %u:", tablelinesfilled);
-    for (unsigned n=0; n<tablecolumns; n++) printf(" %g", T[n]);
-    #endif
-
-    tablelinesfilled++;
-  }
+        MotionLine.push_back(value);
+        offset+=nr;
+    } 
+    return MotionLine.size();
 }
 
-void getmotiontable(const double**table, unsigned*lines, unsigned*columns)
-{
-  *table=motiontable;
-  *lines=tablelinesfilled;
-  *columns=tablecolumns;
-}
+void storetableline(unsigned columns){ MotionTable.push_back(MotionLine); }

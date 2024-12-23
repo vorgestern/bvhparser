@@ -3,7 +3,6 @@
 extern enum SegmentForms {sfnone,sfline,sfcylinder} segmentform;
 
 void dumptoken(int token);
-void getmotiontable(const double**table, unsigned*lines, unsigned*columns);
 
 // Setup indices for following channels.
 unsigned getchannelrange(unsigned numchannels);
@@ -44,14 +43,15 @@ public:
     void setchannels(unsigned char c0, unsigned char c1, unsigned char c2, unsigned char c3, unsigned char c4, unsigned char c5){ channelnum=6; channels[0]=c0; channels[1]=c1; channels[2]=c2; channels[3]=c3; channels[4]=c4; channels[5]=c5; firstchannelindex=getchannelrange(6); }
     void setoffset(double x, double y, double z){ offset[0]=x; offset[1]=y; offset[2]=z;  }
     void setname(const char name[]);
-    void dumpmotiontables_x3d(const double table[], unsigned lines, unsigned columns)const;
+    void dumpmotiontables_x3d(const std::vector<std::vector<double>>&)const;
     void dumpmotionroutes_x3d()const;
 };
 
 extern std::vector<hanimjoint>HUMANOID;
+extern std::vector<std::vector<double>>MotionTable;
 
 void dumphumanoid_x3d(const std::vector<hanimjoint>&),
-    dumpmotiontable_x3d(const std::vector<hanimjoint>&),
+    dumpmotiontable_x3d(const std::vector<hanimjoint>&, const std::vector<std::vector<double>>&),
     dumpmotionroutes_x3d(const std::vector<hanimjoint>&);
 
 // Compute the axis/angle-representation from num rotations (1 to 3).

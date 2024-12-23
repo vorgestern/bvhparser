@@ -1,5 +1,4 @@
 
-#include <cstring>
 #include <string>
 #include <vector>
 #include <numbers>
@@ -38,10 +37,10 @@ unsigned hanimjoint::getrotationindexes(int index[], int dir[])const
     return u;
 }
 
-void hanimjoint::dumpmotiontables_x3d(const double table[], unsigned lines, unsigned columns)const
+void hanimjoint::dumpmotiontables_x3d(const std::vector<std::vector<double>>&Table)const
 {
-#define TI(n) (index[n]<0?0.0:T[index[n]])
     size_t col=0;
+    const auto lines=Table.size();
     if (haspositionchannels())
     {
         int index[3];
@@ -60,8 +59,8 @@ void hanimjoint::dumpmotiontables_x3d(const double table[], unsigned lines, unsi
         col+=printf(" keyValue='");
         for (unsigned n=0; n<lines; n++)
         {
-            const double*T=table+n*columns;
-            col+=printf("%g %g %g%s", TI(0),TI(1),TI(2), n<lines-1?",":"");
+            const auto&L=Table[n];
+            col+=printf("%g %g %g%s", L[index[0]],L[index[1]],L[index[2]], n<lines-1?",":"");
             if (col>128 && n+1<lines){ printf("\n"); col=0; }
         }
         col+=printf("'/>");
@@ -84,8 +83,8 @@ void hanimjoint::dumpmotiontables_x3d(const double table[], unsigned lines, unsi
         col+=printf(" keyValue='");
         for (unsigned n=0; n<lines; n++)
         {
-            const double*T=table+n*columns; //!< Tabellenzeile
-            const double ANGLE[3]={TI(0)*deg,TI(1)*deg,TI(2)*deg};
+            const auto&L=Table[n];
+            const double ANGLE[3]={L[index[0]]*deg,L[index[1]]*deg,L[index[2]]*deg};
             double axis[3], angle;
             AnglesToAxisAngle(axis,&angle,ANGLE,DIR,num);
             col+=printf("%g %g %g %g%s", axis[0],axis[1],axis[2],angle, n<lines-1?",":"");
