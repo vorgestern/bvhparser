@@ -1,6 +1,6 @@
 
 %option never-interactive
-%option outfile="lex-bvhconv.cpp"
+  // %option outfile="lex-bvhconv.cpp"
 
   #include <ctype.h>
   #include <parsercontext.h>

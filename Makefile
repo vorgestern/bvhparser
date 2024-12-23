@@ -15,7 +15,7 @@ b/bison-bvhconv.cpp: src/bvhconv.y
 	bison --defines=b/bvhconv.h --output=$@ -Wcounterexamples $<
 
 b/lex-bvhconv.cpp: src/bvhconv.lex
-	flex -8 --nounistd --prefix=xx -t > $@ $<
+	flex -8 --nounistd --prefix=xx -o $@ $<
 
 b/%.o: src/%.cpp src/bvhhelp.h
 	g++ $(CXXFLAGS) -Werror $(CPPFLAGS) -c $< -o $@
