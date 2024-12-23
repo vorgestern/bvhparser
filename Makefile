@@ -1,6 +1,7 @@
 
 XFILES := hanimjoint main tools x3d euler_to_axisangle
 CPPFLAGS := -I src
+CXXFLAGS := -std=c++20 -Wall -Werror
 
 .PHONY: all clean
 
@@ -17,10 +18,10 @@ b/lex-bvhconv.cpp: src/bvhconv.lex
 	flex -8 --nounistd --prefix=xx -t > $@ $<
 
 b/%.o: src/%.cpp src/bvhhelp.h
-	g++ -std=c++20 $(CPPFLAGS) -c $< -o $@
+	g++ $(CXXFLAGS) -Werror $(CPPFLAGS) -c $< -o $@
 
 b/%.o: b/%.cpp src/bvhhelp.h
-	g++ -std=c++20 $(CPPFLAGS) -c $< -o $@
+	g++ $(CXXFLAGS) -Wno-unused-function $(CPPFLAGS) -c $< -o $@
 
 bvhparser: $(XFILES:%=b/%.o) b/bison-bvhconv.o b/lex-bvhconv.o
 	g++ -o $@ $^
