@@ -671,8 +671,15 @@ int xx_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *xxtext;
-#line 1 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
-#line 6 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 1 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
+#line 5 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
+    // Considerations regarding option outfile:
+    //      Using option in lex-File will not allow to specify the directory.
+    //      Using commandline '-o filename' will allow full control but embeds the full path in the generated scanner.
+    //      Using commandline '-t > filename' will allow full control without embedding the path in the generated scanner.
+    // Windows/VS17/MSBuild: Do not specify output file on the command line.
+    //                       Specify <Outputs>$(ProjectDir)lex-%(Filename).cpp</Outputs>
+    // Linux/make:           Use -t to override this option and fully determine output file on the command line.
   #include <ctype.h>
   #include <parsercontext.h>
   #include "bvhconv.h"
@@ -682,7 +689,7 @@ char *xxtext;
   void ateof();
   // {INT} { yylval.I=atoi(yytext); return INT; }
 
-#line 685 "lex-bvhconv.cpp"
+#line 692 "lex-bvhconv.cpp"
 
 #define INITIAL 0
 #define animationtable 1
@@ -895,10 +902,10 @@ YY_DECL
 		}
 
 	{
-#line 24 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 31 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 
 
-#line 901 "lex-bvhconv.cpp"
+#line 908 "lex-bvhconv.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -954,151 +961,151 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 26 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 33 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { ASNONE(HIERARCHY); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 27 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 34 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { const char*s=yytext+5; while (*s!=0 && isspace(*s)) s++; strcpy(yylval.S, s); return ROOT; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 28 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 35 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { const char*s=yytext+6; while (*s!=0 && isspace(*s)) s++; strcpy(yylval.S, s); return JOINT; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 29 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 36 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { ASNONE(ENDSITE); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 30 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 37 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { ASNONE(OFFSET); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 31 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 38 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { sscanf(yytext+9, "%d", &yylval.I); return CHANNELS; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 32 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 39 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { yylval.I=XPOSITION; ASNONE(XPOSITION); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 33 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 40 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { yylval.I=YPOSITION; ASNONE(YPOSITION); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 34 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 41 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { yylval.I=ZPOSITION; ASNONE(ZPOSITION); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 35 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 42 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { yylval.I=XROTATION; ASNONE(XROTATION); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 36 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 43 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { yylval.I=YROTATION; ASNONE(YROTATION); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 37 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 44 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { yylval.I=ZROTATION; ASNONE(ZROTATION); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 39 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 46 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { sscanf(yytext, "%lf", &yylval.D); return FLOAT; }
 	YY_BREAK
 /* Alle numerischen Angaben werden als FLOAT interpretiert. Integerwerte kommen nur vor zusammen mit einem spezifischen Tag, z.B. CHANNELS */
 case 14:
 YY_RULE_SETUP
-#line 42 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 49 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { BEGIN(animationtable); ASNONE(MOTION); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 44 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 51 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 {}
 	YY_BREAK
 case 16:
 /* rule 16 can match eol */
 YY_RULE_SETUP
-#line 45 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 52 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { LCX.linenum++; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 46 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 53 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { ASNONE(OPENBRACE); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 47 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 54 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { ASNONE(CLOSEBRACE); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 48 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 55 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { ASNONE(ASTERISK); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 49 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 56 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { ASNONE(OPENPAREN); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 50 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 57 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { ASNONE(CLOSEPAREN); }
 	YY_BREAK
 case 22:
 /* rule 22 can match eol */
 YY_RULE_SETUP
-#line 52 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 59 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { strcpy(yylval.S, yytext+1); char*s=strchr(yylval.S, 0); if (s>yylval.S) s[-1]=0; return STRING; }
 	YY_BREAK
 case 23:
 /* rule 23 can match eol */
 YY_RULE_SETUP
-#line 54 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 61 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { sscanf(yytext+7, "%d", &yylval.I); return FRAMES; }
 	YY_BREAK
 case 24:
 /* rule 24 can match eol */
 YY_RULE_SETUP
-#line 55 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 62 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { const char*s=strchr(yytext, ':'); sscanf(s+1, "%lf", &yylval.D); return FRAMETIME; }
 	YY_BREAK
 case 25:
 /* rule 25 can match eol */
 YY_RULE_SETUP
-#line 56 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 63 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { yylval.I=scanline(yytext); return TABLELINE; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 57 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 64 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { yylval.I=scanline(yytext); return TABLELINE; }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(animationtable):
-#line 59 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 66 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 { ateof(); return 0; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 61 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 68 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 ECHO;
 	YY_BREAK
-#line 1101 "lex-bvhconv.cpp"
+#line 1108 "lex-bvhconv.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2101,6 +2108,6 @@ void xxfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 61 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.lex"
+#line 68 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.l"
 
 

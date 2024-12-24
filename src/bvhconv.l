@@ -1,6 +1,13 @@
 
 %option never-interactive
-  // %option outfile="lex-bvhconv.cpp"
+%option outfile="lex-bvhconv.cpp"
+    // Considerations regarding option outfile:
+    //      Using option in lex-File will not allow to specify the directory.
+    //      Using commandline '-o filename' will allow full control but embeds the full path in the generated scanner.
+    //      Using commandline '-t > filename' will allow full control without embedding the path in the generated scanner.
+    // Windows/VS17/MSBuild: Do not specify output file on the command line.
+    //                       Specify <Outputs>$(ProjectDir)lex-%(Filename).cpp</Outputs>
+    // Linux/make:           Use -t to override this option and fully determine output file on the command line.
 
   #include <ctype.h>
   #include <parsercontext.h>

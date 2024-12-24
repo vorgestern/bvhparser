@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\bvhconv.l">
-      <Command>$(FLEX) -8 --nounistd --prefix=xx --outfile=$(ProjectDir)lex-%(Filename).cpp %(FullPath)</Command>
+      <Command>$(FLEX) -8 --nounistd --prefix=xx %(FullPath)</Command>
       <Message>Generating lexer source from %(Identity)</Message>
       <Outputs>$(ProjectDir)lex-%(Filename).cpp</Outputs>
     </CustomBuild>
