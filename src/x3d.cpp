@@ -4,6 +4,7 @@
 #include <cmath>
 #include <bvhhelp.h>
 #include <glm/gtx/euler_angles.hpp>
+#include <glm/ext/matrix_transform.hpp>
 
 using namespace std;
 
@@ -45,7 +46,7 @@ void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS, SegmentForms segmentshape
                         const double xangle=atan2(T[2],T[1]), zangle=atan2(T[0],T[1]);
                         if (xangle!=0 || zangle!=0)
                         {
-                            const auto R=glm::dmat4 {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1}*glm::eulerAngleX(xangle)*glm::eulerAngleZ(-zangle);
+                            const auto R=glm::identity<glm::dmat4>()*glm::eulerAngleX(xangle)*glm::eulerAngleZ(-zangle);
                             const auto A=toaxisangle(R);
                             printf("\n<Transform translation='%g %g %g' rotation='%g %g %g %g'>", .5*T[0],.5*T[1],.5*T[2], A[0],A[1],A[2],A[3]);
                         }
