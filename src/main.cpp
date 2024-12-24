@@ -136,7 +136,7 @@ void setcurrentchannels(unsigned c0, unsigned c1, unsigned c2, unsigned c3, unsi
 
 void setcurrentoffset(double x, double y, double z)
 {
-    if (HUMANOID.size()>0) HUMANOID.back().setoffset(x,y,z);
+    if (HUMANOID.size()>0) HUMANOID.back().offset={x,y,z};
     else fprintf(stderr, "\nFehler: offsetspec ohne offenen joint");
 }
 
