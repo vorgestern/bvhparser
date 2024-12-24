@@ -7,7 +7,7 @@ enum class SegmentForms {none,line,cylinder};
 void dumptoken(int token);
 
 // Setup indices for following channels.
-unsigned getchannelrange(unsigned numchannels);
+unsigned reservechannels(unsigned numchannels);
 
 enum class jtype {root,joint,endsite};
 

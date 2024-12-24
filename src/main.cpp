@@ -201,7 +201,7 @@ void dumphumanoid()
 
 static unsigned nextchannel=0;
 
-unsigned getchannelrange(unsigned channels)
+unsigned reservechannels(unsigned channels)
 {
     unsigned n=nextchannel;
     nextchannel+=channels;

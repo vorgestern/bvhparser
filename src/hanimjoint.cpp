@@ -39,14 +39,14 @@ void hanimjoint::setchannels(unsigned char c0, unsigned char c1, unsigned char c
 {
     channelnum=3;
     channels[0]=c0; channels[1]=c1; channels[2]=c2;
-    firstchannelindex=getchannelrange(3);
+    firstchannelindex=reservechannels(3);
 }
 
 void hanimjoint::setchannels(unsigned char c0, unsigned char c1, unsigned char c2, unsigned char c3, unsigned char c4, unsigned char c5)
 {
     channelnum=6;
     channels[0]=c0; channels[1]=c1; channels[2]=c2; channels[3]=c3; channels[4]=c4; channels[5]=c5;
-    firstchannelindex=getchannelrange(6);
+    firstchannelindex=reservechannels(6);
 }
 
 void hanimjoint::getpositionindexes(int index[])const
