@@ -8,7 +8,6 @@ using namespace std;
 
 void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS, SegmentForms segmentshape)
 {
-    const auto NJ=JOINTS.size();
     int merklev=0;
     unsigned nummat=0;
     bool start=true;
