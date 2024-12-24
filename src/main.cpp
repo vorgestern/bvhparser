@@ -74,7 +74,7 @@ int main(int argc, const char*argv[])
             int u=1;
             while (u!=0)
             {
-                u=yylex();
+                u=xxlex();
                 dumptoken(u);
             }
             rc=0;
