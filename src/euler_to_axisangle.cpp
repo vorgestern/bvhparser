@@ -45,20 +45,20 @@ void AnglesToAxisAngle(double axis[], double*angle, const double A[], const int 
     switch (num)
     {
         case 1:
-    {
+        {
             const dmat4 M=D[0]==0?eulerAngleX(A[0]):D[0]==1?eulerAngleY(A[0]):eulerAngleZ(A[0]);
             axisAngle(M, myaxis, myangle);
             break;
         }
         case 2:
-    {
+        {
             const dmat4 M1=D[0]==0?eulerAngleX(A[0]):D[0]==1?eulerAngleY(A[0]):eulerAngleZ(A[0]);
             const dmat4 M2=D[1]==0?eulerAngleX(A[1]):D[1]==1?eulerAngleY(A[1]):eulerAngleZ(A[1]);
             axisAngle(M1*M2, myaxis, myangle);
             break;
         }
         case 3:
-    {
+        {
             const dmat4 M1=D[0]==0?eulerAngleX(A[0]):D[0]==1?eulerAngleY(A[0]):eulerAngleZ(A[0]);
             const dmat4 M2=D[1]==0?eulerAngleX(A[1]):D[1]==1?eulerAngleY(A[1]):eulerAngleZ(A[1]);
             const dmat4 M3=D[2]==0?eulerAngleX(A[2]):D[2]==1?eulerAngleY(A[2]):eulerAngleZ(A[2]);
