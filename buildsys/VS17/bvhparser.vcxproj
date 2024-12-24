@@ -32,12 +32,12 @@
   </PropertyGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\bvhconv.l">
-      <Command>$(FLEX) -8 --nounistd --prefix=xx %(FullPath)</Command>
+      <Command>$(FLEX) -8 --nounistd --prefix=xx %(Identity)</Command>
       <Message>Generating lexer source from %(Identity)</Message>
       <Outputs>$(ProjectDir)lex-%(Filename).cpp</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\..\src\bvhconv.y">
-      <Command>$(BISON) --defines="%(Filename).h" --output=bison-%(Filename).cpp %(FullPath)</Command>
+      <Command>$(BISON) --defines="%(Filename).h" --output=bison-%(Filename).cpp %(Identity)</Command>
       <Message>Generating parser source from %(Identity)</Message>
       <Outputs>$(ProjectDir)bison-%(Filename).cpp</Outputs>
     </CustomBuild>

@@ -78,7 +78,7 @@ extern int yydebug;
 typedef union YYSTYPE
 {
 /* Line 2058 of yacc.c  */
-#line 8 "C:\\Users\\Josef\\Meins\\BVHParser\\master\\src\\bvhconv.y"
+#line 8 "..\\..\\src\\bvhconv.y"
 
     int I;
     double D;
