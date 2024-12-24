@@ -47,7 +47,7 @@ void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS, SegmentForms segmentshape
                             const double xangle=atan2(T[2],T[1]), zangle=atan2(T[0],T[1]);
                             if (xangle!=0 || zangle!=0)
                             {
-const double ANGLE[2]={xangle,zangle};
+const double ANGLE[2]={xangle,-zangle};
                                 const int DIR[2]={0,2};
                                 double axis[3], angle;
                                 AnglesToAxisAngle(axis,&angle,ANGLE,DIR,2);
