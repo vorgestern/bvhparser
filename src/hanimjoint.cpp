@@ -117,11 +117,6 @@ void hanimjoint::dumpmotiontables_x3d(const std::vector<std::vector<double>>&Tab
     }
     if (hasrotationchannels())
     {
-        int index[3], DIR[3];
-        const unsigned num=getrotationindexes(index, DIR);
-        col=printf("\n<!-- orientationindex %d(%d)  %d(%d)  %d(%d):", index[0],DIR[0],index[1],DIR[1],index[2],DIR[2]);
-        for (unsigned n=0; n<channelnum; n++) col+=printf(" %c", channels[n]);
-        col+=printf(" -->");
         col=printf("\n<OrientationInterpolator DEF='nprot_%s'", name.c_str());
         col+=printf(" key='");
         for (unsigned n=0; n<lines; n++)
@@ -133,12 +128,11 @@ void hanimjoint::dumpmotiontables_x3d(const std::vector<std::vector<double>>&Tab
         col+=printf(" keyValue='");
         for (unsigned n=0; n<lines; n++)
         {
-            const auto R=getrotation(Table[n]);
-            const auto A=toaxisangle(R);
+            const auto A=toaxisangle(getrotation(Table[n]));
             col+=printf("%g %g %g %g%s", A[0],A[1],A[2],A[3], n<lines-1?",":"");
             if (col>128 && n+1<lines){ printf("\n"); col=0; }
         }
-        printf("'/>");
+        col+=printf("'/>");
     }
 }
 
