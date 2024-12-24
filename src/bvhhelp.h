@@ -55,3 +55,5 @@ void dumphumanoid_x3d(const std::vector<hanimjoint>&, SegmentForms),
 // DIRS[n]: 0=>X-axis, 1=>Y-axis, 2=>Z-axis.
 // Result is {ax,ay,az,angle}.
 glm::dvec4 AnglesToAxisAngle(const double ANGLES[], const int DIRS[], unsigned num);
+
+glm::dvec4 toaxisangle(const glm::dmat4&);

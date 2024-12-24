@@ -68,3 +68,11 @@ dvec4 AnglesToAxisAngle(const double A[], const int D[], unsigned num)
     }
     return {myaxis.x,myaxis.y,myaxis.z,myangle};
 }
+
+dvec4 toaxisangle(const dmat4&M)
+{
+    dvec3 myaxis {0,0,1};
+    double myangle=0;
+    axisAngle(M, myaxis, myangle);
+    return {myaxis.x,myaxis.y,myaxis.z,myangle};
+}

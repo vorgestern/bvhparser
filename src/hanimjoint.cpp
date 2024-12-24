@@ -133,18 +133,9 @@ void hanimjoint::dumpmotiontables_x3d(const std::vector<std::vector<double>>&Tab
         col+=printf(" keyValue='");
         for (unsigned n=0; n<lines; n++)
         {
-#if 0
-            const auto&L=Table[n];
-            const double ANGLE[3]={L[index[0]]*deg,L[index[1]]*deg,L[index[2]]*deg};
-            const auto A=AnglesToAxisAngle(ANGLE,DIR,num);
-            col+=printf("%g %g %g %g%s", A[0],A[1],A[2],A[3], n<lines-1?",":"");
-#else
             const auto R=getrotation(Table[n]);
-            glm::dvec3 ax {0,0,1};
-            double angle=0;
-            glm::axisAngle(R, ax, angle);
-            col+=printf("%g %g %g %g%s", ax[0],ax[1],ax[2],angle, n<lines-1?",":"");
-#endif
+            const auto A=toaxisangle(R);
+            col+=printf("%g %g %g %g%s", A[0],A[1],A[2],A[3], n<lines-1?",":"");
             if (col>128 && n+1<lines){ printf("\n"); col=0; }
         }
         printf("'/>");
