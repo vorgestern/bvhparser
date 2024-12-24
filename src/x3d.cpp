@@ -11,20 +11,21 @@ void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS, SegmentForms segmentshape
     const auto NJ=JOINTS.size();
     int merklev=0;
     unsigned nummat=0;
-    for (unsigned n=0; n<NJ; n++)
+    bool start=true;
+    for (const auto&J: JOINTS)
     {
-        const hanimjoint&J=JOINTS[n];
         const int lev=level(J);
         const double*T=offset(J);
         const char*nam=name(J);
 
         // Upon rising up again in the hierarchy, close open joints.
-        bool up=n>0 && lev<merklev;
+        bool up=!start && lev<merklev;
         if (up)
         {
             for (int d=merklev; d>=lev; d--)
                 printf("\n%*s</%s>", 2*d, "", d>0?"Transform":"Transform");
         }
+        start=false;
 
         switch (type(J))
         {
