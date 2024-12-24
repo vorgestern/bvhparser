@@ -57,7 +57,7 @@ int main(int argc, const char*argv[])
         }
     }
 
-    if (!fninput.empty()) xxin=fopen(fninput.string().c_str(), "r");
+    if (!fninput.empty()) xxin=fopen(fninput.string().c_str(), "rb");
 
     int rc=1;
 

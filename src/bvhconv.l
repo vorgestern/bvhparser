@@ -23,7 +23,7 @@ ID                [A-Za-z_][A-Za-z_0-9]*
 STRING            \"(∞‰ˆ¸ƒ÷‹ﬂ|[^"])*\"
 INT               (\+|-)*[0-9]+
 FIXED             (\+|-)*([0-9]*\.[0-9]+|[0-9]+\.[0-9]*)
-NL                \n
+NL                \n|\r\n
 
 %x animationtable
 
