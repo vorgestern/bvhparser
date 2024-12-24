@@ -78,8 +78,8 @@ printf("<Cylinder height='%g' radius='%g'/></Shape>", hei, 0.2*rad);
             const double rad=T==nullptr?1:0.10*sqrt(T[0]*T[0]+T[1]*T[1]+T[2]*T[2]);
             if (nummat==0) printf("<Shape><Appearance DEF='app1'><Material DEF='mat1' diffuseColor='1 1 1' specularColor='1 1 1' shininess='1.0'/></Appearance><Sphere radius='%g'/></Shape>", rad);
             else           printf("<Shape><Appearance USE='app1'/><Sphere radius='%g'/></Shape>", rad);
+            nummat++;
         }
-        nummat++;
         merklev=level(J);
     }
     for (int d=merklev; d>=0; d--) printf("\n%*s</Transform>", 2*d, "");
