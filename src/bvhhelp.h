@@ -24,6 +24,7 @@ class hanimjoint
     bool hasrotationchannels()const;
     void getpositionindexes(int index[])const;
     unsigned getrotationindexes(int index[], int dir[])const; //!< Return columns and axes to which they refer in the specified order.
+    glm::dmat4 getrotation(const std::vector<double>&MotionLine)const;
     friend unsigned channelnum(const hanimjoint&X){ return X.channelnum; }
     friend unsigned level(const hanimjoint&X){ return X.level; }
     friend const char*name(const hanimjoint&X){ return X.name.c_str(); }

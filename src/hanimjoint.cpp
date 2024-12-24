@@ -3,6 +3,8 @@
 #include <vector>
 #include <numbers>
 #include <bvhhelp.h>
+#include <glm/gtx/euler_angles.hpp>
+#include <glm/gtx/matrix_interpolation.hpp>
 
 const double deg=std::numbers::pi_v<double>/180.0;
 
@@ -73,6 +75,18 @@ unsigned hanimjoint::getrotationindexes(int index[], int dir[])const
     return u;
 }
 
+glm::dmat4 hanimjoint::getrotation(const std::vector<double>&MotionLine)const
+{
+    glm::dmat4 Result={1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
+    for (unsigned c=0; c<channelnum; c++) switch (channels[c])
+    {
+        case 'x': Result*=glm::eulerAngleX(MotionLine[firstchannelindex+c]*deg); break;
+        case 'y': Result*=glm::eulerAngleY(MotionLine[firstchannelindex+c]*deg); break;
+        case 'z': Result*=glm::eulerAngleZ(MotionLine[firstchannelindex+c]*deg); break;
+    }
+    return Result;
+}
+
 void hanimjoint::dumpmotiontables_x3d(const std::vector<std::vector<double>>&Table)const
 {
     size_t col=0;
@@ -119,10 +133,18 @@ void hanimjoint::dumpmotiontables_x3d(const std::vector<std::vector<double>>&Tab
         col+=printf(" keyValue='");
         for (unsigned n=0; n<lines; n++)
         {
+#if 0
             const auto&L=Table[n];
             const double ANGLE[3]={L[index[0]]*deg,L[index[1]]*deg,L[index[2]]*deg};
             const auto A=AnglesToAxisAngle(ANGLE,DIR,num);
             col+=printf("%g %g %g %g%s", A[0],A[1],A[2],A[3], n<lines-1?",":"");
+#else
+            const auto R=getrotation(Table[n]);
+            glm::dvec3 ax {0,0,1};
+            double angle=0;
+            glm::axisAngle(R, ax, angle);
+            col+=printf("%g %g %g %g%s", ax[0],ax[1],ax[2],angle, n<lines-1?",":"");
+#endif
             if (col>128 && n+1<lines){ printf("\n"); col=0; }
         }
         printf("'/>");
