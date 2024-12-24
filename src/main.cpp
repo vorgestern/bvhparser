@@ -144,13 +144,32 @@ static void dumphumanoid_txt(const vector<hanimjoint>&JOINTS)
 {
     for (const auto&J: JOINTS)
     {
-        printf("\n%*s", 4*level(J), "");
-        printf("%s", name(J));
-        const unsigned m1=channelnum(J);
-        if (m1>0)
+        switch (type(J))
         {
-            printf(" channels: (%u-%u) ", firstchannel(J), lastchannel(J));
-            for (unsigned m=0; m<m1; m++) printf("%c", J[m]);
+            case jtype::root:
+            case jtype::joint:
+            {
+                auto k=printf("\n%*s", 4*level(J), "");
+                k+=printf("%s", name(J));
+                const unsigned m1=channelnum(J);
+                if (m1>0)
+                {
+                    k+=printf("%c", ' ');
+                    for (unsigned m=0; m<m1; m++) k+=printf("%c", J[m]);
+                    k+=printf(" %u-%u", firstchannel(J), lastchannel(J));
+                }
+                const auto T=offset(J);
+                if (k<64) k+=printf("%*s", 64-k, "");
+                else if (k<96) k+=printf("%*s", 96-k, "");
+                k+=printf("(%.4g %.4g %.4g)", T[0], T[1], T[2]);
+                break;
+            }
+            case jtype::endsite:
+            {
+                const auto T=offset(J);
+                printf(" (%.4g %.4g %.4g)", T[0], T[1], T[2]);
+                break;
+            }
         }
     }
     printf("\n");
