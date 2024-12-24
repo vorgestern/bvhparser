@@ -19,22 +19,8 @@ class hanimjoint
     unsigned channelnum;           //!< Number of channels, 0,3,6
     unsigned level;                //!< Hierarchy level
     unsigned firstchannelindex;    //!< Index of the first associated channel in the MOTION table
-    bool haspositionchannels()const
-    {
-        for (unsigned c=0; c<channelnum; c++) switch (channels[c])
-        {
-            case 'X': case 'Y': case 'Z': return true;
-        }
-        return false;
-    }
-    bool hasrotationchannels()const
-    {
-        for (unsigned c=0; c<channelnum; c++) switch (channels[c])
-        {
-            case 'x': case 'y': case 'z': return true;
-        }
-        return false;
-    }
+    bool haspositionchannels()const;
+    bool hasrotationchannels()const;
     void getpositionindexes(int index[])const;
     unsigned getrotationindexes(int index[], int dir[])const; //!< Return columns and axes to which they refer in the specified order.
     friend unsigned channelnum(const hanimjoint&X){ return X.channelnum; }
@@ -50,18 +36,8 @@ public:
         offset[0]=offset[1]=offset[2]=0;
     }
     unsigned char operator[](int n)const{ return n<0?0:n<(int)channelnum?channels[n]:0; }
-    void setchannels(unsigned char c0, unsigned char c1, unsigned char c2)
-    {
-        channelnum=3;
-        channels[0]=c0; channels[1]=c1; channels[2]=c2;
-        firstchannelindex=getchannelrange(3);
-    }
-    void setchannels(unsigned char c0, unsigned char c1, unsigned char c2, unsigned char c3, unsigned char c4, unsigned char c5)
-    {
-        channelnum=6;
-        channels[0]=c0; channels[1]=c1; channels[2]=c2; channels[3]=c3; channels[4]=c4; channels[5]=c5;
-        firstchannelindex=getchannelrange(6);
-    }
+    void setchannels(unsigned char c0, unsigned char c1, unsigned char c2);
+    void setchannels(unsigned char c0, unsigned char c1, unsigned char c2, unsigned char c3, unsigned char c4, unsigned char c5);
     void setoffset(double x, double y, double z){ offset[0]=x; offset[1]=y; offset[2]=z;  }
     void setname(const char name[]);
     void dumpmotiontables_x3d(const std::vector<std::vector<double>>&)const;
