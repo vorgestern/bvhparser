@@ -52,4 +52,5 @@ void dumphumanoid_x3d(const std::vector<hanimjoint>&, SegmentForms),
 // The first rotation rotates around DIRS[0] by ANGLES[0],
 // the second around DIRS[1] by ANGLES[1], the third around DIRS[2] by ANGLES[2].
 // DIRS[n]: 0=>X-axis, 1=>Y-axis, 2=>Z-axis.
-void AnglesToAxisAngle(double axis[], double*angle, const double ANGLES[], const int DIRS[], unsigned num);
+// Result is {ax,ay,az,angle}.
+glm::dvec4 AnglesToAxisAngle(const double ANGLES[], const int DIRS[], unsigned num);

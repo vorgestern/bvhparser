@@ -38,7 +38,7 @@ void ZYXAngleToAxisAngle(double axis[], double*angle, double xangle, double yang
 }
 #endif
 
-void AnglesToAxisAngle(double axis[], double*angle, const double A[], const int D[], unsigned num)
+dvec4 AnglesToAxisAngle(const double A[], const int D[], unsigned num)
 {
     dvec3 myaxis {0,0,1};
     double myangle=0;
@@ -66,8 +66,5 @@ void AnglesToAxisAngle(double axis[], double*angle, const double A[], const int 
             break;
         }
     }
-    axis[0]=myaxis.x;
-    axis[1]=myaxis.y;
-    axis[2]=myaxis.z;
-    *angle=myangle;
+    return {myaxis.x,myaxis.y,myaxis.z,myangle};
 }

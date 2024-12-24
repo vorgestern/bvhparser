@@ -46,11 +46,10 @@ void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS, SegmentForms segmentshape
                         {
 const double ANGLE[2]={xangle,-zangle};
                             const int DIR[2]={0,2};
-                            double axis[3], angle;
-                            AnglesToAxisAngle(axis,&angle,ANGLE,DIR,2);
+                            const auto A=AnglesToAxisAngle(ANGLE,DIR,2);
                             printf("\n<Transform translation='%g %g %g' rotation='%g %g %g %g'>",
                                 .5*T[0],.5*T[1],.5*T[2],
-                                axis[0],axis[1],axis[2], angle);
+                                A[0],A[1],A[2],A[3]);
                         }
                         else printf("\n<Transform translation='%g %g %g'>", .5*T[0],.5*T[1],.5*T[2]);
                         if (nummat==0) printf("\n<Shape><Appearance DEF='app1'><Material DEF='mat1' diffuseColor='1 1 1' specularColor='1 1 1' shininess='1.0'/></Appearance>");
