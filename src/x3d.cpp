@@ -14,7 +14,7 @@ void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS, SegmentForms segmentshape
     for (const auto&J: JOINTS)
     {
         const int lev=level(J);
-        const double*T=offset(J);
+        const auto T=J.offset;
         const char*nam=name(J);
 
         // Upon rising up again in the hierarchy, close open joints.
@@ -34,33 +34,30 @@ void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS, SegmentForms segmentshape
                     case SegmentForms::none: break;
                     case SegmentForms::line:
                     {
-                        if (T!=nullptr) printf("\n%*s<Shape><LineSet vertexCount='2'><Coordinate point='0 0 0,%g %g %g'/></LineSet></Shape>", 2*lev, "", T[0],T[1],T[2]);
+                        printf("\n%*s<Shape><LineSet vertexCount='2'><Coordinate point='0 0 0,%g %g %g'/></LineSet></Shape>", 2*lev, "", T[0],T[1],T[2]);
                         break;
                     }
                     case SegmentForms::cylinder:
                     {
-                        if (T!=nullptr)
+                        const double hei=sqrt(T[0]*T[0]+T[1]*T[1]+T[2]*T[2]);
+                        const double rad=0.1*sqrt(T[0]*T[0]+T[1]*T[1]+T[2]*T[2]);
+                        const double xangle=atan2(T[2],T[1]), zangle=atan2(T[0],T[1]);
+                        if (xangle!=0 || zangle!=0)
                         {
-                            const double hei=sqrt(T[0]*T[0]+T[1]*T[1]+T[2]*T[2]);
-                            const double rad=0.1*sqrt(T[0]*T[0]+T[1]*T[1]+T[2]*T[2]);
-                            const double xangle=atan2(T[2],T[1]), zangle=atan2(T[0],T[1]);
-                            if (xangle!=0 || zangle!=0)
-                            {
 const double ANGLE[2]={xangle,-zangle};
-                                const int DIR[2]={0,2};
-                                double axis[3], angle;
-                                AnglesToAxisAngle(axis,&angle,ANGLE,DIR,2);
-                                printf("\n<Transform translation='%g %g %g' rotation='%g %g %g %g'>",
-                                    .5*T[0],.5*T[1],.5*T[2],
-                                    axis[0],axis[1],axis[2], angle);
-                            }
-                            else printf("\n<Transform translation='%g %g %g'>", .5*T[0],.5*T[1],.5*T[2]);
-                            if (nummat==0) printf("\n<Shape><Appearance DEF='app1'><Material DEF='mat1' diffuseColor='1 1 1' specularColor='1 1 1' shininess='1.0'/></Appearance>");
-                            else           printf("\n<Shape><Appearance USE='app1'/>");
-printf("<Cylinder height='%g' radius='%g'/></Shape>", hei, 0.2*rad);
-                            printf("</Transform>");
-                            nummat++;
+                            const int DIR[2]={0,2};
+                            double axis[3], angle;
+                            AnglesToAxisAngle(axis,&angle,ANGLE,DIR,2);
+                            printf("\n<Transform translation='%g %g %g' rotation='%g %g %g %g'>",
+                                .5*T[0],.5*T[1],.5*T[2],
+                                axis[0],axis[1],axis[2], angle);
                         }
+                        else printf("\n<Transform translation='%g %g %g'>", .5*T[0],.5*T[1],.5*T[2]);
+                        if (nummat==0) printf("\n<Shape><Appearance DEF='app1'><Material DEF='mat1' diffuseColor='1 1 1' specularColor='1 1 1' shininess='1.0'/></Appearance>");
+                        else           printf("\n<Shape><Appearance USE='app1'/>");
+printf("<Cylinder height='%g' radius='%g'/></Shape>", hei, 0.2*rad);
+                        printf("</Transform>");
+                        nummat++;
                         break;
                     }
                 }
@@ -69,12 +66,12 @@ printf("<Cylinder height='%g' radius='%g'/></Shape>", hei, 0.2*rad);
         }
 
         printf("\n%*s<%s", 2*lev, "", lev>0?"Transform":"Transform");
-        if (T!=nullptr) printf(" translation='%g %g %g'", T[0],T[1],T[2]);
+        printf(" translation='%g %g %g'", T[0],T[1],T[2]);
         if (nam!=nullptr) printf(" DEF='%s'>", nam);
         else              printf(">");
         if (segmentshape==SegmentForms::none)
         {
-            const double rad=T==nullptr?1:0.10*sqrt(T[0]*T[0]+T[1]*T[1]+T[2]*T[2]);
+            const double rad=0.10*sqrt(T[0]*T[0]+T[1]*T[1]+T[2]*T[2]);
             if (nummat==0) printf("<Shape><Appearance DEF='app1'><Material DEF='mat1' diffuseColor='1 1 1' specularColor='1 1 1' shininess='1.0'/></Appearance><Sphere radius='%g'/></Shape>", rad);
             else           printf("<Shape><Appearance USE='app1'/><Sphere radius='%g'/></Shape>", rad);
             nummat++;

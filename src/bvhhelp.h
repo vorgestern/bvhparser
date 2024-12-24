@@ -1,4 +1,6 @@
 
+#include <glm/glm.hpp>
+
 // Commandline arguments -segments none|line|cylinder
 enum class SegmentForms {none,line,cylinder};
 
@@ -14,7 +16,6 @@ enum class jtype {root,joint,endsite};
 class hanimjoint
 {
     std::string name {};
-    double offset[3];
     char channels[6];              //!< XYZ for translation, xyz for rotation
     unsigned channelnum;           //!< Number of channels, 0,3,6
     unsigned level;                //!< Hierarchy level
@@ -28,9 +29,9 @@ class hanimjoint
     friend const char*name(const hanimjoint&X){ return X.name.c_str(); }
     friend unsigned firstchannel(const hanimjoint&X){ return X.firstchannelindex; }
     friend unsigned lastchannel(const hanimjoint&X){ return X.firstchannelindex+X.channelnum-1; }
-    friend const double*offset(const hanimjoint&X){ return X.offset; }
     friend jtype type(const hanimjoint&);
 public:
+    glm::dvec3 offset;
     hanimjoint(unsigned level1=0): channelnum(0), level(level1), firstchannelindex(0xffffffff)
     {
         offset[0]=offset[1]=offset[2]=0;
@@ -38,7 +39,7 @@ public:
     unsigned char operator[](int n)const{ return n<0?0:n<(int)channelnum?channels[n]:0; }
     void setchannels(unsigned char c0, unsigned char c1, unsigned char c2);
     void setchannels(unsigned char c0, unsigned char c1, unsigned char c2, unsigned char c3, unsigned char c4, unsigned char c5);
-    void setoffset(double x, double y, double z){ offset[0]=x; offset[1]=y; offset[2]=z;  }
+    void setoffset(double x, double y, double z){ offset[0]=x; offset[1]=y; offset[2]=z; }
     void setname(const char name[]);
     void dumpmotiontables_x3d(const std::vector<std::vector<double>>&)const;
     void dumpmotionroutes_x3d()const;
