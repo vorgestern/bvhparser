@@ -57,6 +57,8 @@ int main(int argc, const char*argv[])
         }
     }
 
+    // Lexer and parser have to handle linefeeds of both descriptions
+    // anyway to work on Linux and Windows, so open the file explicitly in binary mode.
     if (!fninput.empty()) xxin=fopen(fninput.string().c_str(), "rb");
 
     int rc=1;
