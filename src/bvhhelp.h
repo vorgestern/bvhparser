@@ -49,11 +49,4 @@ void dumphumanoid_x3d(const std::vector<hanimjoint>&, SegmentForms),
     dumpmotiontable_x3d(const std::vector<hanimjoint>&, const std::vector<std::vector<double>>&),
     dumpmotionroutes_x3d(const std::vector<hanimjoint>&);
 
-// Compute the axis/angle-representation from num rotations (1 to 3).
-// The first rotation rotates around DIRS[0] by ANGLES[0],
-// the second around DIRS[1] by ANGLES[1], the third around DIRS[2] by ANGLES[2].
-// DIRS[n]: 0=>X-axis, 1=>Y-axis, 2=>Z-axis.
-// Result is {ax,ay,az,angle}.
-glm::dvec4 AnglesToAxisAngle(const double ANGLES[], const int DIRS[], unsigned num);
-
 glm::dvec4 toaxisangle(const glm::dmat4&);

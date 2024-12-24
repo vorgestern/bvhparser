@@ -38,37 +38,6 @@ void ZYXAngleToAxisAngle(double axis[], double*angle, double xangle, double yang
 }
 #endif
 
-dvec4 AnglesToAxisAngle(const double A[], const int D[], unsigned num)
-{
-    dvec3 myaxis {0,0,1};
-    double myangle=0;
-    switch (num)
-    {
-        case 1:
-        {
-            const dmat4 M=D[0]==0?eulerAngleX(A[0]):D[0]==1?eulerAngleY(A[0]):eulerAngleZ(A[0]);
-            axisAngle(M, myaxis, myangle);
-            break;
-        }
-        case 2:
-        {
-            const dmat4 M1=D[0]==0?eulerAngleX(A[0]):D[0]==1?eulerAngleY(A[0]):eulerAngleZ(A[0]);
-            const dmat4 M2=D[1]==0?eulerAngleX(A[1]):D[1]==1?eulerAngleY(A[1]):eulerAngleZ(A[1]);
-            axisAngle(M1*M2, myaxis, myangle);
-            break;
-        }
-        case 3:
-        {
-            const dmat4 M1=D[0]==0?eulerAngleX(A[0]):D[0]==1?eulerAngleY(A[0]):eulerAngleZ(A[0]);
-            const dmat4 M2=D[1]==0?eulerAngleX(A[1]):D[1]==1?eulerAngleY(A[1]):eulerAngleZ(A[1]);
-            const dmat4 M3=D[2]==0?eulerAngleX(A[2]):D[2]==1?eulerAngleY(A[2]):eulerAngleZ(A[2]);
-            axisAngle(M1*M2*M3, myaxis, myangle);
-            break;
-        }
-    }
-    return {myaxis.x,myaxis.y,myaxis.z,myangle};
-}
-
 dvec4 toaxisangle(const dmat4&M)
 {
     dvec3 myaxis {0,0,1};
