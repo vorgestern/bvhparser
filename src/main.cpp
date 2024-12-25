@@ -14,8 +14,7 @@ using fspath=filesystem::path;
 // http://research.cs.wisc.edu/graphics/Courses/cs-838-1999/Jeff/Example1.bvh
 
 static enum class OutputType {ffregular, ffmix, fflexeroutput, fftext, ffboundingbox} func=OutputType::ffregular;
-static SegmentForms segmentshape=SegmentForms::cylinder;
-bool has_floor=false, headlight_on=true;
+static OutputOptions Opts {0, SegmentForms::cylinder, true, true};
 
 int yyparse();
 extern FILE*xxin;
@@ -46,16 +45,9 @@ int main(int argc, const char*argv[])
         else if (arg=="-t") func=OutputType::fftext;
         else if (arg=="-b") func=OutputType::ffboundingbox;
         else if (arg=="-f" && a<argc-1) fninput=argv[++a];
-        else if (arg=="-s0") segmentshape=SegmentForms::none;
-        else if (arg=="-s1") segmentshape=SegmentForms::line;
-        else if (arg=="-s2") segmentshape=SegmentForms::cylinder;
-        else if (arg=="-segments" && a<argc-1)
-        {
-            const string_view form=argv[++a];
-            if (form=="none") segmentshape=SegmentForms::none;
-            else if (form=="lines") segmentshape=SegmentForms::line;
-            else if (form=="cylinder") segmentshape=SegmentForms::cylinder;
-        }
+        else if (arg=="-s0") Opts.segmentshape=SegmentForms::none;
+        else if (arg=="-s1") Opts.segmentshape=SegmentForms::line;
+        else if (arg=="-s2") Opts.segmentshape=SegmentForms::cylinder;
     }
 
     // Lexer and parser have to handle linefeeds of both descriptions
@@ -142,83 +134,16 @@ void setcurrentoffset(double x, double y, double z)
     else fprintf(stderr, "\nFehler: offsetspec ohne offenen joint");
 }
 
-static void dumphumanoid_txt(const Hierarchy&JOINTS)
-{
-    for (const auto&J: JOINTS)
-    {
-        switch (type(J))
-        {
-            case jtype::root:
-            case jtype::joint:
-            {
-                auto k=printf("\n%*s", 4*level(J), "");
-                k+=printf("%s", name(J));
-                const unsigned m1=channelnum(J);
-                if (m1>0)
-                {
-                    k+=printf("%c", ' ');
-                    for (unsigned m=0; m<m1; m++) k+=printf("%c", J[m]);
-                    k+=printf(" %u-%u", firstchannel(J), lastchannel(J));
-                }
-                const auto T=J.offset;
-                if (k<64) k+=printf("%*s", 64-k, "");
-                else if (k<96) k+=printf("%*s", 96-k, "");
-                k+=printf("(%.4g %.4g %.4g)", T[0], T[1], T[2]);
-                break;
-            }
-            case jtype::endsite:
-            {
-                const auto T=J.offset;
-                printf(" (%.4g %.4g %.4g)", T[0], T[1], T[2]);
-                break;
-            }
-        }
-    }
-    printf("\n");
-}
-
-static void dumphumanoid_xml(const Hierarchy&H, const MotionTable&M, SegmentForms s)
-{
-    printf(
-        "<?xml version='1.0' encoding='iso-8859-1'?>"
-        "\n<!DOCTYPE X3D PUBLIC 'ISO//Web3D//DTD X3D 3.1//EN' 'http://www.web3d.org/specifications/x3d-3.1.dtd'>"
-        "\n<X3D version='3.1' profile='Full'>"
-        "\n<Scene>"
-        "\n<NavigationInfo DEF='nistart' type='\"EXAMINE\" \"ANY\"' headlight='%s' speed='1'/>"
-        "\n<Viewpoint position='0 20 200'/>", headlight_on?"true":"false"
-    );
-    if (has_floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
-    dumphumanoid_x3d(H, s);
-    dumpmotiontable_x3d(H, M);
-    printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", PCX.framesep*(PCX.framenum+1));
-    if (M.size()>0) dumpmotionroutes_x3d(H);
-    printf("\n</Scene>\n</X3D>\n");
-}
-
-static void dumphumanoid_bb(const Hierarchy&JOINTS)
-{
-#if 0
-    vector<glm::dvec3>MyLine;
-    for (const auto&M: BVHMotion)
-        // const auto&M=MotionTable[10];
-    {
-        vector<glm::dvec3>Points;
-        compute_traces(Points, H, M);
-        MyLine.push_back(Points[41]); // [12]
-    }
-    printf("\n<Shape><Appearance><Material emissiveColor='1 1 1'/></Appearance><LineSet vertexCount='%u'>\n<Coordinate point='", MyLine.size());
-    unsigned num=0;
-    for (auto&P: MyLine) printf("%s%g %g %g", num++>0?", ":"", P[0], P[1], P[2]);
-    printf("'/></LineSet></Shape>");
-#endif
-}
+void dumphumanoid_bb(const Hierarchy&);
+void dumphumanoid_txt(const Hierarchy&);
 
 void parserfinished()
 {
+    Opts.totaltime=PCX.framesep*(PCX.framenum+1);
     switch (func)
     {
         case OutputType::fftext: dumphumanoid_txt(BVHHumanoid); break;
         case OutputType::ffboundingbox: dumphumanoid_bb(BVHHumanoid); break;
-        default: dumphumanoid_xml(BVHHumanoid, BVHMotion, segmentshape); break;
+        default: output_x3d(BVHHumanoid, BVHMotion, Opts); break;
     }
 }

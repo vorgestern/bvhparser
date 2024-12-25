@@ -8,7 +8,6 @@ extern struct parsercontext {
     int jointlevel;
     int framenum;
     double framesep;
-    double totaltime;
     void pushjoint(const char name[]), popjoint();
     void endsite();
 } PCX;

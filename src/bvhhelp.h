@@ -43,13 +43,19 @@ public:
 extern MotionTable BVHMotion;
 extern Hierarchy BVHHumanoid;
 
-void compute_traces(std::vector<glm::dvec3>&Lines, const Hierarchy&JOINTS, const MotionLine&);
+struct OutputOptions
+{
+    double totaltime;
+    SegmentForms segmentshape;
+    bool has_floor;
+    bool has_headlight;
+};
 
-void dumphumanoid_x3d(const Hierarchy&, SegmentForms),
-    dumpmotiontable_x3d(const Hierarchy&, const MotionTable&),
-    dumpmotionroutes_x3d(const Hierarchy&);
+void compute_traces(std::vector<glm::dvec3>&Lines, const Hierarchy&JOINTS, const MotionLine&);
 
 void dumptoken(int token);
 unsigned reservechannels(unsigned numchannels);
 
 glm::dvec4 toaxisangle(const glm::dmat4&);
+
+void output_x3d(const Hierarchy&, const MotionTable&, const OutputOptions&opt);
