@@ -48,11 +48,20 @@ int main(int argc, const char*argv[])
         else if (arg=="-s0") Opts.segmentshape=SegmentForms::none;
         else if (arg=="-s1") Opts.segmentshape=SegmentForms::line;
         else if (arg=="-s2") Opts.segmentshape=SegmentForms::cylinder;
+        else if (arg[0]!='-') fninput=arg;
     }
 
     // Lexer and parser have to handle linefeeds of both descriptions
     // anyway to work on Linux and Windows, so open the file explicitly in binary mode.
-    if (!fninput.empty()) xxin=fopen(fninput.string().c_str(), "rb");
+    if (!fninput.empty())
+    {
+        xxin=fopen(fninput.string().c_str(), "rb");
+        if (xxin==nullptr)
+        {
+            fprintf(stderr, "Cannot open/read '%s'\n", fninput.string().c_str());
+            exit(1);
+        }
+    }
 
     int rc=1;
 
