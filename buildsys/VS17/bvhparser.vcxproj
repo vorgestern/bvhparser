@@ -24,6 +24,7 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="UseGlm.props" />
+    <Import Project="Debugging.props" />
     <Import Project="bvhparser.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
