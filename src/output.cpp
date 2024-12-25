@@ -12,28 +12,37 @@ void dumphumanoid_x3d(const Hierarchy&, SegmentForms),
 
 void output_x3d(const Hierarchy&H, const MotionTable&M, const OutputOptions&opt)
 {
+    const auto B=compute_boundingbox(H, M);
+    const auto d=B.bmax-B.bmin;
+    const auto r=0.01*sqrt(d.x*d.x+d.y*d.y+d.z*d.z);
+    const auto c=0.5*glm::dvec3(B.bmin[0]+B.bmax[0], 2*B.bmin[1], B.bmin[2]+B.bmax[2]);
+
     printf(
         "<?xml version='1.0' encoding='iso-8859-1'?>"
         "\n<!DOCTYPE X3D PUBLIC 'ISO//Web3D//DTD X3D 3.1//EN' 'http://www.web3d.org/specifications/x3d-3.1.dtd'>"
         "\n<X3D version='3.1' profile='Full'>"
         "\n<Scene>"
         "\n<NavigationInfo DEF='nistart' type='\"EXAMINE\" \"ANY\"' headlight='%s' speed='1'/>"
-        "\n<Viewpoint position='0 20 200'/>", opt.has_headlight?"true":"false"
+        "\n<Viewpoint position='%.3g %.3g %.3g'/>", opt.has_headlight?"true":"false", c[0], c[1], c[2]+500*r
     );
 
-    const auto B=compute_boundingbox(H, M);
-    const auto d=B.bmax-B.bmin;
-    const auto r=0.01*sqrt(d.x*d.x+d.y*d.y+d.z*d.z);
-    printf("\n<Transform translation='%g %g %g'><Shape DEF='bb1'><Appearance><Material diffuseColor='1 1 1'/></Appearance><Sphere radius='%g'/></Shape></Transform>", B.bmin[0], B.bmin[1], B.bmin[2], r);
-    printf("\n<Transform translation='%g %g %g'><Shape USE='bb1'/></Transform>", B.bmin[0], B.bmin[1], B.bmax[2]);
-    printf("\n<Transform translation='%g %g %g'><Shape USE='bb1'/></Transform>", B.bmin[0], B.bmax[1], B.bmin[2]);
-    printf("\n<Transform translation='%g %g %g'><Shape USE='bb1'/></Transform>", B.bmin[0], B.bmax[1], B.bmax[2]);
-    printf("\n<Transform translation='%g %g %g'><Shape USE='bb1'/></Transform>", B.bmax[0], B.bmin[1], B.bmin[2]);
-    printf("\n<Transform translation='%g %g %g'><Shape USE='bb1'/></Transform>", B.bmax[0], B.bmin[1], B.bmax[2]);
-    printf("\n<Transform translation='%g %g %g'><Shape USE='bb1'/></Transform>", B.bmax[0], B.bmax[1], B.bmin[2]);
-    printf("\n<Transform translation='%g %g %g'><Shape USE='bb1'/></Transform>", B.bmax[0], B.bmax[1], B.bmax[2]);
+    printf("\n<Transform translation='%.4g %.4g %.4g'><Shape DEF='bb1'><Appearance><Material diffuseColor='1 1 1'/></Appearance><Sphere radius='%g'/></Shape></Transform>", B.bmin[0], B.bmin[1], B.bmin[2], r);
+    printf("\n<Transform translation='%.4g %.4g %.4g'><Shape USE='bb1'/></Transform>", B.bmin[0], B.bmin[1], B.bmax[2]);
+    printf("\n<Transform translation='%.4g %.4g %.4g'><Shape USE='bb1'/></Transform>", B.bmin[0], B.bmax[1], B.bmin[2]);
+    printf("\n<Transform translation='%.4g %.4g %.4g'><Shape USE='bb1'/></Transform>", B.bmin[0], B.bmax[1], B.bmax[2]);
+    printf("\n<Transform translation='%.4g %.4g %.4g'><Shape USE='bb1'/></Transform>", B.bmax[0], B.bmin[1], B.bmin[2]);
+    printf("\n<Transform translation='%.4g %.4g %.4g'><Shape USE='bb1'/></Transform>", B.bmax[0], B.bmin[1], B.bmax[2]);
+    printf("\n<Transform translation='%.4g %.4g %.4g'><Shape USE='bb1'/></Transform>", B.bmax[0], B.bmax[1], B.bmin[2]);
+    printf("\n<Transform translation='%.4g %.4g %.4g'><Shape USE='bb1'/></Transform>", B.bmax[0], B.bmax[1], B.bmax[2]);
 
-    if (opt.has_floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
+    if (opt.has_floor)
+    {
+        printf(R"__(
+<Transform translation='%.4g %.4g %.4g'>
+    <Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='%.4g %.4g %.4g'/></Shape>
+</Transform>)__", 0.5*(B.bmin[0]+B.bmax[0]), B.bmin[1], 0.5*(B.bmin[2]+B.bmax[2]),
+        B.bmax[0]-B.bmin[0], 0.01*(B.bmax[1]-B.bmin[1]), B.bmax[2]-B.bmin[2]);
+    }
     dumphumanoid_x3d(H, opt.segmentshape);
     dumpmotiontable_x3d(H, M);
     printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", opt.totaltime);

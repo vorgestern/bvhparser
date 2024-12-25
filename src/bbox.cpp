@@ -60,8 +60,9 @@ static void bbcompute(bbox&B, const Hierarchy&H, const MotionLine&L)
 
 bbox compute_boundingbox(const Hierarchy&H, const MotionTable&M)
 {
-    bbox X;
+    bbox X {{1,1,1}, {-1,-1,-1}};
     for (const auto&L: M) bbcompute(X, H, L);
+//  for (unsigned n=0; n<21; ++n) bbcompute(X, H, M[n]);
     return X;
 }
 
