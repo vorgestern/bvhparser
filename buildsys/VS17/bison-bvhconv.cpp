@@ -1408,7 +1408,7 @@ yyreduce:
         case 2:
 /* Line 1792 of yacc.c  */
 #line 29 "..\\..\\src\\bvhconv.y"
-    { dumphumanoid(); }
+    { parserfinished(); }
     break;
 
   case 3:

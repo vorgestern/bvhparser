@@ -26,7 +26,7 @@
 %type <D> number
 %%
 
-input: HIERARCHY startroot root MOTION framenumspec frametimespec motiontable { dumphumanoid(); }
+input: HIERARCHY startroot root MOTION framenumspec frametimespec motiontable { parserfinished(); }
 
 startroot: ROOT { PCX.pushjoint($1); }
 

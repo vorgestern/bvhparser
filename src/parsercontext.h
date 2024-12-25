@@ -18,4 +18,4 @@ void setcurrentoffset(double, double, double);
 void setcurrentchannels(unsigned, unsigned, unsigned);
 void setcurrentchannels(unsigned, unsigned, unsigned, unsigned, unsigned, unsigned);
 void storetableline(unsigned columns);
-void dumphumanoid();
+void parserfinished();

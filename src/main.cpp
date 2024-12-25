@@ -13,7 +13,7 @@ using fspath=filesystem::path;
 // https://en.wikipedia.org/wiki/Biovision_Hierarchy
 // http://research.cs.wisc.edu/graphics/Courses/cs-838-1999/Jeff/Example1.bvh
 
-static enum class OutputType {ffregular, ffmix, fflexeroutput, fftext} func=OutputType::ffregular;
+static enum class OutputType {ffregular, ffmix, fflexeroutput, fftext, ffboundingbox} func=OutputType::ffregular;
 static SegmentForms segmentshape=SegmentForms::cylinder;
 bool has_floor=false, headlight_on=true;
 
@@ -25,7 +25,7 @@ parsercontext PCX;
 
 int xxlex();
 
-// Flex will not create yylex() directly, because we used -prefix=xx to set the name to xxlex
+// Flex will not create yylex() directly, because we used --prefix=xx to set the name to xxlex
 // and provide this wrapper for the parser. 
 int yylex()
 {
@@ -44,6 +44,7 @@ int main(int argc, const char*argv[])
         if (arg=="-lex") func=OutputType::fflexeroutput;   // Output lexer results
         else if (arg=="-mix") func=OutputType::ffmix;      // Mix output from lexer and parser.
         else if (arg=="-t") func=OutputType::fftext;
+        else if (arg=="-b") func=OutputType::ffboundingbox;
         else if (arg=="-f" && a<argc-1) fninput=argv[++a];
         else if (arg=="-s0") segmentshape=SegmentForms::none;
         else if (arg=="-s1") segmentshape=SegmentForms::line;
@@ -176,7 +177,7 @@ static void dumphumanoid_txt(const Hierarchy&JOINTS)
     printf("\n");
 }
 
-static void dumphumanoid_xml(const vector<hanimjoint>&JOINTS)
+static void dumphumanoid_xml(const Hierarchy&H, const MotionTable&M, SegmentForms s)
 {
     printf(
         "<?xml version='1.0' encoding='iso-8859-1'?>"
@@ -187,29 +188,37 @@ static void dumphumanoid_xml(const vector<hanimjoint>&JOINTS)
         "\n<Viewpoint position='0 20 200'/>", headlight_on?"true":"false"
     );
     if (has_floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
+    dumphumanoid_x3d(H, s);
+    dumpmotiontable_x3d(H, M);
+    printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", PCX.framesep*(PCX.framenum+1));
+    if (M.size()>0) dumpmotionroutes_x3d(H);
+    printf("\n</Scene>\n</X3D>\n");
+}
 
+static void dumphumanoid_bb(const Hierarchy&JOINTS)
+{
+#if 0
     vector<glm::dvec3>MyLine;
     for (const auto&M: BVHMotion)
-    // const auto&M=MotionTable[10];
+        // const auto&M=MotionTable[10];
     {
         vector<glm::dvec3>Points;
-        compute_traces(Points, JOINTS, M);
+        compute_traces(Points, H, M);
         MyLine.push_back(Points[41]); // [12]
     }
     printf("\n<Shape><Appearance><Material emissiveColor='1 1 1'/></Appearance><LineSet vertexCount='%u'>\n<Coordinate point='", MyLine.size());
     unsigned num=0;
     for (auto&P: MyLine) printf("%s%g %g %g", num++>0?", ":"", P[0], P[1], P[2]);
     printf("'/></LineSet></Shape>");
-
-    dumphumanoid_x3d(BVHHumanoid, segmentshape);
-    dumpmotiontable_x3d(BVHHumanoid, BVHMotion);
-    printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", PCX.framesep*(PCX.framenum+1));
-    if (BVHMotion.size()>0) dumpmotionroutes_x3d(BVHHumanoid);
-    printf("\n</Scene>\n</X3D>\n");
+#endif
 }
 
-void dumphumanoid()
+void parserfinished()
 {
-    if (func==OutputType::fftext) dumphumanoid_txt(BVHHumanoid);
-    else dumphumanoid_xml(BVHHumanoid);
+    switch (func)
+    {
+        case OutputType::fftext: dumphumanoid_txt(BVHHumanoid); break;
+        case OutputType::ffboundingbox: dumphumanoid_bb(BVHHumanoid); break;
+        default: dumphumanoid_xml(BVHHumanoid, BVHMotion, segmentshape); break;
+    }
 }
