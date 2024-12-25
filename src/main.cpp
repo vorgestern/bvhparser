@@ -213,12 +213,3 @@ void dumphumanoid()
     if (func==OutputType::fftext) dumphumanoid_txt(BVHHumanoid);
     else dumphumanoid_xml(BVHHumanoid);
 }
-
-static unsigned nextchannel=0;
-
-unsigned reservechannels(unsigned channels)
-{
-    unsigned n=nextchannel;
-    nextchannel+=channels;
-    return n;
-}

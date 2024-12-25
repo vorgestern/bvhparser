@@ -31,8 +31,9 @@ void dumptoken(int u)
     }
 }
 
-static MotionLine BVHLine;
+// =========================================
 
+static MotionLine BVHLine;
 int scanline(const char pad[])
 {
     BVHLine.clear();
@@ -47,3 +48,13 @@ int scanline(const char pad[])
 }
 
 void storetableline(unsigned columns){ BVHMotion.push_back(BVHLine); }
+
+// =========================================
+
+static unsigned nextchannel=0;
+unsigned reservechannels(unsigned channels)
+{
+    unsigned n=nextchannel;
+    nextchannel+=channels;
+    return n;
+}
