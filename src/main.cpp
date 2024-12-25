@@ -96,13 +96,14 @@ void yyerror(char const*s)
 
 void ateof(){}
 
-vector<hanimjoint>HUMANOID;
+Hierarchy BVHHumanoid;
+MotionTable BVHMotion;
 
 void parsercontext::pushjoint(const char name[])
 {
     if (mylog) printf("\n%*sjoint %s {", 2*jointlevel, "", name);
-    HUMANOID.emplace_back(jointlevel);
-    if (name!=nullptr && name[0]!=0) HUMANOID.back().setname(name);
+    BVHHumanoid.emplace_back(jointlevel);
+    if (name!=nullptr && name[0]!=0) BVHHumanoid.back().setname(name);
     jointlevel++;
 }
 
@@ -124,23 +125,23 @@ static unsigned char channelcode(unsigned c)
 
 void setcurrentchannels(unsigned c0, unsigned c1, unsigned c2)
 {
-    if (HUMANOID.size()>0) HUMANOID.back().setchannels(channelcode(c0),channelcode(c1),channelcode(c2));
+    if (BVHHumanoid.size()>0) BVHHumanoid.back().setchannels(channelcode(c0),channelcode(c1),channelcode(c2));
     else fprintf(stderr, "\nFehler: channelspec ohne offenen joint");
 }
 
 void setcurrentchannels(unsigned c0, unsigned c1, unsigned c2, unsigned c3, unsigned c4, unsigned c5)
 {
-    if (HUMANOID.size()>0) HUMANOID.back().setchannels(channelcode(c0),channelcode(c1),channelcode(c2),channelcode(c3),channelcode(c4),channelcode(c5));
+    if (BVHHumanoid.size()>0) BVHHumanoid.back().setchannels(channelcode(c0),channelcode(c1),channelcode(c2),channelcode(c3),channelcode(c4),channelcode(c5));
     else fprintf(stderr, "\nFehler: channelspec ohne offenen joint");
 }
 
 void setcurrentoffset(double x, double y, double z)
 {
-    if (HUMANOID.size()>0) HUMANOID.back().offset={x,y,z};
+    if (BVHHumanoid.size()>0) BVHHumanoid.back().offset={x,y,z};
     else fprintf(stderr, "\nFehler: offsetspec ohne offenen joint");
 }
 
-static void dumphumanoid_txt(const vector<hanimjoint>&JOINTS)
+static void dumphumanoid_txt(const Hierarchy&JOINTS)
 {
     for (const auto&J: JOINTS)
     {
@@ -186,17 +187,17 @@ static void dumphumanoid_xml(const vector<hanimjoint>&JOINTS)
         "\n<Viewpoint position='0 20 200'/>", headlight_on?"true":"false"
     );
     if (has_floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
-    dumphumanoid_x3d(HUMANOID, segmentshape);
-    dumpmotiontable_x3d(HUMANOID, MotionTable);
+    dumphumanoid_x3d(BVHHumanoid, segmentshape);
+    dumpmotiontable_x3d(BVHHumanoid, BVHMotion);
     printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", PCX.framesep*(PCX.framenum+1));
-    if (MotionTable.size()>0) dumpmotionroutes_x3d(HUMANOID);
+    if (BVHMotion.size()>0) dumpmotionroutes_x3d(BVHHumanoid);
     printf("\n</Scene>\n</X3D>\n");
 }
 
 void dumphumanoid()
 {
-    if (func==OutputType::fftext) dumphumanoid_txt(HUMANOID);
-    else dumphumanoid_xml(HUMANOID);
+    if (func==OutputType::fftext) dumphumanoid_txt(BVHHumanoid);
+    else dumphumanoid_xml(BVHHumanoid);
 }
 
 static unsigned nextchannel=0;

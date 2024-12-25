@@ -1,15 +1,12 @@
 
 #include <glm/glm.hpp>
 
-// Commandline arguments -segments none|line|cylinder
-enum class SegmentForms {none,line,cylinder};
+enum class SegmentForms {none,line,cylinder}; // Commandline arguments -segments none|line|cylinder
+enum class jtype {root,joint,endsite};
 
 void dumptoken(int token);
 
-// Setup indices for following channels.
 unsigned reservechannels(unsigned numchannels);
-
-enum class jtype {root,joint,endsite};
 
 // Represent a joint (or root) of the model.
 // The parser creates a list of objects of this type.
@@ -42,11 +39,15 @@ public:
     void dumpmotionroutes_x3d()const;
 };
 
-extern std::vector<hanimjoint>HUMANOID;
-extern std::vector<std::vector<double>>MotionTable;
+using Hierarchy=std::vector<hanimjoint>;
+using MotionLine=std::vector<double>;
+using MotionTable=std::vector<MotionLine>;
 
-void dumphumanoid_x3d(const std::vector<hanimjoint>&, SegmentForms),
-    dumpmotiontable_x3d(const std::vector<hanimjoint>&, const std::vector<std::vector<double>>&),
-    dumpmotionroutes_x3d(const std::vector<hanimjoint>&);
+extern Hierarchy BVHHumanoid;
+extern MotionTable BVHMotion;
+
+void dumphumanoid_x3d(const Hierarchy&, SegmentForms),
+    dumpmotiontable_x3d(const Hierarchy&, const MotionTable&),
+    dumpmotionroutes_x3d(const Hierarchy&);
 
 glm::dvec4 toaxisangle(const glm::dmat4&);

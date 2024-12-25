@@ -8,12 +8,12 @@
 
 using namespace std;
 
-void dumphumanoid_x3d(const vector<hanimjoint>&JOINTS, SegmentForms segmentshape)
+void dumphumanoid_x3d(const Hierarchy&Joints, SegmentForms segmentshape)
 {
     int merklev=0;
     unsigned nummat=0;
     bool start=true;
-    for (const auto&J: JOINTS)
+    for (const auto&J: Joints)
     {
         const int lev=level(J);
         const auto T=J.offset;
@@ -79,17 +79,17 @@ printf("<Cylinder height='%g' radius='%g'/></Shape>", hei, 0.2*rad);
     for (int d=merklev; d>=0; d--) printf("\n%*s</Transform>", 2*d, "");
 }
 
-void dumpmotiontable_x3d(const vector<hanimjoint>&joints, const vector<vector<double>>&Table)
+void dumpmotiontable_x3d(const Hierarchy&Joints, const MotionTable&Table)
 {
     if (Table.size()>0)
     {
         printf("\n<!-- Interpolators -->");
-        for (const auto&j: joints) j.dumpmotiontables_x3d(Table);
+        for (const auto&J: Joints) J.dumpmotiontables_x3d(Table);
     }
 }
 
-void dumpmotionroutes_x3d(const vector<hanimjoint>&joints)
+void dumpmotionroutes_x3d(const Hierarchy&Joints)
 {
     printf("\n<!-- Routes -->");
-    for (const auto&j: joints) j.dumpmotionroutes_x3d();
+    for (const auto&J: Joints) J.dumpmotionroutes_x3d();
 }

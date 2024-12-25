@@ -31,20 +31,19 @@ void dumptoken(int u)
     }
 }
 
-static vector<double>MotionLine;
-vector<vector<double>>MotionTable;
+static MotionLine BVHLine;
 
 int scanline(const char pad[])
 {
-    MotionLine.clear();
+    BVHLine.clear();
     int offset=0, nr=0;
     double value=0;
     while (1==sscanf(pad+offset, "%lg%n", &value, &nr))
     {
-        MotionLine.push_back(value);
+        BVHLine.push_back(value);
         offset+=nr;
     } 
-    return MotionLine.size();
+    return BVHLine.size();
 }
 
-void storetableline(unsigned columns){ MotionTable.push_back(MotionLine); }
+void storetableline(unsigned columns){ BVHMotion.push_back(BVHLine); }
