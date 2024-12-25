@@ -20,6 +20,19 @@ void output_x3d(const Hierarchy&H, const MotionTable&M, const OutputOptions&opt)
         "\n<NavigationInfo DEF='nistart' type='\"EXAMINE\" \"ANY\"' headlight='%s' speed='1'/>"
         "\n<Viewpoint position='0 20 200'/>", opt.has_headlight?"true":"false"
     );
+
+    const auto B=compute_boundingbox(H, M);
+    const auto d=B.bmax-B.bmin;
+    const auto r=0.01*sqrt(d.x*d.x+d.y*d.y+d.z*d.z);
+    printf("\n<Transform translation='%g %g %g'><Shape DEF='bb1'><Appearance><Material diffuseColor='1 1 1'/></Appearance><Sphere radius='%g'/></Shape></Transform>", B.bmin[0], B.bmin[1], B.bmin[2], r);
+    printf("\n<Transform translation='%g %g %g'><Shape USE='bb1'/></Transform>", B.bmin[0], B.bmin[1], B.bmax[2]);
+    printf("\n<Transform translation='%g %g %g'><Shape USE='bb1'/></Transform>", B.bmin[0], B.bmax[1], B.bmin[2]);
+    printf("\n<Transform translation='%g %g %g'><Shape USE='bb1'/></Transform>", B.bmin[0], B.bmax[1], B.bmax[2]);
+    printf("\n<Transform translation='%g %g %g'><Shape USE='bb1'/></Transform>", B.bmax[0], B.bmin[1], B.bmin[2]);
+    printf("\n<Transform translation='%g %g %g'><Shape USE='bb1'/></Transform>", B.bmax[0], B.bmin[1], B.bmax[2]);
+    printf("\n<Transform translation='%g %g %g'><Shape USE='bb1'/></Transform>", B.bmax[0], B.bmax[1], B.bmin[2]);
+    printf("\n<Transform translation='%g %g %g'><Shape USE='bb1'/></Transform>", B.bmax[0], B.bmax[1], B.bmax[2]);
+
     if (opt.has_floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
     dumphumanoid_x3d(H, opt.segmentshape);
     dumpmotiontable_x3d(H, M);

@@ -51,7 +51,10 @@ struct OutputOptions
     bool has_headlight;
 };
 
-void compute_traces(std::vector<glm::dvec3>&Lines, const Hierarchy&JOINTS, const MotionLine&);
+struct bbox { glm::dvec3 bmin, bmax; };
+
+void compute_traces(std::vector<glm::dvec3>&, const Hierarchy&, const MotionLine&);
+bbox compute_boundingbox(const Hierarchy&, const MotionTable&);
 
 void dumptoken(int token);
 unsigned reservechannels(unsigned numchannels);
