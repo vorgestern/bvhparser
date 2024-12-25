@@ -75,19 +75,34 @@ unsigned hanimjoint::getrotationindexes(int index[], int dir[])const
     return u;
 }
 
-glm::dmat4 hanimjoint::getrotation(const std::vector<double>&MotionLine)const
+glm::dmat4 hanimjoint::getrotation(const MotionLine&Line)const
 {
     glm::dmat4 Result={1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
     for (unsigned c=0; c<channelnum; c++) switch (channels[c])
     {
-        case 'x': Result*=glm::eulerAngleX(MotionLine[firstchannelindex+c]*deg); break;
-        case 'y': Result*=glm::eulerAngleY(MotionLine[firstchannelindex+c]*deg); break;
-        case 'z': Result*=glm::eulerAngleZ(MotionLine[firstchannelindex+c]*deg); break;
+        case 'x': Result*=glm::eulerAngleX(Line[firstchannelindex+c]*deg); break;
+        case 'y': Result*=glm::eulerAngleY(Line[firstchannelindex+c]*deg); break;
+        case 'z': Result*=glm::eulerAngleZ(Line[firstchannelindex+c]*deg); break;
     }
     return Result;
 }
 
-void hanimjoint::dumpmotiontables_x3d(const std::vector<std::vector<double>>&Table)const
+glm::dmat4 hanimjoint::gettransform(const MotionLine&Line)const
+{
+    glm::dmat4 Result={1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
+    for (unsigned c=0; c<channelnum; c++) switch (channels[c])
+    {
+        case 'X': Result=glm::translate(Result, {Line[firstchannelindex+c],0,0}); break;
+        case 'Y': Result=glm::translate(Result, {0,Line[firstchannelindex+c],0}); break;
+        case 'Z': Result=glm::translate(Result, {0,0,Line[firstchannelindex+c]}); break;
+        case 'x': Result*=glm::eulerAngleX(Line[firstchannelindex+c]*deg); break;
+        case 'y': Result*=glm::eulerAngleY(Line[firstchannelindex+c]*deg); break;
+        case 'z': Result*=glm::eulerAngleZ(Line[firstchannelindex+c]*deg); break;
+    }
+    return Result;
+}
+
+void hanimjoint::dumpmotiontables_x3d(const MotionTable&Table)const
 {
     size_t col=0;
     const auto lines=Table.size();

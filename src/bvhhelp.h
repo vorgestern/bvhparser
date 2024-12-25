@@ -3,10 +3,10 @@
 
 enum class SegmentForms {none,line,cylinder}; // Commandline arguments -segments none|line|cylinder
 enum class jtype {root,joint,endsite};
-
-void dumptoken(int token);
-
-unsigned reservechannels(unsigned numchannels);
+class hanimjoint;
+using MotionLine=std::vector<double>;
+using MotionTable=std::vector<MotionLine>;
+using Hierarchy=std::vector<hanimjoint>;
 
 // Represent a joint (or root) of the model.
 // The parser creates a list of objects of this type.
@@ -35,19 +35,21 @@ public:
     void setchannels(unsigned char c0, unsigned char c1, unsigned char c2);
     void setchannels(unsigned char c0, unsigned char c1, unsigned char c2, unsigned char c3, unsigned char c4, unsigned char c5);
     void setname(const char name[]);
-    void dumpmotiontables_x3d(const std::vector<std::vector<double>>&)const;
+    void dumpmotiontables_x3d(const MotionTable&)const;
     void dumpmotionroutes_x3d()const;
+    glm::dmat4 gettransform(const MotionLine&)const;
 };
 
-using Hierarchy=std::vector<hanimjoint>;
-using MotionLine=std::vector<double>;
-using MotionTable=std::vector<MotionLine>;
-
-extern Hierarchy BVHHumanoid;
 extern MotionTable BVHMotion;
+extern Hierarchy BVHHumanoid;
+
+void compute_traces(std::vector<glm::dvec3>&Lines, const Hierarchy&JOINTS, const MotionLine&);
 
 void dumphumanoid_x3d(const Hierarchy&, SegmentForms),
     dumpmotiontable_x3d(const Hierarchy&, const MotionTable&),
     dumpmotionroutes_x3d(const Hierarchy&);
+
+void dumptoken(int token);
+unsigned reservechannels(unsigned numchannels);
 
 glm::dvec4 toaxisangle(const glm::dmat4&);

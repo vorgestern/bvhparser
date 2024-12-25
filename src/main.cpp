@@ -187,6 +187,20 @@ static void dumphumanoid_xml(const vector<hanimjoint>&JOINTS)
         "\n<Viewpoint position='0 20 200'/>", headlight_on?"true":"false"
     );
     if (has_floor) printf("\n<Transform translation='0 -2 20'><Shape><Appearance><Material diffuseColor='0.2 0.4 0.2'/></Appearance><Box size='60 0.2 120'/></Shape></Transform>");
+
+    vector<glm::dvec3>MyLine;
+    for (const auto&M: BVHMotion)
+    // const auto&M=MotionTable[10];
+    {
+        vector<glm::dvec3>Points;
+        compute_traces(Points, JOINTS, M);
+        MyLine.push_back(Points[41]); // [12]
+    }
+    printf("\n<Shape><Appearance><Material emissiveColor='1 1 1'/></Appearance><LineSet vertexCount='%u'>\n<Coordinate point='", MyLine.size());
+    unsigned num=0;
+    for (auto&P: MyLine) printf("%s%g %g %g", num++>0?", ":"", P[0], P[1], P[2]);
+    printf("'/></LineSet></Shape>");
+
     dumphumanoid_x3d(BVHHumanoid, segmentshape);
     dumpmotiontable_x3d(BVHHumanoid, BVHMotion);
     printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", PCX.framesep*(PCX.framenum+1));

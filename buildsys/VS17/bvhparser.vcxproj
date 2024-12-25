@@ -52,6 +52,7 @@
       <DisableSpecificWarnings>4065;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lex-bvhconv.cpp" />
+    <ClCompile Include="..\..\src\bbox.cpp" />
     <ClCompile Include="..\..\src\euler_to_axisangle.cpp" />
     <ClCompile Include="..\..\src\hanimjoint.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
