@@ -89,7 +89,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\parser\bvhconv.h" />
+    <ClInclude Include="bvhconv.h" />
     <ClInclude Include="..\..\parser\parsercontext.h" />
     <ClInclude Include="..\..\include\parser.h" />
   </ItemGroup>
