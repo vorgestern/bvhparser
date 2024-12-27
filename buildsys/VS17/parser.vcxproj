@@ -31,6 +31,7 @@
   <ImportGroup Label="ExtensionSettings" />
 
   <ImportGroup Label="PropertySheets">
+    <Import Project="UseGlm.props" />
     <Import Project="parser.props" />
   </ImportGroup>
 
@@ -98,6 +99,7 @@
       <DisableSpecificWarnings>4065;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lex-bvhconv.cpp" />
+    <ClCompile Include="..\..\parser\hanimjoint.cpp" />
     <ClCompile Include="..\..\parser\parsercontext.cpp" />
     <ClCompile Include="..\..\parser\parser.cpp" />
   </ItemGroup>

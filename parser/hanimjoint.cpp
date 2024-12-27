@@ -1,8 +1,6 @@
 
-#include <string>
-#include <vector>
+#include <parser.h>
 #include <numbers>
-#include <bvhhelp.h>
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/matrix_interpolation.hpp>
 
