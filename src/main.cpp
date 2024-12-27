@@ -30,30 +30,23 @@ int main(int argc, const char*argv[])
         else if (arg[0]!='-') fninput=arg;
     }
 
-    switch (func)
+    if (func==OutputType::fflexeroutput)
     {
-        case OutputType::ffregular:
-        case OutputType::ffmix:
-        case OutputType::fftext:
+        lexdump(fninput.string());
+    }
+    else
+    {
+        BVHScene*Scene=parse(fninput.string(), func==OutputType::ffmix);
+        if (Scene!=nullptr)
         {
-            BVHScene*Scene=parse(fninput.string(), func==OutputType::ffmix);
-            if (Scene!=nullptr)
+            switch (func)
             {
-                switch (func)
-                {
-                    case OutputType::fftext: dumphumanoid_txt(Scene->H); break;
-                    case OutputType::ffboundingbox: dumphumanoid_bb(Scene->H); break;
-                    default: output_x3d(Scene->H, Scene->M, Scene->totaltime, Opts); break;
-                }
-                delete Scene;
+                case OutputType::fftext: dumphumanoid_txt(Scene->H); break;
+                case OutputType::ffboundingbox: dumphumanoid_bb(Scene->H); break;
+                default:
+                case OutputType::ffregular: output_x3d(Scene->H, Scene->M, Scene->totaltime, Opts); break;
             }
-            break;
-        }
-
-        case OutputType::fflexeroutput:
-        {
-            lexdump(fninput.string());
-            break;
+            delete Scene;
         }
     }
 
