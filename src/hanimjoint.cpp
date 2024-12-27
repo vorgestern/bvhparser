@@ -19,18 +19,18 @@ void hanimjoint::setname(const char s[])
     name=s;
 }
 
-bool hanimjoint::haspositionchannels()const
+bool haspositionchannels(const hanimjoint&J)
 {
-    for (unsigned c=0; c<channelnum; c++) switch (channels[c])
+    for (unsigned c=0; c<J.channelnum; c++) switch (J.channels[c])
     {
         case 'X': case 'Y': case 'Z': return true;
     }
     return false;
 }
 
-bool hanimjoint::hasrotationchannels()const
+bool hasrotationchannels(const hanimjoint&J)
 {
-    for (unsigned c=0; c<channelnum; c++) switch (channels[c])
+    for (unsigned c=0; c<J.channelnum; c++) switch (J.channels[c])
     {
         case 'x': case 'y': case 'z': return true;
     }
@@ -106,7 +106,7 @@ void hanimjoint::dumpmotiontables_x3d(const MotionTable&Table)const
 {
     size_t col=0;
     const auto lines=Table.size();
-    if (haspositionchannels())
+    if (haspositionchannels(*this))
     {
         int index[3];
         getpositionindexes(index);
@@ -130,7 +130,7 @@ void hanimjoint::dumpmotiontables_x3d(const MotionTable&Table)const
         }
         col+=printf("'/>");
     }
-    if (hasrotationchannels())
+    if (hasrotationchannels(*this))
     {
         col=printf("\n<OrientationInterpolator DEF='nprot_%s'", name.c_str());
         col+=printf(" key='");
@@ -148,19 +148,5 @@ void hanimjoint::dumpmotiontables_x3d(const MotionTable&Table)const
             if (col>128 && n+1<lines){ printf("\n"); col=0; }
         }
         col+=printf("'/>");
-    }
-}
-
-void hanimjoint::dumpmotionroutes_x3d()const
-{
-    if (haspositionchannels())
-    {
-        printf("\n<ROUTE fromNode='T' fromField='fraction_changed' toNode='nppos_%s' toField='set_fraction'/>", name.c_str());
-        printf("\n<ROUTE fromNode='nppos_%s' fromField='value_changed' toNode='%s' toField='set_translation'/>", name.c_str(), name.c_str());
-    }
-    if (hasrotationchannels())
-    {
-        printf("\n<ROUTE fromNode='T' fromField='fraction_changed' toNode='nprot_%s' toField='set_fraction'/>", name.c_str());
-        printf("\n<ROUTE fromNode='nprot_%s' fromField='value_changed' toNode='%s' toField='set_rotation'/>", name.c_str(), name.c_str());
     }
 }

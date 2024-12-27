@@ -7,8 +7,21 @@
 using namespace std;
 
 void dumphumanoid_x3d(const Hierarchy&, SegmentForms),
-     dumpmotiontable_x3d(const Hierarchy&, const MotionTable&),
-     dumpmotionroutes_x3d(const Hierarchy&);
+     dumpmotiontable_x3d(const Hierarchy&, const MotionTable&);
+
+static void dumpmotionroutes_x3d(const hanimjoint&J)
+{
+    if (haspositionchannels(J))
+    {
+        printf("\n<ROUTE fromNode='T' fromField='fraction_changed' toNode='nppos_%s' toField='set_fraction'/>", name(J));
+        printf("\n<ROUTE fromNode='nppos_%s' fromField='value_changed' toNode='%s' toField='set_translation'/>", name(J), name(J));
+    }
+    if (hasrotationchannels(J))
+    {
+        printf("\n<ROUTE fromNode='T' fromField='fraction_changed' toNode='nprot_%s' toField='set_fraction'/>", name(J));
+        printf("\n<ROUTE fromNode='nprot_%s' fromField='value_changed' toNode='%s' toField='set_rotation'/>", name(J), name(J));
+    }
+}
 
 void output_x3d(const Hierarchy&H, const MotionTable&M, double totaltime, const OutputOptions&opt)
 {
@@ -46,7 +59,11 @@ void output_x3d(const Hierarchy&H, const MotionTable&M, double totaltime, const 
     dumphumanoid_x3d(H, opt.segmentshape);
     dumpmotiontable_x3d(H, M);
     printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", totaltime);
-    if (M.size()>0) dumpmotionroutes_x3d(H);
+    if (M.size()>0)
+    {
+        printf("\n<!-- Routes -->");
+        for (const auto&J: H) dumpmotionroutes_x3d(J);
+    }
     printf("\n</Scene>\n</X3D>\n");
 }
 

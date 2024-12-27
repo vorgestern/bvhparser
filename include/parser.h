@@ -18,8 +18,6 @@ class hanimjoint
     unsigned channelnum;           //!< Number of channels, 0,3,6
     unsigned level;                //!< Hierarchy level
     unsigned firstchannelindex;    //!< Index of the first associated channel in the MOTION table
-    bool haspositionchannels()const;
-    bool hasrotationchannels()const;
     void getpositionindexes(int index[])const;
     unsigned getrotationindexes(int index[], int dir[])const; //!< Return columns and axes to which they refer in the specified order.
     glm::dmat4 getrotation(const std::vector<double>&MotionLine)const;
@@ -28,6 +26,8 @@ class hanimjoint
     friend const char*name(const hanimjoint&X){ return X.name.c_str(); }
     friend unsigned firstchannel(const hanimjoint&X){ return X.firstchannelindex; }
     friend unsigned lastchannel(const hanimjoint&X){ return X.firstchannelindex+X.channelnum-1; }
+    friend bool haspositionchannels(const hanimjoint&);
+    friend bool hasrotationchannels(const hanimjoint&);
     friend jtype type(const hanimjoint&);
 public:
     glm::dvec3 offset;
@@ -37,7 +37,6 @@ public:
     void setchannels(unsigned start, unsigned char c0, unsigned char c1, unsigned char c2, unsigned char c3, unsigned char c4, unsigned char c5);
     void setname(const char name[]);
     void dumpmotiontables_x3d(const MotionTable&)const;
-    void dumpmotionroutes_x3d()const;
     glm::dmat4 gettransform(const MotionLine&)const;
 };
 

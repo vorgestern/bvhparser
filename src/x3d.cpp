@@ -87,9 +87,3 @@ void dumpmotiontable_x3d(const Hierarchy&Joints, const MotionTable&Table)
         for (const auto&J: Joints) J.dumpmotiontables_x3d(Table);
     }
 }
-
-void dumpmotionroutes_x3d(const Hierarchy&Joints)
-{
-    printf("\n<!-- Routes -->");
-    for (const auto&J: Joints) J.dumpmotionroutes_x3d();
-}
