@@ -18,9 +18,7 @@ class hanimjoint
     unsigned channelnum;           //!< Number of channels, 0,3,6
     unsigned level;                //!< Hierarchy level
     unsigned firstchannelindex;    //!< Index of the first associated channel in the MOTION table
-    void getpositionindexes(int index[])const;
     unsigned getrotationindexes(int index[], int dir[])const; //!< Return columns and axes to which they refer in the specified order.
-    glm::dmat4 getrotation(const std::vector<double>&MotionLine)const;
     friend unsigned channelnum(const hanimjoint&X){ return X.channelnum; }
     friend unsigned level(const hanimjoint&X){ return X.level; }
     friend const char*name(const hanimjoint&X){ return X.name.c_str(); }
@@ -36,8 +34,9 @@ public:
     void setchannels(unsigned start, unsigned char c0, unsigned char c1, unsigned char c2);
     void setchannels(unsigned start, unsigned char c0, unsigned char c1, unsigned char c2, unsigned char c3, unsigned char c4, unsigned char c5);
     void setname(const char name[]);
-    void dumpmotiontables_x3d(const MotionTable&)const;
     glm::dmat4 gettransform(const MotionLine&)const;
+    glm::dmat4 getrotation(const MotionLine&)const;
+    void getpositionindexes(int index[])const;
 };
 
 struct BVHScene
