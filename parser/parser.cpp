@@ -102,10 +102,20 @@ void lexdump(string_view filename)
             exit(1);
         }
     }
+    PCX.Scene=new BVHScene;
+    PCX.framenum=0;
+    PCX.framesep=0;
+    PCX.jointlevel=0;
+    PCX.linenum=0;
+    PCX.mylog=false;
+    PCX.nextchannel=0;
+    PCX.mixlexeroutput=false;
     int u=1;
     while (u!=0)
     {
         u=xxlex();
         dumptoken(u);
     }
+    delete PCX.Scene;
+    PCX.Scene=nullptr;
 }
