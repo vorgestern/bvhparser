@@ -1105,12 +1105,12 @@ case 25:
 /* rule 25 can match eol */
 YY_RULE_SETUP
 #line 63 "..\\..\\src\\bvhconv.l"
-{ yylval.I=scanline(yytext); return TABLELINE; }
+{ yylval.I=scanmotionline(yytext); return TABLELINE; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 64 "..\\..\\src\\bvhconv.l"
-{ yylval.I=scanline(yytext); return TABLELINE; }
+{ yylval.I=scanmotionline(yytext); return TABLELINE; }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(animationtable):

@@ -12,7 +12,7 @@ extern struct parsercontext {
     void endsite();
 } PCX;
 
-int scanline(const char[]);
+int scanmotionline(const char[]);
 void setcurrentoffset(double, double, double);
 void setcurrentchannels(unsigned, unsigned, unsigned);
 void setcurrentchannels(unsigned, unsigned, unsigned, unsigned, unsigned, unsigned);

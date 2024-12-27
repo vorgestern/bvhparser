@@ -34,7 +34,7 @@ void dumptoken(int u)
 // =========================================
 
 static MotionLine BVHLine;
-int scanline(const char pad[])
+int scanmotionline(const char pad[])
 {
     BVHLine.clear();
     int offset=0, nr=0;

@@ -59,8 +59,8 @@ MOTION { BEGIN(animationtable); ASNONE(MOTION); }
 
 <animationtable>^Frames:{WS}*{INT}{WS}*{NL} { sscanf(yytext+7, "%d", &yylval.I); return FRAMES; }
 <animationtable>^Frame{WS}+Time:{WS}*{FIXED}{WS}*{NL} { const char*s=strchr(yytext, ':'); sscanf(s+1, "%lf", &yylval.D); return FRAMETIME; }
-<animationtable>^.*{NL} { yylval.I=scanline(yytext); return TABLELINE; }
-<animationtable>^.* { yylval.I=scanline(yytext); return TABLELINE; }
+<animationtable>^.*{NL} { yylval.I=scanmotionline(yytext); return TABLELINE; }
+<animationtable>^.* { yylval.I=scanmotionline(yytext); return TABLELINE; }
 
 <<EOF>> { ateof(); return 0; }
 
