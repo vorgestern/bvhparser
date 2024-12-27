@@ -688,8 +688,8 @@ int xx_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *xxtext;
-#line 1 "..\\..\\src\\bvhconv.l"
-#line 5 "..\\..\\src\\bvhconv.l"
+#line 1 "..\\..\\bvhparser\\bvhconv.l"
+#line 5 "..\\..\\bvhparser\\bvhconv.l"
     // Considerations regarding option outfile:
     //      Using option in lex-File will not allow to specify the directory.
     //      Using commandline '-o filename' will allow full control but embeds the full path in the generated scanner.
@@ -919,7 +919,7 @@ YY_DECL
 		}
 
 	{
-#line 31 "..\\..\\src\\bvhconv.l"
+#line 31 "..\\..\\bvhparser\\bvhconv.l"
 
 
 #line 925 "lex-bvhconv.cpp"
@@ -978,148 +978,148 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 33 "..\\..\\src\\bvhconv.l"
+#line 33 "..\\..\\bvhparser\\bvhconv.l"
 { ASNONE(HIERARCHY); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 34 "..\\..\\src\\bvhconv.l"
+#line 34 "..\\..\\bvhparser\\bvhconv.l"
 { const char*s=yytext+5; while (*s!=0 && isspace(*s)) s++; strcpy(yylval.S, s); return ROOT; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 35 "..\\..\\src\\bvhconv.l"
+#line 35 "..\\..\\bvhparser\\bvhconv.l"
 { const char*s=yytext+6; while (*s!=0 && isspace(*s)) s++; strcpy(yylval.S, s); return JOINT; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 36 "..\\..\\src\\bvhconv.l"
+#line 36 "..\\..\\bvhparser\\bvhconv.l"
 { ASNONE(ENDSITE); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 37 "..\\..\\src\\bvhconv.l"
+#line 37 "..\\..\\bvhparser\\bvhconv.l"
 { ASNONE(OFFSET); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 38 "..\\..\\src\\bvhconv.l"
+#line 38 "..\\..\\bvhparser\\bvhconv.l"
 { sscanf(yytext+9, "%d", &yylval.I); return CHANNELS; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 39 "..\\..\\src\\bvhconv.l"
+#line 39 "..\\..\\bvhparser\\bvhconv.l"
 { yylval.I=XPOSITION; ASNONE(XPOSITION); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 40 "..\\..\\src\\bvhconv.l"
+#line 40 "..\\..\\bvhparser\\bvhconv.l"
 { yylval.I=YPOSITION; ASNONE(YPOSITION); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 41 "..\\..\\src\\bvhconv.l"
+#line 41 "..\\..\\bvhparser\\bvhconv.l"
 { yylval.I=ZPOSITION; ASNONE(ZPOSITION); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 42 "..\\..\\src\\bvhconv.l"
+#line 42 "..\\..\\bvhparser\\bvhconv.l"
 { yylval.I=XROTATION; ASNONE(XROTATION); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 43 "..\\..\\src\\bvhconv.l"
+#line 43 "..\\..\\bvhparser\\bvhconv.l"
 { yylval.I=YROTATION; ASNONE(YROTATION); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 44 "..\\..\\src\\bvhconv.l"
+#line 44 "..\\..\\bvhparser\\bvhconv.l"
 { yylval.I=ZROTATION; ASNONE(ZROTATION); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 46 "..\\..\\src\\bvhconv.l"
+#line 46 "..\\..\\bvhparser\\bvhconv.l"
 { sscanf(yytext, "%lf", &yylval.D); return FLOAT; }
 	YY_BREAK
 /* Alle numerischen Angaben werden als FLOAT interpretiert. Integerwerte kommen nur vor zusammen mit einem spezifischen Tag, z.B. CHANNELS */
 case 14:
 YY_RULE_SETUP
-#line 49 "..\\..\\src\\bvhconv.l"
+#line 49 "..\\..\\bvhparser\\bvhconv.l"
 { BEGIN(animationtable); ASNONE(MOTION); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 51 "..\\..\\src\\bvhconv.l"
+#line 51 "..\\..\\bvhparser\\bvhconv.l"
 {}
 	YY_BREAK
 case 16:
 /* rule 16 can match eol */
 YY_RULE_SETUP
-#line 52 "..\\..\\src\\bvhconv.l"
+#line 52 "..\\..\\bvhparser\\bvhconv.l"
 { PCX.linenum++; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 53 "..\\..\\src\\bvhconv.l"
+#line 53 "..\\..\\bvhparser\\bvhconv.l"
 { ASNONE(OPENBRACE); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 54 "..\\..\\src\\bvhconv.l"
+#line 54 "..\\..\\bvhparser\\bvhconv.l"
 { ASNONE(CLOSEBRACE); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 55 "..\\..\\src\\bvhconv.l"
+#line 55 "..\\..\\bvhparser\\bvhconv.l"
 { ASNONE(ASTERISK); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 56 "..\\..\\src\\bvhconv.l"
+#line 56 "..\\..\\bvhparser\\bvhconv.l"
 { ASNONE(OPENPAREN); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 57 "..\\..\\src\\bvhconv.l"
+#line 57 "..\\..\\bvhparser\\bvhconv.l"
 { ASNONE(CLOSEPAREN); }
 	YY_BREAK
 case 22:
 /* rule 22 can match eol */
 YY_RULE_SETUP
-#line 59 "..\\..\\src\\bvhconv.l"
+#line 59 "..\\..\\bvhparser\\bvhconv.l"
 { strcpy(yylval.S, yytext+1); char*s=strchr(yylval.S, 0); if (s>yylval.S) s[-1]=0; return STRING; }
 	YY_BREAK
 case 23:
 /* rule 23 can match eol */
 YY_RULE_SETUP
-#line 61 "..\\..\\src\\bvhconv.l"
+#line 61 "..\\..\\bvhparser\\bvhconv.l"
 { sscanf(yytext+7, "%d", &yylval.I); return FRAMES; }
 	YY_BREAK
 case 24:
 /* rule 24 can match eol */
 YY_RULE_SETUP
-#line 62 "..\\..\\src\\bvhconv.l"
+#line 62 "..\\..\\bvhparser\\bvhconv.l"
 { const char*s=strchr(yytext, ':'); sscanf(s+1, "%lf", &yylval.D); return FRAMETIME; }
 	YY_BREAK
 case 25:
 /* rule 25 can match eol */
 YY_RULE_SETUP
-#line 63 "..\\..\\src\\bvhconv.l"
+#line 63 "..\\..\\bvhparser\\bvhconv.l"
 { yylval.I=PCX.scanmotionline(yytext); return TABLELINE; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 64 "..\\..\\src\\bvhconv.l"
+#line 64 "..\\..\\bvhparser\\bvhconv.l"
 { yylval.I=PCX.scanmotionline(yytext); return TABLELINE; }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(animationtable):
-#line 66 "..\\..\\src\\bvhconv.l"
+#line 66 "..\\..\\bvhparser\\bvhconv.l"
 { ateof(); return 0; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 68 "..\\..\\src\\bvhconv.l"
+#line 68 "..\\..\\bvhparser\\bvhconv.l"
 ECHO;
 	YY_BREAK
 #line 1125 "lex-bvhconv.cpp"
@@ -2125,6 +2125,6 @@ void xxfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 68 "..\\..\\src\\bvhconv.l"
+#line 68 "..\\..\\bvhparser\\bvhconv.l"
 
 

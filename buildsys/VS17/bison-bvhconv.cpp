@@ -63,7 +63,7 @@
 
 /* Copy the first part of user declarations.  */
 /* Line 371 of yacc.c  */
-#line 2 "..\\..\\src\\bvhconv.y"
+#line 2 "..\\..\\bvhparser\\bvhconv.y"
 
     #include <parsercontext.h>
     int yylex();
@@ -138,7 +138,7 @@ extern int yydebug;
 typedef union YYSTYPE
 {
 /* Line 387 of yacc.c  */
-#line 8 "..\\..\\src\\bvhconv.y"
+#line 8 "..\\..\\bvhparser\\bvhconv.y"
 
     int I;
     double D;
@@ -1407,181 +1407,181 @@ yyreduce:
     {
         case 2:
 /* Line 1792 of yacc.c  */
-#line 29 "..\\..\\src\\bvhconv.y"
+#line 29 "..\\..\\bvhparser\\bvhconv.y"
     { PCX.parserfinished(); }
     break;
 
   case 3:
 /* Line 1792 of yacc.c  */
-#line 31 "..\\..\\src\\bvhconv.y"
+#line 31 "..\\..\\bvhparser\\bvhconv.y"
     { PCX.pushjoint((yyvsp[(1) - (1)].S)); }
     break;
 
   case 4:
 /* Line 1792 of yacc.c  */
-#line 33 "..\\..\\src\\bvhconv.y"
+#line 33 "..\\..\\bvhparser\\bvhconv.y"
     { PCX.popjoint(); }
     break;
 
   case 5:
 /* Line 1792 of yacc.c  */
-#line 34 "..\\..\\src\\bvhconv.y"
+#line 34 "..\\..\\bvhparser\\bvhconv.y"
     { PCX.popjoint(); }
     break;
 
   case 6:
 /* Line 1792 of yacc.c  */
-#line 36 "..\\..\\src\\bvhconv.y"
+#line 36 "..\\..\\bvhparser\\bvhconv.y"
     { PCX.framenum=(yyvsp[(1) - (1)].I); }
     break;
 
   case 7:
 /* Line 1792 of yacc.c  */
-#line 37 "..\\..\\src\\bvhconv.y"
+#line 37 "..\\..\\bvhparser\\bvhconv.y"
     { PCX.framesep=(yyvsp[(1) - (1)].D); }
     break;
 
   case 8:
 /* Line 1792 of yacc.c  */
-#line 39 "..\\..\\src\\bvhconv.y"
+#line 39 "..\\..\\bvhparser\\bvhconv.y"
     {}
     break;
 
   case 9:
 /* Line 1792 of yacc.c  */
-#line 40 "..\\..\\src\\bvhconv.y"
+#line 40 "..\\..\\bvhparser\\bvhconv.y"
     {}
     break;
 
   case 10:
 /* Line 1792 of yacc.c  */
-#line 41 "..\\..\\src\\bvhconv.y"
+#line 41 "..\\..\\bvhparser\\bvhconv.y"
     {}
     break;
 
   case 11:
 /* Line 1792 of yacc.c  */
-#line 43 "..\\..\\src\\bvhconv.y"
+#line 43 "..\\..\\bvhparser\\bvhconv.y"
     { PCX.popjoint(); }
     break;
 
   case 12:
 /* Line 1792 of yacc.c  */
-#line 44 "..\\..\\src\\bvhconv.y"
+#line 44 "..\\..\\bvhparser\\bvhconv.y"
     { PCX.popjoint(); }
     break;
 
   case 13:
 /* Line 1792 of yacc.c  */
-#line 46 "..\\..\\src\\bvhconv.y"
+#line 46 "..\\..\\bvhparser\\bvhconv.y"
     { PCX.pushjoint((yyvsp[(1) - (1)].S)); }
     break;
 
   case 14:
 /* Line 1792 of yacc.c  */
-#line 48 "..\\..\\src\\bvhconv.y"
+#line 48 "..\\..\\bvhparser\\bvhconv.y"
     { PCX.popjoint(); PCX.endsite(); }
     break;
 
   case 15:
 /* Line 1792 of yacc.c  */
-#line 49 "..\\..\\src\\bvhconv.y"
+#line 49 "..\\..\\bvhparser\\bvhconv.y"
     { PCX.popjoint(); PCX.endsite(); }
     break;
 
   case 16:
 /* Line 1792 of yacc.c  */
-#line 50 "..\\..\\src\\bvhconv.y"
+#line 50 "..\\..\\bvhparser\\bvhconv.y"
     { PCX.popjoint(); PCX.endsite(); }
     break;
 
   case 17:
 /* Line 1792 of yacc.c  */
-#line 52 "..\\..\\src\\bvhconv.y"
+#line 52 "..\\..\\bvhparser\\bvhconv.y"
     { PCX.pushjoint(nullptr); }
     break;
 
   case 18:
 /* Line 1792 of yacc.c  */
-#line 54 "..\\..\\src\\bvhconv.y"
+#line 54 "..\\..\\bvhparser\\bvhconv.y"
     { PCX.setcurrentoffset((yyvsp[(2) - (4)].D),(yyvsp[(3) - (4)].D),(yyvsp[(4) - (4)].D)); }
     break;
 
   case 19:
 /* Line 1792 of yacc.c  */
-#line 56 "..\\..\\src\\bvhconv.y"
+#line 56 "..\\..\\bvhparser\\bvhconv.y"
     { PCX.setcurrentchannels((yyvsp[(2) - (4)].I),(yyvsp[(3) - (4)].I),(yyvsp[(4) - (4)].I)); }
     break;
 
   case 20:
 /* Line 1792 of yacc.c  */
-#line 57 "..\\..\\src\\bvhconv.y"
+#line 57 "..\\..\\bvhparser\\bvhconv.y"
     { PCX.setcurrentchannels((yyvsp[(2) - (7)].I),(yyvsp[(3) - (7)].I),(yyvsp[(4) - (7)].I),(yyvsp[(5) - (7)].I),(yyvsp[(6) - (7)].I),(yyvsp[(7) - (7)].I)); }
     break;
 
   case 21:
 /* Line 1792 of yacc.c  */
-#line 58 "..\\..\\src\\bvhconv.y"
+#line 58 "..\\..\\bvhparser\\bvhconv.y"
     {}
     break;
 
   case 22:
 /* Line 1792 of yacc.c  */
-#line 59 "..\\..\\src\\bvhconv.y"
+#line 59 "..\\..\\bvhparser\\bvhconv.y"
     {}
     break;
 
   case 23:
 /* Line 1792 of yacc.c  */
-#line 60 "..\\..\\src\\bvhconv.y"
+#line 60 "..\\..\\bvhparser\\bvhconv.y"
     {}
     break;
 
   case 24:
 /* Line 1792 of yacc.c  */
-#line 61 "..\\..\\src\\bvhconv.y"
+#line 61 "..\\..\\bvhparser\\bvhconv.y"
     {}
     break;
 
   case 25:
 /* Line 1792 of yacc.c  */
-#line 62 "..\\..\\src\\bvhconv.y"
+#line 62 "..\\..\\bvhparser\\bvhconv.y"
     {}
     break;
 
   case 26:
 /* Line 1792 of yacc.c  */
-#line 63 "..\\..\\src\\bvhconv.y"
+#line 63 "..\\..\\bvhparser\\bvhconv.y"
     {}
     break;
 
   case 27:
 /* Line 1792 of yacc.c  */
-#line 65 "..\\..\\src\\bvhconv.y"
+#line 65 "..\\..\\bvhparser\\bvhconv.y"
     {}
     break;
 
   case 28:
 /* Line 1792 of yacc.c  */
-#line 66 "..\\..\\src\\bvhconv.y"
+#line 66 "..\\..\\bvhparser\\bvhconv.y"
     {}
     break;
 
   case 29:
 /* Line 1792 of yacc.c  */
-#line 68 "..\\..\\src\\bvhconv.y"
+#line 68 "..\\..\\bvhparser\\bvhconv.y"
     {}
     break;
 
   case 30:
 /* Line 1792 of yacc.c  */
-#line 69 "..\\..\\src\\bvhconv.y"
+#line 69 "..\\..\\bvhparser\\bvhconv.y"
     {}
     break;
 
   case 31:
 /* Line 1792 of yacc.c  */
-#line 71 "..\\..\\src\\bvhconv.y"
+#line 71 "..\\..\\bvhparser\\bvhconv.y"
     { PCX.storetableline((yyvsp[(1) - (1)].I)); }
     break;
 
@@ -1819,7 +1819,7 @@ yyreturn:
 
 
 /* Line 2055 of yacc.c  */
-#line 73 "..\\..\\src\\bvhconv.y"
+#line 73 "..\\..\\bvhparser\\bvhconv.y"
 
 
 // offsetspec: OFFSET FLOAT FLOAT FLOAT { setcurrentoffset($2,%$3,$4); }
