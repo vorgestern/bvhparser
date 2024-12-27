@@ -8,6 +8,7 @@ extern struct parsercontext {
     int framenum {0};
     double framesep {0};
     unsigned nextchannel {0};
+    bool mixlexeroutput {false};
     int linenum;
     void pushjoint(const char name[]), popjoint();
     void endsite();

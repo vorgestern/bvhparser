@@ -10,7 +10,7 @@ void dumphumanoid_x3d(const Hierarchy&, SegmentForms),
      dumpmotiontable_x3d(const Hierarchy&, const MotionTable&),
      dumpmotionroutes_x3d(const Hierarchy&);
 
-void output_x3d(const Hierarchy&H, const MotionTable&M, const OutputOptions&opt)
+void output_x3d(const Hierarchy&H, const MotionTable&M, double totaltime, const OutputOptions&opt)
 {
     const auto B=compute_boundingbox(H, M);
     const auto d=B.bmax-B.bmin;
@@ -45,7 +45,7 @@ void output_x3d(const Hierarchy&H, const MotionTable&M, const OutputOptions&opt)
     }
     dumphumanoid_x3d(H, opt.segmentshape);
     dumpmotiontable_x3d(H, M);
-    printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", opt.totaltime);
+    printf("\n<TimeSensor DEF='T' loop='true' cycleInterval='%g'/>", totaltime);
     if (M.size()>0) dumpmotionroutes_x3d(H);
     printf("\n</Scene>\n</X3D>\n");
 }

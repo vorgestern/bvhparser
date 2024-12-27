@@ -1,6 +1,6 @@
 
 #include <string>
-#include <bvhhelp.h>
+#include <parser.h>
 #include <parsercontext.h>
 #include "bvhconv.h"
 
@@ -50,6 +50,7 @@ void parsercontext::setcurrentoffset(double x, double y, double z)
 
 void parsercontext::parserfinished()
 {
+    Scene->totaltime=framesep*(framenum+1);
 }
 
 // =========================================
@@ -68,8 +69,6 @@ int parsercontext::scanmotionline(const char pad[])
 }
 
 void parsercontext::storetableline(unsigned columns){ Scene->M.push_back(Scene->BVHLine); }
-
-// =========================================
 
 unsigned parsercontext::reservechannels(unsigned channels)
 {
