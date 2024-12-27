@@ -1056,7 +1056,7 @@ case 16:
 /* rule 16 can match eol */
 YY_RULE_SETUP
 #line 52 "..\\..\\src\\bvhconv.l"
-{ LCX.linenum++; }
+{ PCX.linenum++; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP

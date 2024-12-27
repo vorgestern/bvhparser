@@ -20,7 +20,6 @@ int yyparse();
 extern FILE*xxin;
 
 static BVHScene MyScene;
-lexercontext LCX;
 parsercontext PCX {&MyScene};
 
 int xxlex();
@@ -98,7 +97,7 @@ extern "C" int xxwrap(){ return 1; }
 
 void yyerror(char const*s)
 {
-    fprintf(stderr, "\n[Line linenum %d] >>>>>> %s\n", LCX.linenum, s);
+    fprintf(stderr, "\n[Line linenum %d] >>>>>> %s\n", PCX.linenum, s);
 }
 
 void ateof(){}

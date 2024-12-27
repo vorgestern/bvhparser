@@ -48,7 +48,7 @@ Zrotation { yylval.I=ZROTATION; ASNONE(ZROTATION); }
 MOTION { BEGIN(animationtable); ASNONE(MOTION); }
 
 <*>{WS}+ {}
-<*>{WS}*{NL} { LCX.linenum++; }
+<*>{WS}*{NL} { PCX.linenum++; }
 \{ { ASNONE(OPENBRACE); }
 \} { ASNONE(CLOSEBRACE); }
 \* { ASNONE(ASTERISK); }
