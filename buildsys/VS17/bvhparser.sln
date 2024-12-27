@@ -9,16 +9,26 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bvhparser", "bvhparser.vcxp
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{717C8FD3-49DF-4205-8869-80A18DA516A3}.Debug|x64.ActiveCfg = Debug|x64
+		{717C8FD3-49DF-4205-8869-80A18DA516A3}.Debug|x64.Build.0 = Debug|x64
 		{717C8FD3-49DF-4205-8869-80A18DA516A3}.Debug|x86.ActiveCfg = Debug|Win32
 		{717C8FD3-49DF-4205-8869-80A18DA516A3}.Debug|x86.Build.0 = Debug|Win32
+		{717C8FD3-49DF-4205-8869-80A18DA516A3}.Release|x64.ActiveCfg = Release|x64
+		{717C8FD3-49DF-4205-8869-80A18DA516A3}.Release|x64.Build.0 = Release|x64
 		{717C8FD3-49DF-4205-8869-80A18DA516A3}.Release|x86.ActiveCfg = Release|Win32
 		{717C8FD3-49DF-4205-8869-80A18DA516A3}.Release|x86.Build.0 = Release|Win32
+		{C7462764-9E29-4F0C-ABA5-2D29AA0B7B5B}.Debug|x64.ActiveCfg = Debug|x64
+		{C7462764-9E29-4F0C-ABA5-2D29AA0B7B5B}.Debug|x64.Build.0 = Debug|x64
 		{C7462764-9E29-4F0C-ABA5-2D29AA0B7B5B}.Debug|x86.ActiveCfg = Debug|Win32
 		{C7462764-9E29-4F0C-ABA5-2D29AA0B7B5B}.Debug|x86.Build.0 = Debug|Win32
+		{C7462764-9E29-4F0C-ABA5-2D29AA0B7B5B}.Release|x64.ActiveCfg = Release|x64
+		{C7462764-9E29-4F0C-ABA5-2D29AA0B7B5B}.Release|x64.Build.0 = Release|x64
 		{C7462764-9E29-4F0C-ABA5-2D29AA0B7B5B}.Release|x86.ActiveCfg = Release|Win32
 		{C7462764-9E29-4F0C-ABA5-2D29AA0B7B5B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
