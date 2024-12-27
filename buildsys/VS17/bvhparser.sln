@@ -5,7 +5,7 @@ VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bvhtox3d", "bvhtox3d.vcxproj", "{717C8FD3-49DF-4205-8869-80A18DA516A3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "parser", "parser.vcxproj", "{C7462764-9E29-4F0C-ABA5-2D29AA0B7B5B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bvhparser", "bvhparser.vcxproj", "{C7462764-9E29-4F0C-ABA5-2D29AA0B7B5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

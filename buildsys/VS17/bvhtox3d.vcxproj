@@ -41,7 +41,7 @@
     <ClCompile Include="..\..\bvhtox3d\x3d.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="parser.vcxproj">
+    <ProjectReference Include="bvhparser.vcxproj">
       <Project>{c7462764-9e29-4f0c-aba5-2d29aa0b7b5b}</Project>
     </ProjectReference>
   </ItemGroup>

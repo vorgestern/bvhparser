@@ -32,7 +32,7 @@
 
   <ImportGroup Label="PropertySheets">
     <Import Project="UseGlm.props" />
-    <Import Project="parser.props" />
+    <Import Project="bvhparser.props" />
   </ImportGroup>
 
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
