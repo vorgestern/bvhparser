@@ -1,5 +1,5 @@
 
-bvhparser
+bvhtox3d
 b/*
 
 *.exe
@@ -10,5 +10,5 @@ buildsys/VS17/.vs
 buildsys/VS17/*.user
 buildsys/VS17/Release
 buildsys/VS17/Debug
-buildsys/VS17/bvhparser
+buildsys/VS17/bvhtox3d
 buildsys/VS17/parser
