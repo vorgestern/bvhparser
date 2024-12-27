@@ -1,8 +1,5 @@
 
 #include <string>
-#include <vector>
-#include <bvhhelp.h>
-#include <parsercontext.h>
 #include "bvhconv.h"
 
 using namespace std;
@@ -29,31 +26,4 @@ void dumptoken(int u)
 
             I(TABLELINE)
     }
-}
-
-// =========================================
-
-int parsercontext::scanmotionline(const char pad[])
-{
-    int offset=0, nr=0;
-    double value=0;
-    Scene->BVHLine.clear();
-    while (1==sscanf(pad+offset, "%lg%n", &value, &nr))
-    {
-        Scene->BVHLine.push_back(value);
-        offset+=nr;
-    } 
-    return Scene->BVHLine.size();
-}
-
-void parsercontext::storetableline(unsigned columns){ Scene->M.push_back(Scene->BVHLine); }
-
-// =========================================
-
-static unsigned nextchannel=0;
-unsigned reservechannels(unsigned channels)
-{
-    unsigned n=nextchannel;
-    nextchannel+=channels;
-    return n;
 }

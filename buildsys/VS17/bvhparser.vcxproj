@@ -58,6 +58,7 @@
     <ClCompile Include="..\..\src\hanimjoint.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\output.cpp" />
+    <ClCompile Include="..\..\src\parsercontext.cpp" />
     <ClCompile Include="..\..\src\tools.cpp" />
     <ClCompile Include="..\..\src\x3d.cpp" />
   </ItemGroup>

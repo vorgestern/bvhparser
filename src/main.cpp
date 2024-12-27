@@ -1,13 +1,13 @@
 
-#include <string_view>
-#include <vector>
 #include <filesystem>
 #include <bvhhelp.h>
 #include <parsercontext.h>
-#include "bvhconv.h"
 
 using namespace std;
 using fspath=filesystem::path;
+
+void dumphumanoid_bb(const Hierarchy&);
+void dumphumanoid_txt(const Hierarchy&);
 
 // https://github.com/g-truc/glm.git
 // https://en.wikipedia.org/wiki/Biovision_Hierarchy
@@ -72,6 +72,16 @@ int main(int argc, const char*argv[])
         case OutputType::fftext:
         {
             rc=yyparse();
+            if (rc==0)
+            {
+                Opts.totaltime=PCX.framesep*(PCX.framenum+1);
+                switch (func)
+                {
+                    case OutputType::fftext: dumphumanoid_txt(PCX.Scene->H); break;
+                    case OutputType::ffboundingbox: dumphumanoid_bb(PCX.Scene->H); break;
+                    default: output_x3d(PCX.Scene->H, PCX.Scene->M, Opts); break;
+                }
+            }
             break;
         }
 
@@ -101,59 +111,3 @@ void yyerror(char const*s)
 }
 
 void ateof(){}
-
-void parsercontext::pushjoint(const char name[])
-{
-    if (mylog) printf("\n%*sjoint %s {", 2*jointlevel, "", name);
-    Scene->H.emplace_back(jointlevel);
-    if (name!=nullptr && name[0]!=0) Scene->H.back().setname(name);
-    jointlevel++;
-}
-
-void parsercontext::popjoint()
-{
-    jointlevel--;
-    if (mylog) printf("\n%*s}", 2*jointlevel, "");
-}
-
-void parsercontext::endsite()
-{
-    if (mylog) printf("\n%*s endsite", 2*jointlevel, "");
-}
-
-static unsigned char channelcode(unsigned c)
-{
-    return c-XPOSITION<3?'X'+c-XPOSITION : c-XROTATION<3?'x'+c-XROTATION : '?';
-}
-
-void parsercontext::setcurrentchannels(unsigned c0, unsigned c1, unsigned c2)
-{
-    if (Scene->H.size()>0) Scene->H.back().setchannels(channelcode(c0),channelcode(c1),channelcode(c2));
-    else fprintf(stderr, "\nFehler: channelspec ohne offenen joint");
-}
-
-void parsercontext::setcurrentchannels(unsigned c0, unsigned c1, unsigned c2, unsigned c3, unsigned c4, unsigned c5)
-{
-    if (Scene->H.size()>0) Scene->H.back().setchannels(channelcode(c0),channelcode(c1),channelcode(c2),channelcode(c3),channelcode(c4),channelcode(c5));
-    else fprintf(stderr, "\nFehler: channelspec ohne offenen joint");
-}
-
-void parsercontext::setcurrentoffset(double x, double y, double z)
-{
-    if (Scene->H.size()>0) Scene->H.back().offset={x,y,z};
-    else fprintf(stderr, "\nFehler: offsetspec ohne offenen joint");
-}
-
-void dumphumanoid_bb(const Hierarchy&);
-void dumphumanoid_txt(const Hierarchy&);
-
-void parsercontext::parserfinished()
-{
-    Opts.totaltime=PCX.framesep*(PCX.framenum+1);
-    switch (func)
-    {
-        case OutputType::fftext: dumphumanoid_txt(Scene->H); break;
-        case OutputType::ffboundingbox: dumphumanoid_bb(Scene->H); break;
-        default: output_x3d(Scene->H, Scene->M, Opts); break;
-    }
-}

@@ -37,18 +37,18 @@ bool hanimjoint::hasrotationchannels()const
     return false;
 }
 
-void hanimjoint::setchannels(unsigned char c0, unsigned char c1, unsigned char c2)
+void hanimjoint::setchannels(unsigned start, unsigned char c0, unsigned char c1, unsigned char c2)
 {
     channelnum=3;
     channels[0]=c0; channels[1]=c1; channels[2]=c2;
-    firstchannelindex=reservechannels(3);
+    firstchannelindex=start;
 }
 
-void hanimjoint::setchannels(unsigned char c0, unsigned char c1, unsigned char c2, unsigned char c3, unsigned char c4, unsigned char c5)
+void hanimjoint::setchannels(unsigned start, unsigned char c0, unsigned char c1, unsigned char c2, unsigned char c3, unsigned char c4, unsigned char c5)
 {
     channelnum=6;
     channels[0]=c0; channels[1]=c1; channels[2]=c2; channels[3]=c3; channels[4]=c4; channels[5]=c5;
-    firstchannelindex=reservechannels(6);
+    firstchannelindex=start;
 }
 
 void hanimjoint::getpositionindexes(int index[])const

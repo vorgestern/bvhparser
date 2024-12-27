@@ -39,8 +39,8 @@ public:
     glm::dvec3 offset;
     hanimjoint(unsigned level1=0): channelnum(0), level(level1), firstchannelindex(0xffffffff), offset({0,0,0}){}
     unsigned char operator[](int n)const{ return n<0?0:n<(int)channelnum?channels[n]:0; }
-    void setchannels(unsigned char c0, unsigned char c1, unsigned char c2);
-    void setchannels(unsigned char c0, unsigned char c1, unsigned char c2, unsigned char c3, unsigned char c4, unsigned char c5);
+    void setchannels(unsigned start, unsigned char c0, unsigned char c1, unsigned char c2);
+    void setchannels(unsigned start, unsigned char c0, unsigned char c1, unsigned char c2, unsigned char c3, unsigned char c4, unsigned char c5);
     void setname(const char name[]);
     void dumpmotiontables_x3d(const MotionTable&)const;
     void dumpmotionroutes_x3d()const;
@@ -61,7 +61,6 @@ void compute_traces(std::vector<glm::dvec3>&, const Hierarchy&, const MotionLine
 bbox compute_boundingbox(const Hierarchy&, const MotionTable&);
 
 void dumptoken(int token);
-unsigned reservechannels(unsigned numchannels);
 
 glm::dvec4 toaxisangle(const glm::dmat4&);
 
