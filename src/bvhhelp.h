@@ -8,6 +8,13 @@ using MotionLine=std::vector<double>;
 using MotionTable=std::vector<MotionLine>;
 using Hierarchy=std::vector<hanimjoint>;
 
+struct BVHScene
+{
+    Hierarchy H;
+    MotionTable M;
+    MotionLine BVHLine;
+};
+
 // Represent a joint (or root) of the model.
 // The parser creates a list of objects of this type.
 class hanimjoint
@@ -39,9 +46,6 @@ public:
     void dumpmotionroutes_x3d()const;
     glm::dmat4 gettransform(const MotionLine&)const;
 };
-
-extern MotionTable BVHMotion;
-extern Hierarchy BVHHumanoid;
 
 struct OutputOptions
 {

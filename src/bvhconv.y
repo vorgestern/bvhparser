@@ -26,7 +26,7 @@
 %type <D> number
 %%
 
-input: HIERARCHY startroot root MOTION framenumspec frametimespec motiontable { parserfinished(); }
+input: HIERARCHY startroot root MOTION framenumspec frametimespec motiontable { PCX.parserfinished(); }
 
 startroot: ROOT { PCX.pushjoint($1); }
 
@@ -51,10 +51,10 @@ endsite: endsitespec { PCX.popjoint(); PCX.endsite(); }
 
 endsitespec: ENDSITE { PCX.pushjoint(nullptr); }
 
-offsetspec: OFFSET number number number { setcurrentoffset($2,$3,$4); }
+offsetspec: OFFSET number number number { PCX.setcurrentoffset($2,$3,$4); }
 
-channels: CHANNELS channelspec channelspec channelspec { setcurrentchannels($2,$3,$4); }
-        | CHANNELS channelspec channelspec channelspec channelspec channelspec channelspec { setcurrentchannels($2,$3,$4,$5,$6,$7); }
+channels: CHANNELS channelspec channelspec channelspec { PCX.setcurrentchannels($2,$3,$4); }
+        | CHANNELS channelspec channelspec channelspec channelspec channelspec channelspec { PCX.setcurrentchannels($2,$3,$4,$5,$6,$7); }
 channelspec: XPOSITION {}
            | YPOSITION {}
            | ZPOSITION {}
@@ -68,7 +68,7 @@ number: INT {}
 motiontable: /* */ {}
            | tableline motiontable {}
 
-tableline: TABLELINE { storetableline($1); }
+tableline: TABLELINE { PCX.storetableline($1); }
 
 %%
 

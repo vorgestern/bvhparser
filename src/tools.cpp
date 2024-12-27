@@ -33,21 +33,20 @@ void dumptoken(int u)
 
 // =========================================
 
-static MotionLine BVHLine;
-int scanmotionline(const char pad[])
+int parsercontext::scanmotionline(const char pad[])
 {
-    BVHLine.clear();
     int offset=0, nr=0;
     double value=0;
+    Scene->BVHLine.clear();
     while (1==sscanf(pad+offset, "%lg%n", &value, &nr))
     {
-        BVHLine.push_back(value);
+        Scene->BVHLine.push_back(value);
         offset+=nr;
     } 
-    return BVHLine.size();
+    return Scene->BVHLine.size();
 }
 
-void storetableline(unsigned columns){ BVHMotion.push_back(BVHLine); }
+void parsercontext::storetableline(unsigned columns){ Scene->M.push_back(Scene->BVHLine); }
 
 // =========================================
 

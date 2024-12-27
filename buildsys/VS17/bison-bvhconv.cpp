@@ -1408,7 +1408,7 @@ yyreduce:
         case 2:
 /* Line 1792 of yacc.c  */
 #line 29 "..\\..\\src\\bvhconv.y"
-    { parserfinished(); }
+    { PCX.parserfinished(); }
     break;
 
   case 3:
@@ -1504,19 +1504,19 @@ yyreduce:
   case 18:
 /* Line 1792 of yacc.c  */
 #line 54 "..\\..\\src\\bvhconv.y"
-    { setcurrentoffset((yyvsp[(2) - (4)].D),(yyvsp[(3) - (4)].D),(yyvsp[(4) - (4)].D)); }
+    { PCX.setcurrentoffset((yyvsp[(2) - (4)].D),(yyvsp[(3) - (4)].D),(yyvsp[(4) - (4)].D)); }
     break;
 
   case 19:
 /* Line 1792 of yacc.c  */
 #line 56 "..\\..\\src\\bvhconv.y"
-    { setcurrentchannels((yyvsp[(2) - (4)].I),(yyvsp[(3) - (4)].I),(yyvsp[(4) - (4)].I)); }
+    { PCX.setcurrentchannels((yyvsp[(2) - (4)].I),(yyvsp[(3) - (4)].I),(yyvsp[(4) - (4)].I)); }
     break;
 
   case 20:
 /* Line 1792 of yacc.c  */
 #line 57 "..\\..\\src\\bvhconv.y"
-    { setcurrentchannels((yyvsp[(2) - (7)].I),(yyvsp[(3) - (7)].I),(yyvsp[(4) - (7)].I),(yyvsp[(5) - (7)].I),(yyvsp[(6) - (7)].I),(yyvsp[(7) - (7)].I)); }
+    { PCX.setcurrentchannels((yyvsp[(2) - (7)].I),(yyvsp[(3) - (7)].I),(yyvsp[(4) - (7)].I),(yyvsp[(5) - (7)].I),(yyvsp[(6) - (7)].I),(yyvsp[(7) - (7)].I)); }
     break;
 
   case 21:
@@ -1582,7 +1582,7 @@ yyreduce:
   case 31:
 /* Line 1792 of yacc.c  */
 #line 71 "..\\..\\src\\bvhconv.y"
-    { storetableline((yyvsp[(1) - (1)].I)); }
+    { PCX.storetableline((yyvsp[(1) - (1)].I)); }
     break;
 
 

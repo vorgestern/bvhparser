@@ -19,8 +19,9 @@ static OutputOptions Opts {0, SegmentForms::cylinder, true, true};
 int yyparse();
 extern FILE*xxin;
 
+static BVHScene MyScene;
 lexercontext LCX;
-parsercontext PCX;
+parsercontext PCX {&MyScene};
 
 int xxlex();
 
@@ -69,7 +70,11 @@ int main(int argc, const char*argv[])
     {
         case OutputType::ffregular:
         case OutputType::ffmix:
-        case OutputType::fftext: rc=yyparse(); break;
+        case OutputType::fftext:
+        {
+            rc=yyparse();
+            break;
+        }
 
         case OutputType::fflexeroutput:
         {
@@ -98,14 +103,11 @@ void yyerror(char const*s)
 
 void ateof(){}
 
-Hierarchy BVHHumanoid;
-MotionTable BVHMotion;
-
 void parsercontext::pushjoint(const char name[])
 {
     if (mylog) printf("\n%*sjoint %s {", 2*jointlevel, "", name);
-    BVHHumanoid.emplace_back(jointlevel);
-    if (name!=nullptr && name[0]!=0) BVHHumanoid.back().setname(name);
+    Scene->H.emplace_back(jointlevel);
+    if (name!=nullptr && name[0]!=0) Scene->H.back().setname(name);
     jointlevel++;
 }
 
@@ -125,34 +127,34 @@ static unsigned char channelcode(unsigned c)
     return c-XPOSITION<3?'X'+c-XPOSITION : c-XROTATION<3?'x'+c-XROTATION : '?';
 }
 
-void setcurrentchannels(unsigned c0, unsigned c1, unsigned c2)
+void parsercontext::setcurrentchannels(unsigned c0, unsigned c1, unsigned c2)
 {
-    if (BVHHumanoid.size()>0) BVHHumanoid.back().setchannels(channelcode(c0),channelcode(c1),channelcode(c2));
+    if (Scene->H.size()>0) Scene->H.back().setchannels(channelcode(c0),channelcode(c1),channelcode(c2));
     else fprintf(stderr, "\nFehler: channelspec ohne offenen joint");
 }
 
-void setcurrentchannels(unsigned c0, unsigned c1, unsigned c2, unsigned c3, unsigned c4, unsigned c5)
+void parsercontext::setcurrentchannels(unsigned c0, unsigned c1, unsigned c2, unsigned c3, unsigned c4, unsigned c5)
 {
-    if (BVHHumanoid.size()>0) BVHHumanoid.back().setchannels(channelcode(c0),channelcode(c1),channelcode(c2),channelcode(c3),channelcode(c4),channelcode(c5));
+    if (Scene->H.size()>0) Scene->H.back().setchannels(channelcode(c0),channelcode(c1),channelcode(c2),channelcode(c3),channelcode(c4),channelcode(c5));
     else fprintf(stderr, "\nFehler: channelspec ohne offenen joint");
 }
 
-void setcurrentoffset(double x, double y, double z)
+void parsercontext::setcurrentoffset(double x, double y, double z)
 {
-    if (BVHHumanoid.size()>0) BVHHumanoid.back().offset={x,y,z};
+    if (Scene->H.size()>0) Scene->H.back().offset={x,y,z};
     else fprintf(stderr, "\nFehler: offsetspec ohne offenen joint");
 }
 
 void dumphumanoid_bb(const Hierarchy&);
 void dumphumanoid_txt(const Hierarchy&);
 
-void parserfinished()
+void parsercontext::parserfinished()
 {
     Opts.totaltime=PCX.framesep*(PCX.framenum+1);
     switch (func)
     {
-        case OutputType::fftext: dumphumanoid_txt(BVHHumanoid); break;
-        case OutputType::ffboundingbox: dumphumanoid_bb(BVHHumanoid); break;
-        default: output_x3d(BVHHumanoid, BVHMotion, Opts); break;
+        case OutputType::fftext: dumphumanoid_txt(Scene->H); break;
+        case OutputType::ffboundingbox: dumphumanoid_bb(Scene->H); break;
+        default: output_x3d(Scene->H, Scene->M, Opts); break;
     }
 }
