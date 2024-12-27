@@ -16,7 +16,6 @@ extern struct parsercontext {
     void setcurrentchannels(unsigned, unsigned, unsigned, unsigned, unsigned, unsigned);
     void setcurrentoffset(double, double, double);
     void parserfinished();
-    void storetableline(unsigned columns);
-    int scanmotionline(const char[]);
+    void storetableline(const char[]);
     unsigned reservechannels(unsigned numchannels);
 } PCX;

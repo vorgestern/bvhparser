@@ -143,10 +143,11 @@ typedef union YYSTYPE
     int I;
     double D;
     char S[1000];
+    char*P;
 
 
 /* Line 387 of yacc.c  */
-#line 150 "bison-bvhconv.cpp"
+#line 151 "bison-bvhconv.cpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -174,7 +175,7 @@ int yyparse ();
 /* Copy the second part of user declarations.  */
 
 /* Line 390 of yacc.c  */
-#line 178 "bison-bvhconv.cpp"
+#line 179 "bison-bvhconv.cpp"
 
 #ifdef short
 # undef short
@@ -476,10 +477,10 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    29,    29,    31,    33,    34,    36,    37,    39,    40,
-      41,    43,    44,    46,    48,    49,    50,    52,    54,    56,
-      57,    58,    59,    60,    61,    62,    63,    65,    66,    68,
-      69,    71
+       0,    31,    31,    33,    35,    36,    38,    39,    41,    42,
+      43,    45,    46,    48,    50,    51,    52,    54,    56,    58,
+      59,    60,    61,    62,    63,    64,    65,    67,    68,    70,
+      71,    73
 };
 #endif
 
@@ -1407,187 +1408,187 @@ yyreduce:
     {
         case 2:
 /* Line 1792 of yacc.c  */
-#line 29 "..\\..\\parser\\bvhconv.y"
+#line 31 "..\\..\\parser\\bvhconv.y"
     { PCX.parserfinished(); }
     break;
 
   case 3:
 /* Line 1792 of yacc.c  */
-#line 31 "..\\..\\parser\\bvhconv.y"
+#line 33 "..\\..\\parser\\bvhconv.y"
     { PCX.pushjoint((yyvsp[(1) - (1)].S)); }
     break;
 
   case 4:
 /* Line 1792 of yacc.c  */
-#line 33 "..\\..\\parser\\bvhconv.y"
+#line 35 "..\\..\\parser\\bvhconv.y"
     { PCX.popjoint(); }
     break;
 
   case 5:
 /* Line 1792 of yacc.c  */
-#line 34 "..\\..\\parser\\bvhconv.y"
+#line 36 "..\\..\\parser\\bvhconv.y"
     { PCX.popjoint(); }
     break;
 
   case 6:
 /* Line 1792 of yacc.c  */
-#line 36 "..\\..\\parser\\bvhconv.y"
+#line 38 "..\\..\\parser\\bvhconv.y"
     { PCX.framenum=(yyvsp[(1) - (1)].I); }
     break;
 
   case 7:
 /* Line 1792 of yacc.c  */
-#line 37 "..\\..\\parser\\bvhconv.y"
+#line 39 "..\\..\\parser\\bvhconv.y"
     { PCX.framesep=(yyvsp[(1) - (1)].D); }
     break;
 
   case 8:
 /* Line 1792 of yacc.c  */
-#line 39 "..\\..\\parser\\bvhconv.y"
+#line 41 "..\\..\\parser\\bvhconv.y"
     {}
     break;
 
   case 9:
 /* Line 1792 of yacc.c  */
-#line 40 "..\\..\\parser\\bvhconv.y"
+#line 42 "..\\..\\parser\\bvhconv.y"
     {}
     break;
 
   case 10:
 /* Line 1792 of yacc.c  */
-#line 41 "..\\..\\parser\\bvhconv.y"
+#line 43 "..\\..\\parser\\bvhconv.y"
     {}
     break;
 
   case 11:
 /* Line 1792 of yacc.c  */
-#line 43 "..\\..\\parser\\bvhconv.y"
+#line 45 "..\\..\\parser\\bvhconv.y"
     { PCX.popjoint(); }
     break;
 
   case 12:
 /* Line 1792 of yacc.c  */
-#line 44 "..\\..\\parser\\bvhconv.y"
+#line 46 "..\\..\\parser\\bvhconv.y"
     { PCX.popjoint(); }
     break;
 
   case 13:
 /* Line 1792 of yacc.c  */
-#line 46 "..\\..\\parser\\bvhconv.y"
+#line 48 "..\\..\\parser\\bvhconv.y"
     { PCX.pushjoint((yyvsp[(1) - (1)].S)); }
     break;
 
   case 14:
 /* Line 1792 of yacc.c  */
-#line 48 "..\\..\\parser\\bvhconv.y"
+#line 50 "..\\..\\parser\\bvhconv.y"
     { PCX.popjoint(); PCX.endsite(); }
     break;
 
   case 15:
 /* Line 1792 of yacc.c  */
-#line 49 "..\\..\\parser\\bvhconv.y"
+#line 51 "..\\..\\parser\\bvhconv.y"
     { PCX.popjoint(); PCX.endsite(); }
     break;
 
   case 16:
 /* Line 1792 of yacc.c  */
-#line 50 "..\\..\\parser\\bvhconv.y"
+#line 52 "..\\..\\parser\\bvhconv.y"
     { PCX.popjoint(); PCX.endsite(); }
     break;
 
   case 17:
 /* Line 1792 of yacc.c  */
-#line 52 "..\\..\\parser\\bvhconv.y"
+#line 54 "..\\..\\parser\\bvhconv.y"
     { PCX.pushjoint(nullptr); }
     break;
 
   case 18:
 /* Line 1792 of yacc.c  */
-#line 54 "..\\..\\parser\\bvhconv.y"
+#line 56 "..\\..\\parser\\bvhconv.y"
     { PCX.setcurrentoffset((yyvsp[(2) - (4)].D),(yyvsp[(3) - (4)].D),(yyvsp[(4) - (4)].D)); }
     break;
 
   case 19:
 /* Line 1792 of yacc.c  */
-#line 56 "..\\..\\parser\\bvhconv.y"
+#line 58 "..\\..\\parser\\bvhconv.y"
     { PCX.setcurrentchannels((yyvsp[(2) - (4)].I),(yyvsp[(3) - (4)].I),(yyvsp[(4) - (4)].I)); }
     break;
 
   case 20:
 /* Line 1792 of yacc.c  */
-#line 57 "..\\..\\parser\\bvhconv.y"
+#line 59 "..\\..\\parser\\bvhconv.y"
     { PCX.setcurrentchannels((yyvsp[(2) - (7)].I),(yyvsp[(3) - (7)].I),(yyvsp[(4) - (7)].I),(yyvsp[(5) - (7)].I),(yyvsp[(6) - (7)].I),(yyvsp[(7) - (7)].I)); }
     break;
 
   case 21:
 /* Line 1792 of yacc.c  */
-#line 58 "..\\..\\parser\\bvhconv.y"
+#line 60 "..\\..\\parser\\bvhconv.y"
     {}
     break;
 
   case 22:
 /* Line 1792 of yacc.c  */
-#line 59 "..\\..\\parser\\bvhconv.y"
+#line 61 "..\\..\\parser\\bvhconv.y"
     {}
     break;
 
   case 23:
 /* Line 1792 of yacc.c  */
-#line 60 "..\\..\\parser\\bvhconv.y"
+#line 62 "..\\..\\parser\\bvhconv.y"
     {}
     break;
 
   case 24:
 /* Line 1792 of yacc.c  */
-#line 61 "..\\..\\parser\\bvhconv.y"
+#line 63 "..\\..\\parser\\bvhconv.y"
     {}
     break;
 
   case 25:
 /* Line 1792 of yacc.c  */
-#line 62 "..\\..\\parser\\bvhconv.y"
+#line 64 "..\\..\\parser\\bvhconv.y"
     {}
     break;
 
   case 26:
 /* Line 1792 of yacc.c  */
-#line 63 "..\\..\\parser\\bvhconv.y"
+#line 65 "..\\..\\parser\\bvhconv.y"
     {}
     break;
 
   case 27:
 /* Line 1792 of yacc.c  */
-#line 65 "..\\..\\parser\\bvhconv.y"
+#line 67 "..\\..\\parser\\bvhconv.y"
     {}
     break;
 
   case 28:
 /* Line 1792 of yacc.c  */
-#line 66 "..\\..\\parser\\bvhconv.y"
+#line 68 "..\\..\\parser\\bvhconv.y"
     {}
     break;
 
   case 29:
 /* Line 1792 of yacc.c  */
-#line 68 "..\\..\\parser\\bvhconv.y"
+#line 70 "..\\..\\parser\\bvhconv.y"
     {}
     break;
 
   case 30:
 /* Line 1792 of yacc.c  */
-#line 69 "..\\..\\parser\\bvhconv.y"
+#line 71 "..\\..\\parser\\bvhconv.y"
     {}
     break;
 
   case 31:
 /* Line 1792 of yacc.c  */
-#line 71 "..\\..\\parser\\bvhconv.y"
-    { PCX.storetableline((yyvsp[(1) - (1)].I)); }
+#line 73 "..\\..\\parser\\bvhconv.y"
+    { PCX.storetableline((yyvsp[(1) - (1)].P)); }
     break;
 
 
 /* Line 1792 of yacc.c  */
-#line 1591 "bison-bvhconv.cpp"
+#line 1592 "bison-bvhconv.cpp"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1819,7 +1820,7 @@ yyreturn:
 
 
 /* Line 2055 of yacc.c  */
-#line 73 "..\\..\\parser\\bvhconv.y"
+#line 75 "..\\..\\parser\\bvhconv.y"
 
 
 // offsetspec: OFFSET FLOAT FLOAT FLOAT { setcurrentoffset($2,%$3,$4); }

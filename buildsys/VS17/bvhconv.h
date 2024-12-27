@@ -83,10 +83,11 @@ typedef union YYSTYPE
     int I;
     double D;
     char S[1000];
+    char*P;
 
 
 /* Line 2058 of yacc.c  */
-#line 90 "bvhconv.h"
+#line 91 "bvhconv.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

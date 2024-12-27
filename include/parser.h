@@ -45,7 +45,6 @@ struct BVHScene
 {
     Hierarchy H;
     MotionTable M;
-    MotionLine BVHLine;
     double totaltime {0};
 };
 

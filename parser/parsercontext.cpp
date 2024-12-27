@@ -55,20 +55,18 @@ void parsercontext::parserfinished()
 
 // =========================================
 
-int parsercontext::scanmotionline(const char pad[])
+void parsercontext::storetableline(const char pad[])
 {
     int offset=0, nr=0;
     double value=0;
-    Scene->BVHLine.clear();
+    MotionLine BVHLine;
     while (1==sscanf(pad+offset, "%lg%n", &value, &nr))
     {
-        Scene->BVHLine.push_back(value);
+        BVHLine.push_back(value);
         offset+=nr;
     } 
-    return Scene->BVHLine.size();
+    Scene->M.push_back(BVHLine);
 }
-
-void parsercontext::storetableline(unsigned columns){ Scene->M.push_back(Scene->BVHLine); }
 
 unsigned parsercontext::reservechannels(unsigned channels)
 {
