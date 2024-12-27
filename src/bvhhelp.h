@@ -16,8 +16,6 @@ struct bbox { glm::dvec3 bmin, bmax; };
 void compute_traces(std::vector<glm::dvec3>&, const Hierarchy&, const MotionLine&);
 bbox compute_boundingbox(const Hierarchy&, const MotionTable&);
 
-glm::dvec4 toaxisangle(const glm::dmat4&);
-
 void output_x3d(const Hierarchy&, const MotionTable&, double totaltime, const OutputOptions&opt);
 void dumphumanoid_bb(const Hierarchy&);
 void dumphumanoid_txt(const Hierarchy&);

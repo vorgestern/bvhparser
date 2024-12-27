@@ -5,8 +5,17 @@
 #include <bvhhelp.h>
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/gtx/matrix_interpolation.hpp>
 
 using namespace std;
+
+static glm::dvec4 toaxisangle(const glm::dmat4&M)
+{
+    glm::dvec3 myaxis {0,0,1};
+    double myangle=0;
+    glm::axisAngle(M, myaxis, myangle);
+    return {myaxis.x,myaxis.y,myaxis.z,myangle};
+}
 
 void dumphumanoid_x3d(const Hierarchy&Joints, SegmentForms segmentshape)
 {
