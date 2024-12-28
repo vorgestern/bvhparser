@@ -153,6 +153,7 @@ void dump_flat(const Hierarchy&H)
 
 void dumphumanoid_txt(const Hierarchy&JOINTS)
 {
+    int jointindex=0;
     for (const auto&J: JOINTS)
     {
         switch (type(J))
@@ -160,7 +161,7 @@ void dumphumanoid_txt(const Hierarchy&JOINTS)
             case jtype::root:
             case jtype::joint:
             {
-                auto k=printf("\n%*s", 4*level(J), "");
+                auto k=printf("\n%2d %2d %*s", jointindex, parent(J), 4*level(J), "");
                 k+=printf("%s", name(J));
                 const unsigned m1=channelnum(J);
                 if (m1>0)
@@ -182,6 +183,7 @@ void dumphumanoid_txt(const Hierarchy&JOINTS)
                 break;
             }
         }
+        ++jointindex;
     }
     printf("\n");
     dump_flat(JOINTS);

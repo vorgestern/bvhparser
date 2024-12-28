@@ -1,21 +1,28 @@
 
 #include <string>
+#include <vector>
 #include <parser.h>
 #include <parsercontext.h>
 #include "bvhconv.h"
 
 using namespace std;
 
+static vector<int>HStack;
+static int jointindex=-1;
+
 void parsercontext::pushjoint(const char name[])
 {
     if (mylog) printf("\n%*sjoint %s {", 2*jointlevel, "", name);
-    Scene->H.emplace_back(jointlevel);
+    if (Scene->H.size()==0){ HStack.clear(); jointindex=0; }
+    Scene->H.emplace_back(HStack.size()>0?HStack.back():-1, jointlevel);
+    HStack.push_back(jointindex++);
     if (name!=nullptr && name[0]!=0) Scene->H.back().setname(name);
     jointlevel++;
 }
 
 void parsercontext::popjoint()
 {
+    if (HStack.size()>0) HStack.pop_back();
     jointlevel--;
     if (mylog) printf("\n%*s}", 2*jointlevel, "");
 }
