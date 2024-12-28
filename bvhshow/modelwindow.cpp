@@ -4,9 +4,15 @@
 #include <FL/gl.h> // for gl_texture_reset()
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <parser.h>
 #include "flshow.h"
 
 using namespace std;
+using namespace glm;
+
+extern BVHScene*LoadedScene;
+
+function<void()>rendermodel=[](){ glDrawArrays(GL_LINE_STRIP, 0, 7); };
 
 static const char*mkvertexshadersource()
 {
@@ -176,9 +182,9 @@ void ModelWindow::draw(void)
         {
             // prog.setposition(0,0);
             // fmtoutput("draw sonst %u (%d %d %d)\n", prog.progname, prog.positionUniform, prog.colourAttribute, prog.positionAttribute);
-            const float dist=7;
+            const float dist=357;
             static float azim=0.2;
-            azim+=0.12;
+            azim+=0.02;
             const float x0=0, y0=2, z0=dist;
             glm::vec3 eye {x0*cos(azim)+z0*sin(azim), y0, -x0*sin(azim)+cos(azim)*dist}, center {0,1,0}, up {0,1,0};
             glm::mat4
@@ -186,7 +192,30 @@ void ModelWindow::draw(void)
                 V=glm::lookAt(eye, center, up);
             glUniformMatrix4fv(prog.UnifProjection, 1, GL_FALSE, &P[0][0]);
             glUniformMatrix4fv(prog.UnifViewMatrix, 1, GL_FALSE, &V[0][0]);
-            glDrawArrays(GL_LINE_STRIP, 0, 7);
+
+            // =================================================
+
+            if (LoadedScene!=nullptr)
+            {
+                auto K=flatten(LoadedScene->H);
+                delete LoadedScene;
+                LoadedScene=nullptr;
+                vector<GLfloat>VertexData(8*K.size(), 0.0);
+                unsigned j=0;
+                for (auto&k: K)
+                {
+                    VertexData[8*j]=k[0];
+                    VertexData[8*j+1]=k[1];
+                    VertexData[8*j+2]=k[2];
+                    VertexData[8*j+3]=k[3];
+                    VertexData[8*j+4]=VertexData[8*j+5]=VertexData[8*j+6]=VertexData[8*j+7]=1;
+                    ++j;
+                }
+                glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
+                glBufferData(GL_ARRAY_BUFFER, VertexData.size()*4, &VertexData[0], GL_STATIC_DRAW);
+                rendermodel=[num=K.size()](){ glDrawArrays(GL_POINTS, 0, num); };
+            }
+            rendermodel();
         }
     }
     Fl_Gl_Window::draw();

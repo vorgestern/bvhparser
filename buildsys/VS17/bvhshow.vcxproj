@@ -106,6 +106,11 @@
   <ItemGroup>
     <ClInclude Include="..\..\bvhshow\bvhshow.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="bvhparser.vcxproj">
+      <Project>{c7462764-9e29-4f0c-aba5-2d29aa0b7b5b}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

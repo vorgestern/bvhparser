@@ -10,7 +10,10 @@
 #include <FL/Fl_File_Chooser.H>
 #include <FL/Fl_Gl_Window.H>
 #include <GL/glew.h>
+#include <parser.h>
 #include "flshow.h"
+
+BVHScene*LoadedScene=nullptr;
 
 struct {
     Fl_Text_Display*textwidget {nullptr};
@@ -39,6 +42,11 @@ static void cbbuttons(Fl_Widget*widget, void*ctx)
         while (GE.fileselect->visible()) Fl::wait();
         const int count=GE.fileselect->count();
         for (int i=1; i<=count&&GE.fileselect->value(i); i++) fmtoutput("%d/%d '%s'\n", i, count, GE.fileselect->value(i));
+        if (count==1)
+        {
+            LoadedScene=parse(GE.fileselect->value(1));
+            fmtoutput("Parsed Scene %p\n", LoadedScene);
+        }
     }
     else fmtoutput("Run callback for %s\n", str);
 }
@@ -48,11 +56,10 @@ int main(int argc, char**argv)
     Fl_File_Icon::load_system_icons();
     Fl::use_high_res_GL(1);
 
-    GE.fileselect=new Fl_File_Chooser(".", "*", Fl_File_Chooser::SINGLE, "Fl_File_Chooser Test");
+    GE.fileselect=new Fl_File_Chooser(".", "*", Fl_File_Chooser::SINGLE, "Select bvh file");
     // GE.fileselect->callback(fc_callback);
 
     Fl_Window*topwin=new Fl_Window(800, 300);
-    // auto*glwin=NewGlWindow(0, 0, 450, 300);
     auto*glwin=NewModelWindow(0, 0, 450, 300);
     auto*g=new Fl_Window(450,0,500,300);
     if (true)
