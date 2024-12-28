@@ -41,11 +41,15 @@ static void cbbuttons(Fl_Widget*widget, void*ctx)
         GE.fileselect->show();
         while (GE.fileselect->visible()) Fl::wait();
         const int count=GE.fileselect->count();
-        for (int i=1; i<=count&&GE.fileselect->value(i); i++) fmtoutput("%d/%d '%s'\n", i, count, GE.fileselect->value(i));
-        if (count==1)
+        if (count>0)
         {
-            LoadedScene=parse(GE.fileselect->value(1));
-            fmtoutput("Parsed Scene %p\n", LoadedScene);
+            std::string filename=GE.fileselect->value(1);
+            // for (int i=1; i<=count&&GE.fileselect->value(i); i++) fmtoutput("%d/%d '%s'\n", i, count, GE.fileselect->value(i));
+            if (!filename.empty())
+            {
+                LoadedScene=parse(filename.c_str());
+                fmtoutput("Parsed Scene '%s'\n==> %p\n", filename.c_str(), LoadedScene);
+            }
         }
     }
     else fmtoutput("Run callback for %s\n", str);
@@ -53,6 +57,7 @@ static void cbbuttons(Fl_Widget*widget, void*ctx)
 
 int main(int argc, char**argv)
 {
+    setvbuf(stdout, nullptr, _IONBF, 0);
     Fl_File_Icon::load_system_icons();
     Fl::use_high_res_GL(1);
 
