@@ -3,8 +3,11 @@
 #include <string_view>
 #include <vector>
 #include <bvhhelp.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace std;
+using namespace glm;
 
 void dumphumanoid_x3d(const Hierarchy&, SegmentForms),
      dumpmotiontable_x3d(const Hierarchy&, const MotionTable&);
@@ -87,6 +90,65 @@ void dumphumanoid_bb(const Hierarchy&H)
 #endif
 }
 
+void dump_flat(const Hierarchy&H)
+{
+    printf("dump_flat\n");
+    struct Seg { vec4 a, b; jtype typ; int lev; string name; };
+    vector<Seg>Segments;
+
+    struct XFS { mat4 XF; int lev; };
+    vector<XFS>XFStack;
+    XFStack.push_back({glm::identity<mat4>(),-1});
+    struct { int lev; } merk={-1};
+    for (auto&J: H)
+    {
+        const int lev=level(J);
+        if (lev>merk.lev+1)
+        {
+            printf("\nTSNH 1\n");
+        }
+        else if (lev==merk.lev+1)
+        {
+            const auto offset=vec3(J.offset);
+            const auto von=XFStack.back().XF*vec4 {0,0,0,1};
+            const auto neu=XFStack.back().XF*vec4(J.offset, 1);
+            Segments.push_back({von, neu, type(J), lev, name(J)});
+            auto XFNeu=translate(XFStack.back().XF, offset);
+            XFStack.push_back({XFNeu, lev});
+            merk.lev=lev;
+        }
+        else if (lev<merk.lev)
+        {
+            while (lev<merk.lev)
+            {
+                XFStack.pop_back();
+                --merk.lev;
+            }
+            const auto offset=vec3(J.offset);
+            const auto von=XFStack.back().XF*vec4 {0,0,0,1};
+            const auto neu=XFStack.back().XF*vec4(offset, 1);
+            Segments.push_back({von, neu, type(J), lev, name(J)});
+            // Replace the transform of the sibling with our own. 
+            auto XFNeu=translate(XFStack.back().XF, vec3(offset));
+            XFStack.back()={XFNeu, lev};
+        }
+        else printf("\nTSNH\n");
+    }
+
+    const auto num=Segments.size();
+    printf("VertexData %zu joints:\n", num);
+    auto j=0u;
+    char types[]="rje";
+    for (auto S: Segments)
+    {
+        char A[100], B[100];
+        sprintf(A, "{%.3g, %.3g, %.3g}", S.a[0], S.a[1], S.a[2]);
+        sprintf(B, "{%.3g, %.3g, %.3g}", S.b[0], S.b[1], S.b[2]);
+        printf("\n%3u %c %d\t%24s\t%24s %s", j, types[(int)S.typ], S.lev, A, B, S.name.c_str());
+        ++j;
+    }
+}
+
 // ==================================================
 
 void dumphumanoid_txt(const Hierarchy&JOINTS)
@@ -122,4 +184,5 @@ void dumphumanoid_txt(const Hierarchy&JOINTS)
         }
     }
     printf("\n");
+    dump_flat(JOINTS);
 }
