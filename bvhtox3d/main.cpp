@@ -52,7 +52,3 @@ int main(int argc, const char*argv[])
 
     return 0;
 }
-
-extern "C" int xxwrap(){ return 1; }
-
-void ateof(){}

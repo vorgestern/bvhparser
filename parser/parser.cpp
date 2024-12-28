@@ -119,3 +119,7 @@ void lexdump(string_view filename)
     delete PCX.Scene;
     PCX.Scene=nullptr;
 }
+
+extern "C" int xxwrap(){ return 1; }
+
+void ateof(){}
