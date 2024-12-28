@@ -7,6 +7,7 @@
 using namespace std;
 
 int xxlex();
+void xxrestart(FILE*);
 
 parsercontext PCX;
 extern FILE*xxin;
@@ -20,6 +21,7 @@ BVHScene*parse(string_view filename, bool mix)
 {
     // Lexer and parser have to handle linefeeds of both descriptions
     // anyway to work on Linux and Windows, so open the file explicitly in binary mode.
+//  if (xxin!=nullptr){ xxrestart(xxin); xxin=nullptr; }
     if (!filename.empty())
     {
         xxin=fopen(filename.data(), "rb");
@@ -29,6 +31,7 @@ BVHScene*parse(string_view filename, bool mix)
             exit(1);
         }
     }
+    else xxin=stdin;
     PCX.Scene=new BVHScene;
     PCX.framenum=0;
     PCX.framesep=0;

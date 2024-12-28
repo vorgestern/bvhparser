@@ -979,7 +979,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 33 "..\\..\\parser\\bvhconv.l"
-{ ASNONE(HIERARCHY); }
+{ BEGIN(0); ASNONE(HIERARCHY); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
@@ -1115,7 +1115,7 @@ YY_RULE_SETUP
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(animationtable):
 #line 66 "..\\..\\parser\\bvhconv.l"
-{ ateof(); return 0; }
+{ BEGIN(0); ateof(); return 0; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP

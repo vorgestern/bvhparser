@@ -29,7 +29,7 @@ NL                \n|\r\n
 
 %%
 
-HIERARCHY { ASNONE(HIERARCHY); }
+HIERARCHY { BEGIN(0); ASNONE(HIERARCHY); }
 ROOT{WS}+{ID} { const char*s=yytext+5; while (*s!=0 && isspace(*s)) s++; strcpy(yylval.S, s); return ROOT; }
 JOINT{WS}+{ID} { const char*s=yytext+6; while (*s!=0 && isspace(*s)) s++; strcpy(yylval.S, s); return JOINT; }
 End{WS}+Site { ASNONE(ENDSITE); }
@@ -62,6 +62,6 @@ MOTION { BEGIN(animationtable); ASNONE(MOTION); }
 <animationtable>^.*{NL} { yylval.P=yytext; return TABLELINE; }
 <animationtable>^.* { yylval.P=yytext; return TABLELINE; }
 
-<<EOF>> { ateof(); return 0; }
+<<EOF>> { BEGIN(0); ateof(); return 0; }
 
 %%
