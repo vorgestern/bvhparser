@@ -186,6 +186,10 @@ void dumphumanoid_txt(const Hierarchy&JOINTS)
         ++jointindex;
     }
     printf("\n");
+    auto Segments=segments(JOINTS);
+    printf("%zu Segments:\n", Segments.size());
+    for (auto s: Segments) printf("\t%u %u\n", s.first, s.second);
+    printf("========\n");
     dump_flat(JOINTS);
     auto X=flatten(JOINTS);
     unsigned j=0;

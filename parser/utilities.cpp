@@ -56,3 +56,15 @@ vector<vec3>flatten(const Hierarchy&H)
     }
     return Segments;
 }
+
+vector<pair<unsigned,unsigned>> segments(const Hierarchy&H)
+{
+    vector<pair<unsigned,unsigned>> Segments;
+    unsigned j=0;
+    for (auto&J: H)
+    {
+        if (const int p=parent(J); p>=0) Segments.push_back({p,j});
+        ++j;
+    }
+    return Segments;
+}
