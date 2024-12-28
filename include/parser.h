@@ -48,3 +48,5 @@ struct BVHScene
 
 void lexdump(std::string_view filename);
 BVHScene*parse(std::string_view, bool mixlexeroutput=false);
+
+std::vector<glm::vec3>flatten(const Hierarchy&);

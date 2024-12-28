@@ -185,4 +185,13 @@ void dumphumanoid_txt(const Hierarchy&JOINTS)
     }
     printf("\n");
     dump_flat(JOINTS);
+    auto X=flatten(JOINTS);
+    unsigned j=0;
+    for (auto S: X)
+    {
+        char A[100];
+        sprintf(A, "{%.3g, %.3g, %.3g}", S[0], S[1], S[2]);
+        printf("\n%3u\t%24s", j, A);
+        ++j;
+    }
 }
