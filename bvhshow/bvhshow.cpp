@@ -16,6 +16,7 @@
 BVHScene*LoadedScene=nullptr;
 
 struct {
+    Fl_Window*topwin {nullptr};
     Fl_Text_Display*textwidget {nullptr};
     Fl_File_Chooser*fileselect {nullptr};
 } GE;
@@ -48,7 +49,7 @@ static void cbbuttons(Fl_Widget*widget, void*ctx)
             if (!filename.empty())
             {
                 LoadedScene=parse(filename.c_str());
-                fmtoutput("Parsed Scene '%s'\n==> %p\n", filename.c_str(), LoadedScene);
+                if (LoadedScene!=nullptr) GE.topwin->copy_label(filename.c_str());
             }
         }
     }
@@ -64,7 +65,7 @@ int main(int argc, char**argv)
     GE.fileselect=new Fl_File_Chooser(".", "*", Fl_File_Chooser::SINGLE, "Select bvh file");
     // GE.fileselect->callback(fc_callback);
 
-    Fl_Window*topwin=new Fl_Window(800, 300);
+    GE.topwin=new Fl_Window(800, 300);
     auto*glwin=NewModelWindow(0, 0, 450, 300);
     auto*g=new Fl_Window(450,0,500,300);
     if (true)
@@ -89,9 +90,9 @@ int main(int argc, char**argv)
         b2->callback(cbbuttons, NULL);
     }
     g->end();
-    topwin->end();
-    topwin->resizable(glwin);
-    topwin->label("Model View");
-    topwin->show(argc, argv);
+    GE.topwin->end();
+    GE.topwin->resizable(glwin);
+    GE.topwin->label("Model View");
+    GE.topwin->show(argc, argv);
     Fl::run();
 }
