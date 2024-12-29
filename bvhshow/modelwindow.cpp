@@ -12,6 +12,10 @@ using namespace glm;
 
 extern BVHScene*LoadedScene;
 
+Hierarchy Hier;
+MotionTable Motion;
+vector<pair<unsigned,unsigned>> Segments;
+
 function<void()>rendermodel=[](){ glDrawArrays(GL_LINE_STRIP, 0, 7); };
 
 static const char*mkvertexshadersource()
@@ -195,18 +199,22 @@ void ModelWindow::draw(void)
 
             // =================================================
 
+            static unsigned motionindex=0;
             if (auto LS=LoadedScene; LS!=nullptr)
             {
                 LoadedScene=nullptr;
-                const auto S=segments(LS->H);
-                const auto K=flatten(LS->H);
+                Hier=LS->H;
+                Motion=LS->M;
                 delete LS;
+                motionindex=0;
+                Segments=segments(Hier);
+                const auto K=flatten(Hier, Motion[motionindex]);
                 struct vertex { vec4 pos, color; };
                 static_assert(32==sizeof vertex);
                 vector<vertex>VertexData;
                 unsigned j=0;
                 const vec4 white(1,1,1,1);
-                for (auto&s: S)
+                for (auto&s: Segments)
                 {
                     const auto a=K[s.first], b=K[s.second];
                     VertexData.push_back({vec4(a,1.0), white});
@@ -217,6 +225,27 @@ void ModelWindow::draw(void)
                 glBufferData(GL_ARRAY_BUFFER, VertexData.size()*sizeof vertex, &VertexData[0], GL_STATIC_DRAW);
                 rendermodel=[num=VertexData.size()](){ glDrawArrays(GL_LINES, 0, num); };
             }
+            else if (motionindex+1<Motion.size())
+            {
+                ++motionindex;
+                const auto K=flatten(Hier, Motion[motionindex]);
+                struct vertex { vec4 pos, color; };
+                static_assert(32==sizeof vertex);
+                vector<vertex>VertexData;
+                unsigned j=0;
+                const vec4 white(1,1,1,1);
+                for (auto&s: Segments)
+                {
+                    const auto a=K[s.first], b=K[s.second];
+                    VertexData.push_back({vec4(a,1.0), white});
+                    VertexData.push_back({vec4(b,1.0), white});
+                    ++j;
+                }
+                glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
+                glBufferData(GL_ARRAY_BUFFER, VertexData.size()*sizeof vertex, &VertexData[0], GL_STATIC_DRAW);
+                rendermodel=[num=VertexData.size()](){ glDrawArrays(GL_LINES, 0, num); };
+            }
+            else if (Motion.size()>0) motionindex=0;
             rendermodel();
         }
     }
