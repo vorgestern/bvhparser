@@ -195,25 +195,28 @@ void ModelWindow::draw(void)
 
             // =================================================
 
-            if (LoadedScene!=nullptr)
+            if (auto LS=LoadedScene; LS!=nullptr)
             {
-                auto K=flatten(LoadedScene->H);
-                delete LoadedScene;
                 LoadedScene=nullptr;
-                vector<GLfloat>VertexData(8*K.size(), 0.0);
+                const auto S=segments(LS->H);
+                const auto K=flatten(LS->H);
+                delete LS;
+                LoadedScene=nullptr;
+                struct vertex { vec4 pos, color; };
+                static_assert(32==sizeof vertex);
+                vector<vertex>VertexData;
                 unsigned j=0;
-                for (auto&k: K)
+                const vec4 white(1,1,1,1);
+                for (auto&s: S)
                 {
-                    VertexData[8*j]=k[0];
-                    VertexData[8*j+1]=k[1];
-                    VertexData[8*j+2]=k[2];
-                    VertexData[8*j+3]=k[3];
-                    VertexData[8*j+4]=VertexData[8*j+5]=VertexData[8*j+6]=VertexData[8*j+7]=1;
+                    const auto a=K[s.first], b=K[s.second];
+                    VertexData.push_back({vec4(a,1.0), white});
+                    VertexData.push_back({vec4(b,1.0), white});
                     ++j;
                 }
                 glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
-                glBufferData(GL_ARRAY_BUFFER, VertexData.size()*4, &VertexData[0], GL_STATIC_DRAW);
-                rendermodel=[num=K.size()](){ glDrawArrays(GL_POINTS, 0, num); };
+                glBufferData(GL_ARRAY_BUFFER, VertexData.size()*sizeof vertex, &VertexData[0], GL_STATIC_DRAW);
+                rendermodel=[num=VertexData.size()](){ glDrawArrays(GL_LINES, 0, num); };
             }
             rendermodel();
         }
