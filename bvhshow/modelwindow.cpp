@@ -17,6 +17,7 @@ MotionTable Motion;
 vector<pair<unsigned,unsigned>> Segments;
 
 function<void()>rendermodel=[](){ glDrawArrays(GL_LINE_STRIP, 0, 7); };
+function<void()>renderboundingbox=[](){ glDrawArrays(GL_LINE_STRIP, 0, 10); };
 
 static const char*mkvertexshadersource()
 {
@@ -103,14 +104,24 @@ void proginfo::activate()const
 class ModelWindow: public Fl_Gl_Window
 {
     proginfo prog {};
-    GLuint VAOModel;
-    GLuint VBModel;
+    GLuint VAOModel, VAOBox;
+    GLuint VBModel,  VBBox;
 
 public:
     ModelWindow(int x, int y, int w, int h);
     void draw(void) override;
     int handle(int event) override;
     void reset();
+    void bind_model()const
+    {
+        glBindVertexArray(VAOModel);
+        glBindBuffer(GL_ARRAY_BUFFER, VBModel);
+    }
+    void bind_boundingbox()const
+    {
+        glBindVertexArray(VAOBox);
+        glBindBuffer(GL_ARRAY_BUFFER, VBBox);
+    }
 };
 
 void cbredraw(void*data)
@@ -134,40 +145,67 @@ void ModelWindow::draw(void)
     const auto w=pixel_w(), h=pixel_h();
     if (glewinfo.glversion.first>=3 && !prog)
     {
-        prog=build_program();
-        // fmtoutput("%u build program ==> %u\n", nc, prog.progname);
-        // fmtoutput("draw first %u (%d %d %d)\n", prog.progname, prog.positionUniform, prog.colourAttribute, prog.positionAttribute);
-        glGenVertexArrays(1, &VAOModel); glBindVertexArray(VAOModel);
-        glGenBuffers(1, &VBModel);       glBindBuffer(GL_ARRAY_BUFFER, VBModel);
         #define WE 1,1,1,1
         #define ROT 1,0,0,1
+
+        prog=build_program();
+
+        if (true)
+        {
+            glGenVertexArrays(1, &VAOBox); glBindVertexArray(VAOBox);
+            glGenBuffers(1, &VBBox);       glBindBuffer(GL_ARRAY_BUFFER, VBBox);
+            const float a=20, b=30;
+            const GLfloat VertexData[]=
+            {
+                -a, 0, -a, 1, ROT,
+                -a, 0,  a, 1, ROT,
+                 a, 0,  a, 1, ROT,
+                 a, 0, -a, 1, ROT,
+                -a, 0, -a, 1, ROT,
+                -a, b, -a, 1, ROT,
+                -a, b,  a, 1, ROT,
+                 a, b,  a, 1, ROT,
+                 a, b, -a, 1, ROT,
+                -a, b, -a, 1, ROT,
+            };
+            glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
+            prog.activate();
+        }
+
+        // fmtoutput("%u build program ==> %u\n", nc, prog.progname);
+        // fmtoutput("draw first %u (%d %d %d)\n", prog.progname, prog.positionUniform, prog.colourAttribute, prog.positionAttribute);
+        if (true)
+        {
+            glGenVertexArrays(1, &VAOModel); glBindVertexArray(VAOModel);
+            glGenBuffers(1, &VBModel);       glBindBuffer(GL_ARRAY_BUFFER, VBModel);
 #if 1
-        const GLfloat a=0.2, b=2;
-        const GLfloat VertexData[]=
-        {
-             0, b, 0, 1, ROT,
-            -a, 0,-a, 1, WE,
-            -a, 0, a, 1, WE,
-             0, b, 0, 1, ROT,
-             a, 0,-a, 1, WE,
-             a, 0, a, 1, WE,
-             0, b, 0, 1, ROT
-        };
+            const GLfloat a=0.2, b=2;
+            const GLfloat VertexData[]=
+            {
+                 0, b, 0, 1, ROT,
+                -a, 0,-a, 1, WE,
+                -a, 0, a, 1, WE,
+                 0, b, 0, 1, ROT,
+                 a, 0,-a, 1, WE,
+                 a, 0, a, 1, WE,
+                 0, b, 0, 1, ROT
+            };
 #else
-        const GLfloat a=0.2, b=1.6, z=0;
-        const GLfloat VertexData[]=
-        {
-             0,  0, b, 1, ROT,
-            -a,  a, 0, 1, WE,
-            -a, -a, 0, 1, WE,
-             0,  0, b, 1, ROT,
-             a, -a, 0, 1, WE,
-             a,  a, 0, 1, WE,
-             0,  0, b, 1, ROT
-        };
+            const GLfloat a=0.2, b=1.6, z=0;
+            const GLfloat VertexData[]=
+            {
+                 0,  0, b, 1, ROT,
+                -a,  a, 0, 1, WE,
+                -a, -a, 0, 1, WE,
+                 0,  0, b, 1, ROT,
+                 a, -a, 0, 1, WE,
+                 a,  a, 0, 1, WE,
+                 0,  0, b, 1, ROT
+            };
 #endif
-        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
-        prog.activate();
+            glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
+            prog.activate();
+        }
     }
     else if (!valid())
     {
@@ -244,7 +282,8 @@ void ModelWindow::draw(void)
                 rendermodel=[num=VertexData.size()](){ glDrawArrays(GL_LINES, 0, num); };
             }
             else if (Motion.size()>0) motionindex=0;
-            rendermodel();
+            bind_model(); rendermodel();
+            bind_boundingbox(); renderboundingbox();
         }
     }
     Fl_Gl_Window::draw();
