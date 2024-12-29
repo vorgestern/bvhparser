@@ -258,6 +258,29 @@ void ModelWindow::draw(void)
                 glBindBuffer(GL_ARRAY_BUFFER, VBModel);
                 glBufferData(GL_ARRAY_BUFFER, VertexData.size()*sizeof vertex, &VertexData[0], GL_STATIC_DRAW);
                 rendermodel=[num=VertexData.size()](){ glDrawArrays(GL_LINES, 0, num); };
+
+                if (true)
+                {
+                    const auto [a,b]=boundingbox(Hier, Motion);
+                    const GLfloat VertexData[]=
+                    {
+                        a[0], a[1], a[2], 1, ROT,
+                        a[0], a[1], b[2], 1, ROT,
+                        b[0], a[1], b[2], 1, ROT,
+                        b[0], a[1], a[2], 1, ROT,
+                        a[0], a[1], a[2], 1, ROT,
+                        a[0], b[1], a[2], 1, ROT,
+                        a[0], b[1], b[2], 1, ROT,
+                        b[0], b[1], b[2], 1, ROT,
+                        b[0], b[1], a[2], 1, ROT,
+                        a[0], b[1], a[2], 1, ROT,
+                    };
+
+                    glBindVertexArray(VAOBox);
+                    glBindBuffer(GL_ARRAY_BUFFER, VBBox);
+                    glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
+                    prog.activate();
+                }
             }
             else if (motiondiv<4) ++motiondiv;
             else if (motionindex+1<Motion.size())

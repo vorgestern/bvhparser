@@ -66,3 +66,45 @@ vector<pair<unsigned,unsigned>> segments(const Hierarchy&H)
     }
     return Segments;
 }
+
+pair<vec3,vec3>boundingbox(const Hierarchy&H)
+{
+    const auto K=flatten(H);
+    if (K.size()<1) return {{1,1,1},{-1,-1,-1}};
+    vec3 bmin=K[0], bmax=K[0];
+    for (auto p: K) for (int j=0; j<3; ++j)
+    {
+        if (p[j]<bmin[j]) bmin[j]=p[j];
+        if (p[j]>bmax[j]) bmax[j]=p[j];
+    }
+    return {bmin,bmax};
+}
+
+pair<vec3,vec3>boundingbox(const Hierarchy&H, const MotionLine&L)
+{
+    const auto K=flatten(H, L);
+    if (K.size()<1) return {{1,1,1},{-1,-1,-1}};
+    vec3 bmin=K[0], bmax=K[0];
+    for (auto p: K) for (int j=0; j<3; ++j)
+    {
+        if (p[j]<bmin[j]) bmin[j]=p[j];
+        if (p[j]>bmax[j]) bmax[j]=p[j];
+    }
+    return {bmin,bmax};
+}
+
+pair<vec3,vec3>boundingbox(const Hierarchy&H, const MotionTable&M)
+{
+    if (M.size()<1) return {{1,1,1},{-1,-1,-1}};
+    auto [bmin,bmax]=boundingbox(H,M[0]);
+    for (int k=1; k<M.size(); ++k)
+    {
+        const auto [amin,amax]=boundingbox(H,M[k]);
+        for (int j=0; j<3; ++j)
+        {
+            if (amin[j]<bmin[j]) bmin[j]=amin[j];
+            if (amax[j]>bmax[j]) bmax[j]=amax[j];
+        }
+    }
+    return {bmin,bmax};
+}

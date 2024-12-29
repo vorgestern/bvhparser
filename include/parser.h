@@ -54,3 +54,6 @@ BVHScene*parse(std::string_view, bool mixlexeroutput=false);
 std::vector<glm::vec3>flatten(const Hierarchy&);
 std::vector<glm::vec3>flatten(const Hierarchy&, const MotionLine&);
 std::vector<std::pair<unsigned,unsigned>>segments(const Hierarchy&);
+std::pair<glm::vec3,glm::vec3>boundingbox(const Hierarchy&);
+std::pair<glm::vec3,glm::vec3>boundingbox(const Hierarchy&, const MotionLine&);
+std::pair<glm::vec3,glm::vec3>boundingbox(const Hierarchy&, const MotionTable&);
