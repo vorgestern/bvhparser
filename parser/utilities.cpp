@@ -14,14 +14,9 @@ vector<vec3>flatten(const Hierarchy&H, const MotionLine&M)
 {
     vector<vec3>Segments(H.size());
     vector<mat4>XF(H.size());
-    if (H.size()>0)
+    for (auto j=0u; j<H.size(); ++j)
     {
-        XF[0]=glm::identity<mat4>();
-        Segments[0]=vec3(H[0].offset);
-    }
-    for (auto j=1u; j<H.size(); ++j)
-    {
-        auto K=translate(XF[parent(H[j])], vec3(H[j].offset));
+        auto K=j>0?translate(XF[parent(H[j])], vec3(H[j].offset)):glm::identity<mat4>();
         const auto nc=channelnum(H[j]);
         const auto ci=firstchannel(H[j]);
         for (auto c=0u; c<nc; ++c)
