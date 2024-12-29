@@ -103,8 +103,8 @@ void proginfo::activate()const
 class ModelWindow: public Fl_Gl_Window
 {
     proginfo prog {};
-    GLuint VertexArrayObject;
-    GLuint VertexBuffer;
+    GLuint VAOModel;
+    GLuint VBModel;
 
 public:
     ModelWindow(int x, int y, int w, int h);
@@ -137,12 +137,8 @@ void ModelWindow::draw(void)
         prog=build_program();
         // fmtoutput("%u build program ==> %u\n", nc, prog.progname);
         // fmtoutput("draw first %u (%d %d %d)\n", prog.progname, prog.positionUniform, prog.colourAttribute, prog.positionAttribute);
-        glGenVertexArrays(1, &VertexArrayObject);
-        glBindVertexArray(VertexArrayObject);
-        // fmtoutput("  vao=%u\n", VertexArrayObject);
-        glGenBuffers(1, &VertexBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
-        // fmtoutput("  vb=%u\n", VertexBuffer);
+        glGenVertexArrays(1, &VAOModel); glBindVertexArray(VAOModel);
+        glGenBuffers(1, &VBModel);       glBindBuffer(GL_ARRAY_BUFFER, VBModel);
         #define WE 1,1,1,1
         #define ROT 1,0,0,1
 #if 1
@@ -188,7 +184,7 @@ void ModelWindow::draw(void)
             // fmtoutput("draw sonst %u (%d %d %d)\n", prog.progname, prog.positionUniform, prog.colourAttribute, prog.positionAttribute);
             const float dist=357;
             static float azim=0.2;
-            azim+=0.02;
+            azim+=0.002;
             const float x0=0, y0=2, z0=dist;
             glm::vec3 eye {x0*cos(azim)+z0*sin(azim), y0, -x0*sin(azim)+cos(azim)*dist}, center {0,1,0}, up {0,1,0};
             glm::mat4
@@ -199,7 +195,7 @@ void ModelWindow::draw(void)
 
             // =================================================
 
-            static unsigned motionindex=0;
+            static unsigned motionindex=0, motiondiv=0;
             if (auto LS=LoadedScene; LS!=nullptr)
             {
                 LoadedScene=nullptr;
@@ -221,12 +217,14 @@ void ModelWindow::draw(void)
                     VertexData.push_back({vec4(b,1.0), white});
                     ++j;
                 }
-                glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
+                glBindBuffer(GL_ARRAY_BUFFER, VBModel);
                 glBufferData(GL_ARRAY_BUFFER, VertexData.size()*sizeof vertex, &VertexData[0], GL_STATIC_DRAW);
                 rendermodel=[num=VertexData.size()](){ glDrawArrays(GL_LINES, 0, num); };
             }
+            else if (motiondiv<4) ++motiondiv;
             else if (motionindex+1<Motion.size())
             {
+                motiondiv=0;
                 ++motionindex;
                 const auto K=flatten(Hier, Motion[motionindex]);
                 struct vertex { vec4 pos, color; };
@@ -241,7 +239,7 @@ void ModelWindow::draw(void)
                     VertexData.push_back({vec4(b,1.0), white});
                     ++j;
                 }
-                glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
+                glBindBuffer(GL_ARRAY_BUFFER, VBModel);
                 glBufferData(GL_ARRAY_BUFFER, VertexData.size()*sizeof vertex, &VertexData[0], GL_STATIC_DRAW);
                 rendermodel=[num=VertexData.size()](){ glDrawArrays(GL_LINES, 0, num); };
             }
