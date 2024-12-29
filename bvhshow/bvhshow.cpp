@@ -62,7 +62,7 @@ int main(int argc, char**argv)
     Fl_File_Icon::load_system_icons();
     Fl::use_high_res_GL(1);
 
-    GE.fileselect=new Fl_File_Chooser(".", "*", Fl_File_Chooser::SINGLE, "Select bvh file");
+    GE.fileselect=new Fl_File_Chooser(nullptr, "*", Fl_File_Chooser::SINGLE, "Select bvh file");
     // GE.fileselect->callback(fc_callback);
 
     GE.topwin=new Fl_Window(800, 300);

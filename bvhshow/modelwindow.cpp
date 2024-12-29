@@ -19,6 +19,11 @@ vector<pair<unsigned,unsigned>> Segments;
 function<void()>rendermodel=[](){ glDrawArrays(GL_LINE_STRIP, 0, 7); };
 function<void()>renderboundingbox=[](){ glDrawArrays(GL_LINE_STRIP, 0, 10); };
 
+static struct {
+    float dist, elev, azim;
+    vec3 focus;
+} vp;
+
 static const char*mkvertexshadersource()
 {
     static char pad[512];
@@ -205,6 +210,8 @@ void ModelWindow::draw(void)
 #endif
             glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
             prog.activate();
+            vp.dist=10;
+            vp.azim=0.2;
         }
     }
     else if (!valid())
@@ -220,13 +227,11 @@ void ModelWindow::draw(void)
         {
             // prog.setposition(0,0);
             // fmtoutput("draw sonst %u (%d %d %d)\n", prog.progname, prog.positionUniform, prog.colourAttribute, prog.positionAttribute);
-            const float dist=357;
-            static float azim=0.2;
-            azim+=0.002;
-            const float x0=0, y0=2, z0=dist;
-            glm::vec3 eye {x0*cos(azim)+z0*sin(azim), y0, -x0*sin(azim)+cos(azim)*dist}, center {0,1,0}, up {0,1,0};
+            vp.azim+=0.002;
+            const float x0=0;
+            glm::vec3 eye {x0*cos(vp.azim)+vp.dist*sin(vp.azim), vp.elev, -x0*sin(vp.azim)+cos(vp.azim)*vp.dist}, center {0,1,0}, up {0,1,0};
             glm::mat4
-                P=glm::perspective(0.7f, 1.2f, 0.5f*dist, 2.f*dist),
+                P=glm::perspective(0.7f, 1.2f, 0.5f*vp.dist, 2.f*vp.dist),
                 V=glm::lookAt(eye, center, up);
             glUniformMatrix4fv(prog.UnifProjection, 1, GL_FALSE, &P[0][0]);
             glUniformMatrix4fv(prog.UnifViewMatrix, 1, GL_FALSE, &V[0][0]);
@@ -280,6 +285,9 @@ void ModelWindow::draw(void)
                     glBindBuffer(GL_ARRAY_BUFFER, VBBox);
                     glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
                     prog.activate();
+                    vp.focus=vec3(.5,.5,.5)*(a+b);
+                    vp.elev=b[1];
+                    vp.dist=1.5*glm::length(b-a);
                 }
             }
             else if (motiondiv<4) ++motiondiv;
