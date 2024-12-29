@@ -201,7 +201,6 @@ void ModelWindow::draw(void)
                 const auto S=segments(LS->H);
                 const auto K=flatten(LS->H);
                 delete LS;
-                LoadedScene=nullptr;
                 struct vertex { vec4 pos, color; };
                 static_assert(32==sizeof vertex);
                 vector<vertex>VertexData;

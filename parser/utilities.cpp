@@ -9,50 +9,17 @@ using namespace glm;
 
 vector<vec3>flatten(const Hierarchy&H)
 {
-    vector<vec3>Segments;
-    vector<mat4>XFStack;
-    XFStack.push_back(glm::identity<mat4>());
-    struct { int lev; } merk={-1};
-    for (auto&J: H)
+    vector<vec3>Segments(H.size());
+    vector<mat4>XF(H.size());
+    if (H.size()>0)
     {
-        const int lev=level(J);
-        assert(lev<=merk.lev+1);
-        if (lev==merk.lev+1)
-        {
-            const auto offset=vec3(J.offset);
-            const auto von=XFStack.back()*vec4 {0,0,0,1};
-            const auto neu=XFStack.back()*vec4(J.offset, 1);
-            Segments.push_back(vec3(neu));
-            auto XFNeu=translate(XFStack.back(), offset);
-            XFStack.push_back(XFNeu);
-            merk.lev=lev;
-        }
-        else if (lev==merk.lev)
-        {
-            const auto offset=vec3(J.offset);
-            const auto von=XFStack.back()*vec4 {0,0,0,1};
-            const auto neu=XFStack.back()*vec4(J.offset, 1);
-            Segments.push_back(vec3(neu));
-            auto XFNeu=translate(XFStack.back(), offset);
-            XFStack.back()=XFNeu;
-            merk.lev=lev;
-        }
-        else if (lev<merk.lev)
-        {
-            while (lev<merk.lev)
-            {
-                XFStack.pop_back();
-                --merk.lev;
-            }
-            const auto offset=vec3(J.offset);
-            const auto von=XFStack.back()*vec4 {0,0,0,1};
-            const auto neu=XFStack.back()*vec4(offset, 1);
-            Segments.push_back(vec3(neu));
-            // Replace the transform of the sibling with our own. 
-            auto XFNeu=translate(XFStack.back(), vec3(offset));
-            XFStack.back()=XFNeu;
-        }
-        // else printf("\nTSNH\n");
+        XF[0]=glm::identity<mat4>();
+        Segments[0]=vec3(H[0].offset);
+    }
+    for (auto j=1u; j<H.size(); ++j)
+    {
+        XF[j]=translate(XF[parent(H[j])], vec3(H[j].offset));
+        Segments[j]=vec3(XF[j]*vec4(0,0,0,1));
     }
     return Segments;
 }
