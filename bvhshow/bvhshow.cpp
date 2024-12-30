@@ -13,7 +13,7 @@
 #include <FL/Fl_Widget.h>
 #include <GL/glew.h>
 #include <parser.h>
-#include "flshow.h"
+#include "bvhshow.h"
 
 BVHScene*LoadedScene=nullptr;
 FrameInfo frameinfo;

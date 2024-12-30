@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <parser.h>
-#include "flshow.h"
+#include "bvhshow.h"
 
 using namespace std;
 using namespace glm;

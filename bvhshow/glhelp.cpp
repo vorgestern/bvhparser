@@ -2,7 +2,7 @@
 #include <FL/Fl_Gl_Window.H>
 #include <GL/glew.h>
 #include <FL/gl.h> // for gl_texture_reset()
-#include "flshow.h"
+#include "bvhshow.h"
 
 using namespace std;
 
