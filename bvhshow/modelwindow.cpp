@@ -66,12 +66,7 @@ struct proginfo
     GLuint progname {0};
     GLint UnifProjection {-1}, UnifViewMatrix {-2};
     GLint AttrPosition {-1}, AttrColour {-1};
-
-//  proginfo(){}
-//  proginfo(GLuint p, GLint upos, GLint acolor, GLint aposition):
-//      progname(p), positionUniform(upos), colourAttribute(acolor), positionAttribute(aposition){}
     operator bool()const{ return progname!=0; }
-//  void setposition(GLfloat x, GLfloat y) const;
     void activate()const;
 };
 
@@ -88,12 +83,6 @@ static proginfo build_program()
         glGetAttribLocation(p, "XPosition"), glGetAttribLocation(p, "XColor")
     };
 }
-
-// void proginfo::setposition(GLfloat x, GLfloat y)const
-// {
-//     const GLfloat p[]={x,y};
-//     glUniform2fv(positionUniform, 1, p);
-// }
 
 void proginfo::activate()const
 {
@@ -168,13 +157,10 @@ void ModelWindow::draw(void)
             prog.activate();
         }
 
-        // fmtoutput("%u build program ==> %u\n", nc, prog.progname);
-        // fmtoutput("draw first %u (%d %d %d)\n", prog.progname, prog.positionUniform, prog.colourAttribute, prog.positionAttribute);
         if (true)
         {
             glGenVertexArrays(1, &VAOModel); glBindVertexArray(VAOModel);
             glGenBuffers(1, &VBModel);       glBindBuffer(GL_ARRAY_BUFFER, VBModel);
-#if 1
             const GLfloat a=0.2, b=2;
             const GLfloat VertexData[]=
             {
@@ -186,19 +172,6 @@ void ModelWindow::draw(void)
                  a, 0, a, 1, WE,
                  0, b, 0, 1, ROT
             };
-#else
-            const GLfloat a=0.2, b=1.6, z=0;
-            const GLfloat VertexData[]=
-            {
-                 0,  0, b, 1, ROT,
-                -a,  a, 0, 1, WE,
-                -a, -a, 0, 1, WE,
-                 0,  0, b, 1, ROT,
-                 a, -a, 0, 1, WE,
-                 a,  a, 0, 1, WE,
-                 0,  0, b, 1, ROT
-            };
-#endif
             glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
             prog.activate();
             vp.dist=10;
@@ -211,13 +184,10 @@ void ModelWindow::draw(void)
     }
     if (true)
     {
-        // fmtoutput("%u %s\n", nc, "draw");
         glClearColor(0.08f, 0.08f, 0.08f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         if (prog)
         {
-            // prog.setposition(0,0);
-            // fmtoutput("draw sonst %u (%d %d %d)\n", prog.progname, prog.positionUniform, prog.colourAttribute, prog.positionAttribute);
             vp.azim+=0.002;
             const float x0=0;
             glm::vec3 eye {x0*cos(vp.azim)+vp.dist*sin(vp.azim), vp.elev, -x0*sin(vp.azim)+cos(vp.azim)*vp.dist}, center {0,1,0}, up {0,1,0};
@@ -310,7 +280,6 @@ int ModelWindow::handle(int event)
     static bool firstcall=true;
     if (firstcall && event==FL_SHOW && shown())
     {
-        // fmtoutput("handle %d first\n", event);
         firstcall=false;
         make_current();
         initialise_glew();
