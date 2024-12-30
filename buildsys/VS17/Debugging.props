@@ -24,6 +24,7 @@
     <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
         <ClCompile>
             <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <Optimization>MaxSpeed</Optimization>
             <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
         </ClCompile>
         <Link>
