@@ -8,6 +8,12 @@ extern struct GlewInfo
     std::pair<int,int> glewversion, glversion, glslversion; // major, minor
 } glewinfo;
 
+extern struct FrameInfo
+{
+    unsigned f, num;
+    double dt;
+} frameinfo;
+
 void initialise_glew();
 void fmtoutput(const char*format, ...);
 Fl_Window*NewGlWindow(int x, int y, int w, int h);

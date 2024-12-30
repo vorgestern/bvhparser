@@ -9,16 +9,22 @@
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/Fl_Gl_Window.H>
+#include <FL/Fl_Progress.H>
+#include <FL/Fl_Widget.h>
 #include <GL/glew.h>
 #include <parser.h>
 #include "flshow.h"
 
 BVHScene*LoadedScene=nullptr;
+FrameInfo frameinfo;
 
 struct {
     Fl_Window*topwin {nullptr};
+    Fl_Widget*modelview {nullptr};
     Fl_Text_Display*textwidget {nullptr};
     Fl_File_Chooser*fileselect {nullptr};
+    Fl_Progress*progress {nullptr};
+    char pad_progress[100];
 } GE;
 
 void fmtoutput(const char*format, ...)
@@ -33,6 +39,17 @@ void fmtoutput(const char*format, ...)
     GE.textwidget->redraw();
 }
 
+static void cbredraw(void*data)
+{
+    static unsigned nc=0;
+    GE.modelview->draw();
+    frameinfo.f=(frameinfo.f+1)%frameinfo.num;
+    sprintf(GE.pad_progress, "%u/%u", frameinfo.f+1, frameinfo.num);
+    GE.progress->label(GE.pad_progress);
+    GE.progress->value(frameinfo.f);
+    Fl::repeat_timeout(frameinfo.dt, cbredraw, data);
+}
+
 static void cbbuttons(Fl_Widget*widget, void*ctx)
 {
     auto str=ctx==nullptr?widget->label():(const char*)ctx;
@@ -45,15 +62,31 @@ static void cbbuttons(Fl_Widget*widget, void*ctx)
         if (count>0)
         {
             std::string filename=GE.fileselect->value(1);
-            // for (int i=1; i<=count&&GE.fileselect->value(i); i++) fmtoutput("%d/%d '%s'\n", i, count, GE.fileselect->value(i));
             if (!filename.empty())
             {
                 LoadedScene=parse(filename.c_str());
-                if (LoadedScene!=nullptr) GE.topwin->copy_label(filename.c_str());
+                if (LoadedScene!=nullptr)
+                {
+                    frameinfo.dt=LoadedScene->totaltime/LoadedScene->M.size();
+                    frameinfo.num=LoadedScene->M.size();
+                    frameinfo.f=0;
+                    GE.topwin->copy_label(filename.c_str());
+                    GE.progress->minimum(0);
+                    GE.progress->maximum(frameinfo.num);
+                    fmtoutput("Duration: %.1f sec (%.0f fps)\n", LoadedScene->totaltime, 1.0/frameinfo.dt);
+                    Fl::repeat_timeout(0.1, cbredraw, (void*)GE.topwin);
+                }
             }
         }
     }
     else fmtoutput("Run callback for %s\n", str);
+}
+
+static void cbtop(Fl_Widget*widget, void*)
+{
+    fmtoutput("cbtop called.\n");
+    // Prevent ModelView from using pointer after release?
+    ((Fl_Window*)widget)->hide();
 }
 
 int main(int argc, char**argv)
@@ -66,7 +99,15 @@ int main(int argc, char**argv)
     // GE.fileselect->callback(fc_callback);
 
     GE.topwin=new Fl_Window(800, 300);
-    auto*glwin=NewModelWindow(0, 0, 450, 300);
+    GE.topwin->callback(cbtop);
+    GE.modelview=NewModelWindow(0, 0, 450, 280);
+    GE.progress=new Fl_Progress(0, 280, 450, 20);
+    GE.progress->minimum(0);
+    GE.progress->maximum(100);
+    GE.progress->color(0x88888800);               // background color
+    GE.progress->selection_color(0x4444ff00);     // progress bar color
+    GE.progress->labelcolor(FL_WHITE);            // text color
+    GE.progress->label("0/100");                  // update progress bar's label
     auto*g=new Fl_Window(450,0,500,300);
     if (true)
     {
@@ -91,8 +132,8 @@ int main(int argc, char**argv)
     }
     g->end();
     GE.topwin->end();
-    GE.topwin->resizable(glwin);
-    GE.topwin->label("Model View");
+    GE.topwin->resizable(GE.modelview);
+    GE.topwin->label("(No File) BVHShow");
     GE.topwin->show(argc, argv);
     Fl::run();
 }

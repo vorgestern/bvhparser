@@ -12,12 +12,12 @@ using namespace glm;
 
 extern BVHScene*LoadedScene;
 
-Hierarchy Hier;
-MotionTable Motion;
-vector<pair<unsigned,unsigned>> Segments;
+static Hierarchy Hier;
+static MotionTable Motion;
+static vector<pair<unsigned,unsigned>> Segments;
 
-function<void()>rendermodel=[](){ glDrawArrays(GL_LINE_STRIP, 0, 7); };
-function<void()>renderboundingbox=[](){ glDrawArrays(GL_LINE_STRIP, 0, 10); };
+static function<void()>rendermodel=[](){ glDrawArrays(GL_LINE_STRIP, 0, 7); };
+static function<void()>renderboundingbox=[](){ glDrawArrays(GL_LINE_STRIP, 0, 10); };
 
 static struct {
     float dist, elev, azim;
@@ -129,15 +129,6 @@ public:
     }
 };
 
-void cbredraw(void*data)
-{
-    static unsigned nc=0;
-    auto*W=reinterpret_cast<ModelWindow*>(data);
-    // fmtoutput("redraw %p %u\n", W, ++nc);
-    W->draw();
-    Fl::repeat_timeout(1.0/60.0, cbredraw, data);
-}
-
 ModelWindow::ModelWindow(int x, int y, int w, int h): Fl_Gl_Window(x, y, w, h)
 {
     mode(FL_RGB8|FL_DOUBLE|FL_OPENGL3);
@@ -238,16 +229,14 @@ void ModelWindow::draw(void)
 
             // =================================================
 
-            static unsigned motionindex=0, motiondiv=0;
             if (auto LS=LoadedScene; LS!=nullptr)
             {
                 LoadedScene=nullptr;
                 Hier=LS->H;
                 Motion=LS->M;
                 delete LS;
-                motionindex=0;
                 Segments=segments(Hier);
-                const auto K=flatten(Hier, Motion[motionindex]);
+                const auto K=flatten(Hier, Motion[frameinfo.f]);
                 struct vertex { vec4 pos, color; };
                 static_assert(32==sizeof vertex);
                 vector<vertex>VertexData;
@@ -290,12 +279,9 @@ void ModelWindow::draw(void)
                     vp.dist=1.5*glm::length(b-a);
                 }
             }
-            else if (motiondiv<4) ++motiondiv;
-            else if (motionindex+1<Motion.size())
+            else if (frameinfo.f<frameinfo.num)
             {
-                motiondiv=0;
-                ++motionindex;
-                const auto K=flatten(Hier, Motion[motionindex]);
+                const auto K=flatten(Hier, Motion[frameinfo.f]);
                 struct vertex { vec4 pos, color; };
                 static_assert(32==sizeof vertex);
                 vector<vertex>VertexData;
@@ -312,7 +298,6 @@ void ModelWindow::draw(void)
                 glBufferData(GL_ARRAY_BUFFER, VertexData.size()*sizeof vertex, &VertexData[0], GL_STATIC_DRAW);
                 rendermodel=[num=VertexData.size()](){ glDrawArrays(GL_LINES, 0, num); };
             }
-            else if (Motion.size()>0) motionindex=0;
             bind_model(); rendermodel();
             bind_boundingbox(); renderboundingbox();
         }
@@ -330,8 +315,6 @@ int ModelWindow::handle(int event)
         make_current();
         initialise_glew();
         if (glewinfo.glversion.first<3) mode(mode() & ~FL_OPENGL3);
-        Fl::repeat_timeout(1.0, cbredraw, (void*)this);
-        // fmtoutput("start redraw %p\n", this);
     }
     return Fl_Gl_Window::handle(event);
 }
