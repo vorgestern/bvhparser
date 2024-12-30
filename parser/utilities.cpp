@@ -97,7 +97,7 @@ pair<vec3,vec3>boundingbox(const Hierarchy&H, const MotionTable&M)
 {
     if (M.size()<1) return {{1,1,1},{-1,-1,-1}};
     auto [bmin,bmax]=boundingbox(H,M[0]);
-    for (int k=1; k<M.size(); ++k)
+    for (auto k=1u; k<M.size(); ++k)
     {
         const auto [amin,amax]=boundingbox(H,M[k]);
         for (int j=0; j<3; ++j)
