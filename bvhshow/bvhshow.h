@@ -2,6 +2,7 @@
 #include <tuple>
 #include <vector>
 #include <string_view>
+#include <parser.h>
 
 extern struct GlewInfo
 {
@@ -10,6 +11,10 @@ extern struct GlewInfo
 
 extern struct FrameInfo
 {
+    enum {stop, initmodel, initdummy, animatedummy, animatemodel} state;
+    Hierarchy Hier;
+    MotionTable Motion;
+    std::vector<std::pair<unsigned,unsigned>> Segments;
     unsigned f, num;
     double dt;
 } frameinfo;
