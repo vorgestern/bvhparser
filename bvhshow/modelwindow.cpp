@@ -14,8 +14,19 @@ static function<void()>renderboundingbox=[](){ glDrawArrays(GL_LINE_STRIP, 0, 10
 
 static struct {
     float dist, elev, azim;
-    vec3 focus;
+    vec3 focus, bbcenter;
 } vp;
+
+vec3 lerp(vec3 start, vec3 end, float t)
+{
+    if (t<0) t=0; else if (t>1) t=1;
+    t=t*t*t*t*t;
+    return vec3(
+        start.x + t*(end.x-start.x),
+        start.y + t*(end.y-start.y),
+        start.z + t*(end.z-start.z)
+    );
+}
 
 static const char*mkvertexshadersource()
 {
@@ -180,7 +191,8 @@ public:
             glBindBuffer(GL_ARRAY_BUFFER, VBBox);
             glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
             prog.activate();
-            vp.focus=vec3(.5,.5,.5)*(a+b);
+            vp.bbcenter=vec3(.5,.5,.5)*(a+b);
+            vp.focus=vp.bbcenter;
             vp.elev=b[1];
             vp.dist=1.5*glm::length(b-a);
         }
@@ -204,17 +216,6 @@ public:
     }
     void animatemodel()
     {
-        glClearColor(0.08f, 0.08f, 0.08f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        vp.azim+=0.002;
-        const float x0=0;
-        glm::vec3 eye {x0*cos(vp.azim)+vp.dist*sin(vp.azim), vp.elev, -x0*sin(vp.azim)+cos(vp.azim)*vp.dist}, center {0,1,0}, up {0,1,0};
-        glm::mat4
-            P=glm::perspective(0.7f, 1.2f, 0.5f*vp.dist, 2.f*vp.dist),
-            V=glm::lookAt(eye, center, up);
-        glUniformMatrix4fv(prog.UnifProjection, 1, GL_FALSE, &P[0][0]);
-        glUniformMatrix4fv(prog.UnifViewMatrix, 1, GL_FALSE, &V[0][0]);
-        // =================================================
         if (frameinfo.f<frameinfo.num)
         {
             const auto K=flatten(frameinfo.Hier, frameinfo.Motion[frameinfo.f]);
@@ -233,6 +234,33 @@ public:
             glBindBuffer(GL_ARRAY_BUFFER, VBModel);
             glBufferData(GL_ARRAY_BUFFER, VertexData.size()*sizeof vertex, &VertexData[0], GL_STATIC_DRAW);
             rendermodel=[num=VertexData.size()](){ glDrawArrays(GL_LINES, 0, num); };
+            // =================================================
+            glClearColor(0.08f, 0.08f, 0.08f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+            vp.azim+=0.002;
+            const float x0=0;
+            static vec3 focus_merk, focus_neu;
+            static float tinterp=1;
+            if (length(K[0]-focus_merk)>0.01*vp.dist && tinterp>0.5)
+            {
+                focus_merk=vp.focus;
+                focus_neu={K[0][0], vp.bbcenter[1], K[0][2]};
+                tinterp=1.0/60.0;
+//              fmtoutput("update focus\n");
+            }
+            if (tinterp<1)
+            {
+                vp.focus=lerp(focus_merk, focus_neu, tinterp);
+                tinterp+=1.0/60;
+//              fmtoutput("    %.2f\n", tinterp);
+            }
+            glm::vec3 eye {x0*cos(vp.azim)+vp.dist*sin(vp.azim), vp.elev, -x0*sin(vp.azim)+cos(vp.azim)*vp.dist}, up {0,1,0};
+            glm::mat4
+                P=glm::perspective(0.7f, 1.2f, 0.3f*vp.dist, 2.f*vp.dist),
+                V=glm::lookAt(eye, vp.focus, up);
+            glUniformMatrix4fv(prog.UnifProjection, 1, GL_FALSE, &P[0][0]);
+            glUniformMatrix4fv(prog.UnifViewMatrix, 1, GL_FALSE, &V[0][0]);
+
             bind_model(); rendermodel();
             bind_boundingbox(); renderboundingbox();
         }
