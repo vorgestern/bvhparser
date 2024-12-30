@@ -3,9 +3,11 @@
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
         <OutDir>..\..\</OutDir>
+        <IntDir>$(Configuration)\obj\</IntDir>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'!='Release|x64'">
         <OutDir>$(Configuration)\</OutDir>
+        <IntDir>$(Configuration)\obj\</IntDir>
     </PropertyGroup>
 
 </Project>

@@ -37,7 +37,6 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <IntDir>$(Configuration)\obj\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
@@ -67,7 +66,6 @@
       <ProgramDataBaseFile>flshow.pdb</ProgramDataBaseFile>
       <SubSystem>Windows</SubSystem>
     </Link>
-    <ProjectReference />
   </ItemDefinitionGroup>
 
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -94,7 +92,6 @@
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
-    <ProjectReference />
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\bvhshow\bvhshow.cpp" />
