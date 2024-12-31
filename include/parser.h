@@ -57,3 +57,4 @@ std::vector<std::pair<unsigned,unsigned>>segments(const Hierarchy&);
 std::pair<glm::vec3,glm::vec3>boundingbox(const Hierarchy&);
 std::pair<glm::vec3,glm::vec3>boundingbox(const Hierarchy&, const MotionLine&);
 std::pair<glm::vec3,glm::vec3>boundingbox(const Hierarchy&, const MotionTable&);
+glm::vec3 recenter(const glm::mat4&View, const glm::mat4&Projection, const glm::vec4&viewport, const glm::vec3&modelpoint);
