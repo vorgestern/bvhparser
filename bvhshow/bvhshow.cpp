@@ -96,6 +96,7 @@ static void cbbuttons(Fl_Widget*widget, void*ctx)
                 if (LoadedScene!=nullptr)
                 {
                     fmtoutput("Duration: %.1f sec (%.0f fps)\n", LoadedScene->totaltime, LoadedScene->M.size()/LoadedScene->totaltime);
+                    frameinfo.viewport=glm::vec4 {0,0,450,280};
                     frameinfo.Hier=LoadedScene->H;
                     frameinfo.Segments=segments(frameinfo.Hier);
                     frameinfo.Motion=LoadedScene->M;

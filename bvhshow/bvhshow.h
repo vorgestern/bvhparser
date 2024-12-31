@@ -11,6 +11,7 @@ extern struct GlewInfo
 
 extern struct FrameInfo
 {
+    glm::vec4 viewport;
     enum {stop, initmodel, initdummy, animatedummy, animatemodel} state;
     Hierarchy Hier;
     MotionTable Motion;
