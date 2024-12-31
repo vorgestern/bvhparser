@@ -13,6 +13,7 @@ extern struct FrameInfo
 {
     glm::vec4 viewport;
     enum {stop, initmodel, initdummy, animatedummy, animatemodel} state;
+    enum {run, back, forward} animmode;
     Hierarchy Hier;
     MotionTable Motion;
     std::vector<std::pair<unsigned,unsigned>> Segments;

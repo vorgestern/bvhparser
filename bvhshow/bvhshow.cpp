@@ -4,6 +4,7 @@
 // #include <FL/platform.H>
 // #include <FL/Fl_Window.H>
 // #include <FL/Fl_Text_Buffer.H>
+// #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_File_Icon.H>
 #include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Text_Display.H>
@@ -11,6 +12,7 @@
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_Progress.H>
 #include <FL/Fl_Widget.h>
+#include <FL/Fl_Pack.H>
 #include <GL/glew.h>
 #include "bvhshow.h"
 
@@ -46,6 +48,7 @@ static void cbredraw(void*data)
             GE.progress->label("dummy");
             GE.progress->value(0);
             GE.modelview->draw();
+            Fl::repeat_timeout(frameinfo.dt, cbredraw, data);
             break;
         }
         case frameinfo.initmodel:
@@ -53,30 +56,33 @@ static void cbredraw(void*data)
             GE.progress->label("loading");
             GE.progress->value(0);
             GE.modelview->draw();
+            Fl::repeat_timeout(frameinfo.dt, cbredraw, data);
             break;
         }
         case frameinfo.animatedummy:
         {
             GE.modelview->draw();
+            Fl::repeat_timeout(frameinfo.dt, cbredraw, data);
             break;
         }
         case frameinfo.animatemodel:
         {
-            frameinfo.f=frameinfo.dt>=frameinfo.num?0:(frameinfo.f+1)%frameinfo.num;
+            const int step=frameinfo.animmode==frameinfo.back?-1:1;
+            frameinfo.f=frameinfo.dt>=frameinfo.num?0:(frameinfo.f+step)%frameinfo.num;
             sprintf(GE.pad_progress, "%.1fs %u/%u", frameinfo.f*frameinfo.dt, frameinfo.f+1, frameinfo.num);
             GE.progress->label(GE.pad_progress);
             GE.progress->value(frameinfo.f);
             GE.modelview->draw();
+            if (frameinfo.animmode==frameinfo.run) Fl::repeat_timeout(frameinfo.dt, cbredraw, data);
             break;
         }
         case frameinfo.stop:
         {
-            GE.progress->label("stopped");
-            GE.progress->value(0);
+            // GE.progress->label("stopped");
+            // GE.progress->value(0);
             break;
         }
     }
-    Fl::repeat_timeout(frameinfo.dt, cbredraw, data);
 }
 
 static void cbbuttons(Fl_Widget*widget, void*ctx)
@@ -113,6 +119,18 @@ static void cbbuttons(Fl_Widget*widget, void*ctx)
             }
         }
     }
+    else if (str=="@||")
+    {
+        frameinfo.state=frameinfo.stop;
+        widget->label("@>");
+    }
+    else if (str=="@>")
+    {
+        frameinfo.state=frameinfo.animatemodel;
+        frameinfo.animmode=frameinfo.run;
+        widget->label("@||");
+        Fl::repeat_timeout(frameinfo.dt, cbredraw, &GE.topwin);
+    }
     else fmtoutput("Run callback for %s\n", str);
 }
 
@@ -121,6 +139,22 @@ static void cbtop(Fl_Widget*widget, void*)
     fmtoutput("cbtop called.\n");
     // Prevent ModelView from using pointer after release?
     ((Fl_Window*)widget)->hide();
+}
+
+static void cbtoolbox(Fl_Widget*widget, void*)
+{
+    if (0==strcmp(widget->label(), "@->"))
+    {
+        frameinfo.animmode=frameinfo.forward;
+        frameinfo.state=frameinfo.animatemodel;
+        Fl::repeat_timeout(frameinfo.dt, cbredraw, &GE.topwin);
+    }
+    else if (0==strcmp(widget->label(), "@<-"))
+    {
+        frameinfo.animmode=frameinfo.back;
+        frameinfo.state=frameinfo.animatemodel;
+        Fl::repeat_timeout(frameinfo.dt, cbredraw, &GE.topwin);
+    }
 }
 
 int main(int argc, char**argv)
@@ -161,10 +195,25 @@ int main(int argc, char**argv)
             icon->label(b1);
         }
 
-        Fl_Button*b2=new Fl_Button(150, 250, 200, 50, "Button 2");
+        Fl_Button*b2=new Fl_Button(150, 250, 200, 50, "@||");
         b2->color(FL_FREE_COLOR);
         b2->box(FL_BORDER_BOX);
+        // b2->image(&G_cat);
         b2->callback(cbbuttons, NULL);
+
+        auto*Neu=new Fl_Pack(0,200,100,30);
+        Neu->type(Fl_Pack::HORIZONTAL);
+        Neu->box(FL_UP_FRAME);
+        Neu->spacing(10);
+        Fl_Button*tb0=new Fl_Button(0,0,20,20,"@<-");
+//      tb0->box(FL_FLAT_BOX);
+//      tb0->clear_visible_focus();
+        tb0->callback(cbtoolbox);
+        Fl_Button*tb3=new Fl_Button(0,0,20,20,"@->");
+//      tb3->box(FL_FLAT_BOX);
+//      tb3->clear_visible_focus();
+        tb3->callback(cbtoolbox);
+        Neu->end();
     }
     g->end();
     GE.topwin->end();
