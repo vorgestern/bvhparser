@@ -11,11 +11,18 @@ using namespace glm;
 
 static function<void()>rendermodel=[](){ glDrawArrays(GL_LINE_STRIP, 0, 7); };
 static function<void()>renderboundingbox=[](){ glDrawArrays(GL_LINE_STRIP, 0, 10); };
+static function<void()>rendertrace=[](){ glDrawArrays(GL_LINE_STRIP, 0, 100); };
+
+struct vertex { vec4 pos, color; };
 
 static struct {
     float dist, elev, azim;
     vec3 focus, bbcenter;
 } vp;
+
+static pair<vec3,vec3> bb;
+const size_t tlen=1000;
+static vector<vertex> Trace(tlen);
 
 static const char*mkvertexshadersource()
 {
@@ -93,8 +100,8 @@ void proginfo::activate()const
 class ModelWindow: public Fl_Gl_Window
 {
     proginfo prog {};
-    GLuint VAOModel, VAOBox;
-    GLuint VBModel,  VBBox;
+    GLuint VAOModel, VAOBox, VAOTrace;
+    GLuint VBModel,  VBBox,  VBTrace;
 
 public:
     ModelWindow(int x, int y, int w, int h);
@@ -111,8 +118,28 @@ public:
         glBindVertexArray(VAOBox);
         glBindBuffer(GL_ARRAY_BUFFER, VBBox);
     }
+    void bind_trace()const
+    {
+        glBindVertexArray(VAOTrace);
+        glBindBuffer(GL_ARRAY_BUFFER, VBTrace);
+    }
+    void inittrace()
+    {
+        // static_assert(sizeof Trace==tlen*sizeof vertex);
+        glGenVertexArrays(1, &VAOTrace); glBindVertexArray(VAOTrace);
+        glGenBuffers(1, &VBTrace);       glBindBuffer(GL_ARRAY_BUFFER, VBTrace);
+        for (auto j=0; j<tlen; ++j)
+        {
+            const float k=0.5+j*0.5/100.0;
+            Trace[j]={vec4 {-10+j*20.0/tlen, 0, 0, 1}, vec4 {k,k,k,1}};
+        }
+        glBufferData(GL_ARRAY_BUFFER, tlen*sizeof vertex, &Trace[0], GL_STATIC_DRAW);
+        prog.activate();
+        rendertrace=[num=current](){ glDrawArrays(GL_LINES, 0, 100); };
+    }
     void initdummy()
     {
+        inittrace();
         #define WE 1,1,1,1
         #define ROT 1,0,0,1
         if (true)
@@ -186,6 +213,7 @@ public:
             vp.focus=vp.bbcenter;
             vp.elev=b[1];
             vp.dist=1.5*glm::length(b-a);
+            bb={a,b};
         }
         #undef ROT
     }
@@ -210,7 +238,6 @@ public:
         if (frameinfo.f<frameinfo.num)
         {
             const auto K=flatten(frameinfo.Hier, frameinfo.Motion[frameinfo.f]);
-            struct vertex { vec4 pos, color; };
             static_assert(32==sizeof vertex);
             vector<vertex>VertexData;
             unsigned j=0;
@@ -229,15 +256,30 @@ public:
             glClearColor(0.08f, 0.08f, 0.08f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
             vp.azim+=0.002;
-            if (false)
+            if (true)
             {
                 // This should move vp.focus so that the model remains close to the center of the window.
                 // Does not work yet.
                 const auto pk=Projection*View*vec4(K[0], 1);
                 const auto wo=recenter(View, Projection, frameinfo.viewport, pk);
-                vp.focus=vec3(0.9, 0.9, 0.9)*vp.focus+vec3(0.1, 0.1, 0.1)*wo;
+                // vp.focus=vec3(0.9, 0.9, 0.9)*vp.focus+vec3(0.1, 0.1, 0.1)*wo;
+                const auto focusneu=wo;
                 // printf("%.2f %.2f %.2f\n", wo[0], wo[1], wo[2]);
                 // printf("%.2f %.2f %.2f\n", vp.focus[0], vp.focus[1], vp.focus[2]);
+                if (true)
+                {
+                    static unsigned current=0;
+                    Trace[current]={vec4(focusneu[0],bb.first[1],focusneu[2],1), {1.0,1.0,1.0,1.0}};
+                    for (unsigned j=0; j<tlen; ++j)
+                    {
+                        const float k=1.0-j*0.5/tlen;
+                        Trace[(current+j)%tlen].color=vec4 {k,k,k,1};
+                    }
+                    current=(current+1)%tlen;
+                    glBindBuffer(GL_ARRAY_BUFFER, VBTrace);
+                    glBufferData(GL_ARRAY_BUFFER, tlen*sizeof vertex, &Trace[0], GL_STATIC_DRAW);
+                    rendertrace=[num=current](){ glDrawArrays(GL_POINTS, 0, current); glDrawArrays(GL_POINTS, current, tlen-current); };
+                }
             }
             const float x0=0;
             glm::vec3 eye {x0*cos(vp.azim)+vp.dist*sin(vp.azim), vp.elev, -x0*sin(vp.azim)+cos(vp.azim)*vp.dist}, up {0,1,0};
@@ -247,6 +289,7 @@ public:
             glUniformMatrix4fv(prog.UnifViewMatrix, 1, GL_FALSE, &View[0][0]);
             bind_model(); rendermodel();
             bind_boundingbox(); renderboundingbox();
+            bind_trace(); rendertrace();
         }
     }
 };
