@@ -5,6 +5,7 @@
 #include <bvhhelp.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
 
 using namespace std;
 using namespace glm;
@@ -151,6 +152,44 @@ void dump_flat(const Hierarchy&H)
 
 // ==================================================
 
+static void dump4x4(const mat4&T)
+{
+    printf("%.2f %.2f %.2f %.2f\n%.2f %.2f %.2f %.2f\n%.2f %.2f %.2f %.2f\n%.2f %.2f %.2f %.2f\n",
+        T[0][0], T[0][1], T[0][2], T[0][3],
+        T[1][0], T[1][1], T[1][2], T[1][3],
+        T[2][0], T[2][1], T[2][2], T[2][3],
+        T[3][0], T[3][1], T[3][2], T[3][3]);
+}
+
+//
+// y1,y2 => 0          wo2 + (0-y2)/(y1-y2) * (wo1-wo2)
+//                     wo2 - y2/(y1-y2)     * (wo1-wo2)
+//
+
+static void demo_inverse()
+{
+    printf("LookAt Demo\n");
+    const float x0=0, azim=0, elev=2, dist=10;
+    glm::vec3 eye {x0*cos(azim)+dist*sin(azim), elev, -x0*sin(azim)+cos(azim)*dist}, center {0,0,0}, up {0,1,0};
+    const auto V=glm::lookAt(eye, center, up);
+    const auto Vi=glm::affineInverse(V);
+    const auto VVi=V*Vi;
+    dump4x4(VVi);
+    printf("Perspective Demo\n");
+    const auto P=perspective(0.7f, 1.2f, 0.3f*dist, 2.f*dist);
+    const auto Pi=glm::affineInverse(P); // <== Das ist falsch
+    const auto PPi=P*Pi;
+    dump4x4(PPi);
+    if (true)
+    {
+        printf("Unproject\n");
+        const vec4 viewport {0,0,400,300};
+        const vec3 wo1=glm::unProject({200,150,-1}, V, P, viewport); printf("wo1=%.2f %.2f %.2f\n", wo1[0],wo1[1],wo1[2]);
+        const vec3 wo2=glm::unProject({200,150,+1}, V, P, viewport); printf("wo2=%.2f %.2f %.2f\n", wo2[0],wo2[1],wo2[2]);
+        const auto wo=wo2-wo2[1]/(wo1[1]-wo2[1])*(wo1-wo2);          printf("wo =%.2f %.2f %.2f\n", wo[0],wo[1],wo[2]);
+    }
+}
+
 void dumphumanoid_txt(const Hierarchy&JOINTS)
 {
     int jointindex=0;
@@ -200,4 +239,6 @@ void dumphumanoid_txt(const Hierarchy&JOINTS)
         printf("\n%3u\t%24s", j, A);
         ++j;
     }
+    printf("\n========\n");
+    demo_inverse();
 }
