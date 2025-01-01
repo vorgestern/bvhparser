@@ -13,20 +13,13 @@
 using namespace std;
 using namespace glm;
 
+namespace {
+
 static function<void()>rendermodel=[](){ glDrawArrays(GL_LINE_STRIP, 0, 7); };
 static function<void()>renderboundingbox=[](){ glDrawArrays(GL_LINE_STRIP, 0, 10); };
 static function<void()>rendertrace=[](){ glDrawArrays(GL_LINE_STRIP, 0, 100); };
 
 struct vertex { vec4 pos, color; };
-
-static struct {
-    float dist, elev, azim;
-    vec3 focus, bbcenter;
-} vp;
-
-static pair<vec3,vec3> bb;
-const size_t tlen=1000;
-static vector<vertex> Trace(tlen);
 
 static const char*mkvertexshadersource()
 {
@@ -63,7 +56,15 @@ void main()
     return pad;
 }
 
-namespace {
+struct {
+    float dist, elev, azim;
+    vec3 focus, bbcenter;
+} vp;
+
+pair<vec3,vec3> bb;
+
+const size_t tlen=1000;
+vector<vertex> Trace(tlen);
 
 mat4 Projection, View;
 
@@ -99,7 +100,7 @@ void proginfo::activate()const
     glUseProgram(progname);
 }
 
-} // anon
+// =========================================================
 
 class ModelWindow: public Fl_Gl_Window
 {
@@ -345,6 +346,8 @@ void ModelWindow::reset()
     prog={0,0,0,0};
     gl_texture_reset();
 }
+
+} // anon
 
 Fl_Window*NewModelWindow(int x, int y, int w, int h)
 {
