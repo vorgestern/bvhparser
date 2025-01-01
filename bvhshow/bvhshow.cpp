@@ -1,4 +1,5 @@
 
+#include <string_view>
 // #include <cstdarg>
 // #include <FL/Fl.H>
 // #include <FL/platform.H>
@@ -16,9 +17,18 @@
 #include <GL/glew.h>
 #include "bvhshow.h"
 
+using namespace std;
+
 FrameInfo frameinfo;
 
+struct mainwindow: public Fl_Window
+{
+    mainwindow(int w, int h): Fl_Window(w, h){}
+    int handle(int event) override;
+};
+
 struct {
+    string arg_filename;
     Fl_Window*topwin {nullptr};
     Fl_Widget*modelview {nullptr};
     Fl_Text_Display*textwidget {nullptr};
@@ -40,7 +50,7 @@ void fmtoutput(const char*format, ...)
     GE.textwidget->redraw();
 }
 
-static void cbredraw(void*data)
+static void cbredraw(void*)
 {
     switch (frameinfo.state)
     {
@@ -49,7 +59,7 @@ static void cbredraw(void*data)
             GE.progress->label("dummy");
             GE.progress->value(0);
             GE.modelview->draw();
-            Fl::repeat_timeout(frameinfo.dt, cbredraw, data);
+            Fl::repeat_timeout(frameinfo.dt, cbredraw, nullptr);
             break;
         }
         case frameinfo.initmodel:
@@ -57,13 +67,13 @@ static void cbredraw(void*data)
             GE.progress->label("loading");
             GE.progress->value(0);
             GE.modelview->draw();
-            Fl::repeat_timeout(frameinfo.dt, cbredraw, data);
+            Fl::repeat_timeout(frameinfo.dt, cbredraw, nullptr);
             break;
         }
         case frameinfo.animatedummy:
         {
             GE.modelview->draw();
-            Fl::repeat_timeout(frameinfo.dt, cbredraw, data);
+            Fl::repeat_timeout(frameinfo.dt, cbredraw, nullptr);
             break;
         }
         case frameinfo.animatemodel:
@@ -74,7 +84,7 @@ static void cbredraw(void*data)
             GE.progress->label(GE.pad_progress);
             GE.progress->value(frameinfo.f);
             GE.modelview->draw();
-            if (frameinfo.animmode==frameinfo.run) Fl::repeat_timeout(frameinfo.dt, cbredraw, data);
+            if (frameinfo.animmode==frameinfo.run) Fl::repeat_timeout(frameinfo.dt, cbredraw, nullptr);
             break;
         }
         case frameinfo.stop:
@@ -83,6 +93,30 @@ static void cbredraw(void*data)
             // GE.progress->value(0);
             break;
         }
+    }
+}
+
+static void bvhload(string_view filename)
+{
+    BVHScene*LoadedScene=parse(filename.data());
+    fmtoutput("bvhload %p '%s'\n", LoadedScene, filename.data());
+    if (LoadedScene!=nullptr)
+    {
+        fmtoutput("Duration: %.1f sec (%.0f fps)\n", LoadedScene->totaltime, LoadedScene->M.size()/LoadedScene->totaltime);
+        frameinfo.viewport=glm::vec4 {0,0,450,280};
+        frameinfo.Hier=LoadedScene->H;
+        frameinfo.Segments=segments(frameinfo.Hier);
+        frameinfo.Motion=LoadedScene->M;
+        frameinfo.num=LoadedScene->M.size();
+        frameinfo.dt=LoadedScene->totaltime/LoadedScene->M.size();
+        frameinfo.f=frameinfo.num;
+        frameinfo.state=frameinfo.initmodel;
+        delete LoadedScene;
+        GE.topwin->copy_label(filename.data());
+        GE.progress->minimum(0);
+        GE.progress->maximum(frameinfo.num);
+        GE.stepper->hide();
+        Fl::repeat_timeout(0.1, cbredraw, (void*)GE.topwin);
     }
 }
 
@@ -97,28 +131,7 @@ static void cbbuttons(Fl_Widget*widget, void*ctx)
         if (const int count=GE.fileselect->count(); count>0)
         {
             std::string filename=GE.fileselect->value(1);
-            if (!filename.empty())
-            {
-                BVHScene*LoadedScene=parse(filename.c_str());
-                if (LoadedScene!=nullptr)
-                {
-                    fmtoutput("Duration: %.1f sec (%.0f fps)\n", LoadedScene->totaltime, LoadedScene->M.size()/LoadedScene->totaltime);
-                    frameinfo.viewport=glm::vec4 {0,0,450,280};
-                    frameinfo.Hier=LoadedScene->H;
-                    frameinfo.Segments=segments(frameinfo.Hier);
-                    frameinfo.Motion=LoadedScene->M;
-                    frameinfo.num=LoadedScene->M.size();
-                    frameinfo.dt=LoadedScene->totaltime/LoadedScene->M.size();
-                    frameinfo.f=frameinfo.num;
-                    frameinfo.state=frameinfo.initmodel;
-                    delete LoadedScene;
-                    GE.topwin->copy_label(filename.c_str());
-                    GE.progress->minimum(0);
-                    GE.progress->maximum(frameinfo.num);
-                    GE.stepper->hide();
-                    Fl::repeat_timeout(0.1, cbredraw, (void*)GE.topwin);
-                }
-            }
+            if (!filename.empty()) bvhload(filename);
         }
     }
     else if (str=="@||")
@@ -161,8 +174,23 @@ static void cbtoolbox(Fl_Widget*widget, void*)
     }
 }
 
+int mainwindow::handle(int event)
+{
+    const auto rc=Fl_Window::handle(event);
+    static bool firstcall=true;
+    if (firstcall && event==FL_SHOW && shown())
+    {
+//      fmtoutput("mainwindow %d handle %d: %s\n", rc, event, GE.arg_filename.c_str());
+        firstcall=false;
+        if (!GE.arg_filename.empty()) bvhload(GE.arg_filename);
+    }
+    return rc;
+}
+
 int main(int argc, char**argv)
 {
+    if (argc>1) GE.arg_filename=argv[1];
+
     setvbuf(stdout, nullptr, _IONBF, 0);
     Fl_File_Icon::load_system_icons();
     Fl::use_high_res_GL(1);
@@ -172,7 +200,7 @@ int main(int argc, char**argv)
 
     frameinfo.state=frameinfo.initdummy;
 
-    GE.topwin=new Fl_Window(800, 400);
+    GE.topwin=new mainwindow(800, 400);
     GE.topwin->callback(cbtop);
     GE.modelview=NewModelWindow(0, 0, 450, 380);
     if (auto p=new Fl_Progress(0, 380, 450, 20); p!=nullptr)
@@ -230,8 +258,7 @@ int main(int argc, char**argv)
     GE.topwin->end();
     GE.topwin->resizable(GE.modelview);
     GE.topwin->label("(No File) BVHShow");
-    GE.topwin->show(argc, argv);
-    frameinfo.state=frameinfo.initdummy;
+    GE.topwin->show();
     Fl::repeat_timeout(0.1, cbredraw, (void*)GE.topwin);
     Fl::run();
 }

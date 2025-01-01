@@ -6,6 +6,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "bvhshow.h"
 
+// Probleme:
+// cmu 15.02-15.04
+// 29.24
+
 using namespace std;
 using namespace glm;
 
@@ -139,7 +143,6 @@ public:
     }
     void initdummy()
     {
-        inittrace();
         #define WE 1,1,1,1
         #define ROT 1,0,0,1
         if (true)
@@ -312,6 +315,8 @@ void ModelWindow::draw(void)
     {
         glViewport(0, 0, w, h);
     }
+    if (VAOTrace==0) inittrace();
+    if (VAOBox==0) initdummy();
     switch (frameinfo.state)
     {
         case frameinfo.initdummy: initdummy(); frameinfo.state=frameinfo.animatedummy; break;
