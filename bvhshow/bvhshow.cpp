@@ -23,6 +23,7 @@ struct {
     Fl_Widget*modelview {nullptr};
     Fl_Text_Display*textwidget {nullptr};
     Fl_File_Chooser*fileselect {nullptr};
+    Fl_Pack*stepper {nullptr};
     Fl_Progress*progress {nullptr};
     char pad_progress[100];
 } GE;
@@ -114,6 +115,7 @@ static void cbbuttons(Fl_Widget*widget, void*ctx)
                     GE.topwin->copy_label(filename.c_str());
                     GE.progress->minimum(0);
                     GE.progress->maximum(frameinfo.num);
+                    GE.stepper->hide();
                     Fl::repeat_timeout(0.1, cbredraw, (void*)GE.topwin);
                 }
             }
@@ -123,12 +125,14 @@ static void cbbuttons(Fl_Widget*widget, void*ctx)
     {
         frameinfo.state=frameinfo.stop;
         widget->label("@>");
+        GE.stepper->show();
     }
     else if (str=="@>")
     {
         frameinfo.state=frameinfo.animatemodel;
         frameinfo.animmode=frameinfo.run;
         widget->label("@||");
+        GE.stepper->hide();
         Fl::repeat_timeout(frameinfo.dt, cbredraw, &GE.topwin);
     }
     else fmtoutput("Run callback for %s\n", str);
@@ -168,54 +172,61 @@ int main(int argc, char**argv)
 
     frameinfo.state=frameinfo.initdummy;
 
-    GE.topwin=new Fl_Window(800, 300);
+    GE.topwin=new Fl_Window(800, 400);
     GE.topwin->callback(cbtop);
-    GE.modelview=NewModelWindow(0, 0, 450, 280);
-    GE.progress=new Fl_Progress(0, 280, 450, 20);
-    GE.progress->minimum(0);
-    GE.progress->maximum(100);
-    GE.progress->color(0x88888800);               // background color
-    GE.progress->selection_color(0x4444ff00);     // progress bar color
-    GE.progress->labelcolor(FL_WHITE);            // text color
-//  GE.progress->label("0/100");                  // update progress bar's label
-    auto*g=new Fl_Window(450,0,500,300);
-    if (true)
+    GE.modelview=NewModelWindow(0, 0, 450, 380);
+    if (auto p=new Fl_Progress(0, 380, 450, 20); p!=nullptr)
+    {
+        p->minimum(0);
+        p->maximum(100);
+        p->color(0x88888800);               // background color
+        p->selection_color(0x4444ff00);     // progress bar color
+        p->labelcolor(FL_WHITE);            // text color
+    //  p->label("0/100");                  // update progress bar's label
+        GE.progress=p;
+    }
+ 
+    if (auto*g=new Fl_Window(450,0,350,400); g!=nullptr)
     {
         GE.textwidget=new Fl_Text_Display(0,0,350,200);
         GE.textwidget->buffer(new Fl_Text_Buffer());
         GE.textwidget->end();
-
-        Fl_Button*b1=new Fl_Button(150, 200, 200, 50, "..");
-        b1->color(FL_FREE_COLOR);
-        b1->box(FL_BORDER_BOX);
-        b1->callback(cbbuttons, (void*)"select_bvh");
-        if (auto icon=Fl_File_Icon::find(".", Fl_File_Icon::DIRECTORY); icon!=nullptr)
+        if (Fl_Button*fileselect=new Fl_Button(350-100-10, 400-20-30-20, 100, 30, ".."); fileselect!=nullptr)
         {
-            b1->labelcolor(FL_YELLOW);
-            icon->label(b1);
+            fileselect->color(FL_FREE_COLOR);
+            fileselect->box(FL_BORDER_BOX);
+            fileselect->callback(cbbuttons, (void*)"select_bvh");
+            if (auto icon=Fl_File_Icon::find(".", Fl_File_Icon::DIRECTORY); icon!=nullptr)
+            {
+                fileselect->labelcolor(FL_YELLOW);
+                icon->label(fileselect);
+            }
         }
-
-        Fl_Button*b2=new Fl_Button(150, 250, 200, 50, "@||");
-        b2->color(FL_FREE_COLOR);
-        b2->box(FL_BORDER_BOX);
-        // b2->image(&G_cat);
-        b2->callback(cbbuttons, NULL);
-
-        auto*Neu=new Fl_Pack(0,200,100,30);
-        Neu->type(Fl_Pack::HORIZONTAL);
-        Neu->box(FL_UP_FRAME);
-        Neu->spacing(10);
-        Fl_Button*tb0=new Fl_Button(0,0,20,20,"@<-");
-//      tb0->box(FL_FLAT_BOX);
-//      tb0->clear_visible_focus();
-        tb0->callback(cbtoolbox);
-        Fl_Button*tb3=new Fl_Button(0,0,20,20,"@->");
-//      tb3->box(FL_FLAT_BOX);
-//      tb3->clear_visible_focus();
-        tb3->callback(cbtoolbox);
-        Neu->end();
+        if (Fl_Button*startstop=new Fl_Button(10, 400-20-30-20, 100, 30, "@||"); startstop!=nullptr)
+        {
+            startstop->color(FL_FREE_COLOR);
+            startstop->box(FL_BORDER_BOX);
+            // startstop->image();
+            startstop->callback(cbbuttons, NULL);
+        }
+        if (auto p=new Fl_Pack(10,400-20-10,100,20); p!=nullptr)
+        {
+            p->type(Fl_Pack::HORIZONTAL);
+            p->box(FL_UP_FRAME);
+            p->spacing(55);
+            p->hide();
+            for (auto g: {"@<-","@->"})
+            {
+                Fl_Button*tb=new Fl_Button(0,0,20,20,g);
+                tb->callback(cbtoolbox);
+                tb->box(FL_FLAT_BOX);
+                // tb->clear_visible_focus();
+            }
+            p->end();
+            GE.stepper=p;
+        }
+        g->end();
     }
-    g->end();
     GE.topwin->end();
     GE.topwin->resizable(GE.modelview);
     GE.topwin->label("(No File) BVHShow");
