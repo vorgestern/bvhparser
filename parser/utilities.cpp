@@ -108,17 +108,3 @@ pair<vec3,vec3>boundingbox(const Hierarchy&H, const MotionTable&M)
     }
     return {bmin,bmax};
 }
-
-vec3 recenter(const mat4&V, const mat4&P, const vec4&viewport, const vec3&eyepoint)
-{
-    // printf("Unproject\n");
-    // const vec4 viewport {0,0,400,300};
-    const vec2 winpoint={
-        viewport[0]+0.5*(eyepoint.x+1)*viewport[2],
-        viewport[1]+0.5*(eyepoint.y+1)*viewport[3]
-    };
-    const vec3 a=glm::unProject({winpoint[0],winpoint[1],-1}, V, P, viewport); // printf("wo1=%.2f %.2f %.2f\n", wo1[0],wo1[1],wo1[2]);
-    const vec3 b=glm::unProject({winpoint[0],winpoint[1],+1}, V, P, viewport); // printf("wo2=%.2f %.2f %.2f\n", wo2[0],wo2[1],wo2[2]);
-    const auto wo=b+(eyepoint.z-b[1])/(a[1]-b[1])*(a-b);          // printf("wo =%.2f %.2f %.2f\n", wo[0],wo[1],wo[2]);
-    return wo;
-}

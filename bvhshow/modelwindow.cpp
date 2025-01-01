@@ -15,6 +15,18 @@ using namespace glm;
 
 namespace {
 
+vec3 recenter(const mat4&V, const mat4&P, const vec4&viewport, const vec3&eyepoint)
+{
+    const vec2 winpoint={
+        viewport[0]+0.5*(eyepoint.x+1)*viewport[2],
+        viewport[1]+0.5*(eyepoint.y+1)*viewport[3]
+    };
+    const vec3 a=glm::unProject({winpoint[0],winpoint[1],-1}, V, P, viewport);
+    const vec3 b=glm::unProject({winpoint[0],winpoint[1],+1}, V, P, viewport);
+    const auto wo=b+(eyepoint.z-b[1])/(a[1]-b[1])*(a-b);
+    return wo;
+}
+
 static function<void()>rendermodel=[](){ glDrawArrays(GL_LINE_STRIP, 0, 7); };
 static function<void()>renderboundingbox=[](){ glDrawArrays(GL_LINE_STRIP, 0, 10); };
 static function<void()>rendertrace=[](){ glDrawArrays(GL_LINE_STRIP, 0, 100); };
