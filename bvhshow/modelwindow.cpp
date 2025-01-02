@@ -13,6 +13,12 @@
 using namespace std;
 using namespace glm;
 
+vec3 eyevector(const vpstruct&X)
+{
+    const float x0=0;
+    return vec3 {x0*cos(X.azim)+X.dist*sin(X.azim), X.elev, -x0*sin(X.azim)+cos(X.azim)*X.dist};
+}
+
 namespace {
 
 vec3 recenter(const mat4&V, const mat4&P, const vec4&viewport, const vec3&eyepoint)
@@ -67,11 +73,6 @@ void main()
 )__");
     return pad;
 }
-
-struct {
-    float dist, elev, azim;
-    vec3 focus, bbcenter;
-} vp;
 
 pair<vec3,vec3> bb;
 
@@ -200,8 +201,7 @@ public:
             };
             glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
             prog.activate();
-            vp.dist=10;
-            vp.azim=0.2;
+            frameinfo.vp.dist=10;
         }
         #undef WE
         #undef ROT
@@ -230,10 +230,10 @@ public:
             glBindBuffer(GL_ARRAY_BUFFER, VBBox);
             glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
             prog.activate();
-            vp.bbcenter=vec3(.5,.5,.5)*(a+b);
-            vp.focus=vp.bbcenter;
-            vp.elev=b[1];
-            vp.dist=1.5*glm::length(b-a);
+            frameinfo.vp.bbcenter=vec3(.5,.5,.5)*(a+b);
+            frameinfo.vp.focus=frameinfo.vp.bbcenter;
+            frameinfo.vp.elev=b[1];
+            frameinfo.vp.dist=0.8*glm::length(b-a);
             bb={a,b};
         }
         else
@@ -253,8 +253,7 @@ public:
             glBindBuffer(GL_ARRAY_BUFFER, VBBox);
             glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
             prog.activate();
-vp.dist=10;
-vp.azim=0.2;
+            frameinfo.vp.dist=10;
         }
         #undef ROT
         #undef WE
@@ -284,21 +283,23 @@ vp.azim=0.2;
         // =================================================
         glClearColor(0.08f, 0.08f, 0.08f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        vp.azim+=0.006;
         if (true)
         {
+            vec3 K0a={K0[0],bb.first[1],K0[2]};
             // This should move vp.focus so that the model remains close to the center of the window.
             // Does not work yet.
-            const auto pk=Projection*View*vec4(K0, 1);
+            auto pk=Projection*View*vec4(K0, 1);
+            pk[1]=bb.first[1];
             const auto wo=recenter(View, Projection, frameinfo.viewport, pk);
             // vp.focus=vec3(0.9, 0.9, 0.9)*vp.focus+vec3(0.1, 0.1, 0.1)*wo;
-            const auto focusneu=wo;
+            const auto focusneu=K0a; // vec3(0.6, 0.6, 0.6)*frameinfo.vp.focus+vec3(0.4, 0.4, 0.4)*K0a;
+            frameinfo.vp.focus=vec3(0.2, 0.2, 0.2)*frameinfo.vp.focus+vec3(0.8, 0.8, 0.8)*K0a;
             // printf("%.2f %.2f %.2f\n", wo[0], wo[1], wo[2]);
             // printf("%.2f %.2f %.2f\n", vp.focus[0], vp.focus[1], vp.focus[2]);
             if (true)
             {
                 static unsigned current=0;
-                Trace[current]={vec4(focusneu[0],bb.first[1],focusneu[2],1), {1.0,1.0,1.0,1.0}};
+                Trace[current]={vec4(K0a,1), {1.0,1.0,1.0,1.0}};
                 for (unsigned j=0; j<tlen; ++j)
                 {
                     const float k=1.0-j*0.5/tlen;
@@ -309,11 +310,12 @@ vp.azim=0.2;
                 glBufferData(GL_ARRAY_BUFFER, tlen*sizeof vertex, &Trace[0], GL_STATIC_DRAW);
                 rendertrace=[num=current](){ glDrawArrays(GL_POINTS, 0, current); glDrawArrays(GL_POINTS, current, tlen-current); };
             }
+// fmtoutput("K0 %.2g %.2g %.2g pk %.2g %.2g %.2g\n", K0[0], K0[1], K0[2], pk[0], pk[1], pk[2]);
+// fmtoutput("K0 %.2f %.2f %.2f ==> %.2f %.2f %.2f\n", K0[0], K0[1], K0[2], wo[0], wo[1], wo[2]);
         }
-        const float x0=0;
-        glm::vec3 eye {x0*cos(vp.azim)+vp.dist*sin(vp.azim), vp.elev, -x0*sin(vp.azim)+cos(vp.azim)*vp.dist}, up {0,1,0};
-        Projection=glm::perspective(0.7f, 1.2f, 0.2f*vp.dist, 3.f*vp.dist);
-        View=glm::lookAt(eye, vp.focus, up);
+        const auto eye=eyevector(frameinfo.vp);
+        Projection=glm::perspective(0.7f, 1.2f, 0.2f*frameinfo.vp.dist, 3.f*frameinfo.vp.dist);
+        View=glm::lookAt(eye, frameinfo.vp.focus, vec3 {0,1,0});
         glUniformMatrix4fv(prog.UnifProjection, 1, GL_FALSE, &Projection[0][0]);
         glUniformMatrix4fv(prog.UnifViewMatrix, 1, GL_FALSE, &View[0][0]);
         bind_model(); rendermodel();

@@ -65,6 +65,7 @@ static void cbredraw(void*)
         case frameinfo.animate:
         case frameinfo.step:
         {
+            frameinfo.vp.azim+=0.006;
             const int step=frameinfo.animdir==frameinfo.back?-1:1;
             frameinfo.f=frameinfo.dt>=frameinfo.num?0:(frameinfo.f+step)%frameinfo.num;
             sprintf(GE.pad_progress, "%.1fs %u/%u", frameinfo.f*frameinfo.dt, frameinfo.f+1, frameinfo.num);

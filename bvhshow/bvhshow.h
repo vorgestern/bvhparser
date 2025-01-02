@@ -9,6 +9,13 @@ extern struct GlewInfo
     std::pair<int,int> glewversion, glversion, glslversion; // major, minor
 } glewinfo;
 
+struct vpstruct {
+    float dist, elev, azim;
+    glm::vec3 focus, bbcenter;
+};
+
+glm::vec3 eyevector(const vpstruct&);
+
 extern struct FrameInfo
 {
     glm::vec4 viewport;
@@ -20,6 +27,7 @@ extern struct FrameInfo
     std::vector<std::pair<unsigned,unsigned>> Segments;
     unsigned f, num;
     double dt;
+    vpstruct vp;
 } frameinfo;
 
 void initialise_glew();
