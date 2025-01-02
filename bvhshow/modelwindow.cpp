@@ -154,31 +154,35 @@ public:
         prog.activate();
         rendertrace=[num=current](){ glDrawArrays(GL_LINES, 0, 100); };
     }
-    void initdummy()
+    void initbox()
     {
         #define WE 1,1,1,1
         #define ROT 1,0,0,1
-        if (true)
+        glGenVertexArrays(1, &VAOBox); glBindVertexArray(VAOBox);
+        glGenBuffers(1, &VBBox);       glBindBuffer(GL_ARRAY_BUFFER, VBBox);
+        const float a=20, b=30;
+        const GLfloat VertexData[]=
         {
-            glGenVertexArrays(1, &VAOBox); glBindVertexArray(VAOBox);
-            glGenBuffers(1, &VBBox);       glBindBuffer(GL_ARRAY_BUFFER, VBBox);
-            const float a=20, b=30;
-            const GLfloat VertexData[]=
-            {
-                -a, 0, -a, 1, ROT,
-                -a, 0,  a, 1, ROT,
-                a, 0,  a, 1, ROT,
-                a, 0, -a, 1, ROT,
-                -a, 0, -a, 1, ROT,
-                -a, b, -a, 1, ROT,
-                -a, b,  a, 1, ROT,
-                a, b,  a, 1, ROT,
-                a, b, -a, 1, ROT,
-                -a, b, -a, 1, ROT,
-            };
-            glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
-            prog.activate();
-        }
+            -a, 0, -a, 1, ROT,
+            -a, 0,  a, 1, ROT,
+            a, 0,  a, 1, ROT,
+            a, 0, -a, 1, ROT,
+            -a, 0, -a, 1, ROT,
+            -a, b, -a, 1, ROT,
+            -a, b,  a, 1, ROT,
+            a, b,  a, 1, ROT,
+            a, b, -a, 1, ROT,
+            -a, b, -a, 1, ROT,
+        };
+        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
+        prog.activate();
+        #undef WE
+        #undef ROT
+    }
+    void initgeom()
+    {
+        #define WE 1,1,1,1
+        #define ROT 1,0,0,1
         if (true)
         {
             glGenVertexArrays(1, &VAOModel); glBindVertexArray(VAOModel);
@@ -205,7 +209,8 @@ public:
     void initmodel()
     {
         #define ROT 1,0,0,1
-        if (true)
+        #define WE 1,1,1,1
+        if (frameinfo.Hier.size()>0)
         {
             const auto [a,b]=boundingbox(frameinfo.Hier, frameinfo.Motion);
             const GLfloat VertexData[]=
@@ -231,7 +236,28 @@ public:
             vp.dist=1.5*glm::length(b-a);
             bb={a,b};
         }
+        else
+        {
+            const GLfloat a=0.2, b=2;
+            const GLfloat VertexData[]=
+            {
+                0, b, 0, 1, ROT,
+                -a, 0,-a, 1, WE,
+                -a, 0, a, 1, WE,
+                0, b, 0, 1, ROT,
+                a, 0,-a, 1, WE,
+                a, 0, a, 1, WE,
+                0, b, 0, 1, ROT
+            };
+            glBindVertexArray(VAOBox);
+            glBindBuffer(GL_ARRAY_BUFFER, VBBox);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
+            prog.activate();
+vp.dist=10;
+vp.azim=0.2;
+        }
         #undef ROT
+        #undef WE
     }
     void animatedummy()
     {
@@ -251,9 +277,11 @@ public:
     }
     void animatemodel()
     {
+        vec3 K0={0,0,0};
         if (frameinfo.f<frameinfo.num)
         {
             const auto K=flatten(frameinfo.Hier, frameinfo.Motion[frameinfo.f]);
+            if (K.size()>0) K0=K[0];
             static_assert(32==sizeof vertex);
             vector<vertex>VertexData;
             unsigned j=0;
@@ -268,45 +296,45 @@ public:
             glBindBuffer(GL_ARRAY_BUFFER, VBModel);
             glBufferData(GL_ARRAY_BUFFER, VertexData.size()*sizeof vertex, &VertexData[0], GL_STATIC_DRAW);
             rendermodel=[num=VertexData.size()](){ glDrawArrays(GL_LINES, 0, num); };
-            // =================================================
-            glClearColor(0.08f, 0.08f, 0.08f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
-            vp.azim+=0.002;
+        }
+        // =================================================
+        glClearColor(0.08f, 0.08f, 0.08f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        vp.azim+=0.006;
+        if (true)
+        {
+            // This should move vp.focus so that the model remains close to the center of the window.
+            // Does not work yet.
+            const auto pk=Projection*View*vec4(K0, 1);
+            const auto wo=recenter(View, Projection, frameinfo.viewport, pk);
+            // vp.focus=vec3(0.9, 0.9, 0.9)*vp.focus+vec3(0.1, 0.1, 0.1)*wo;
+            const auto focusneu=wo;
+            // printf("%.2f %.2f %.2f\n", wo[0], wo[1], wo[2]);
+            // printf("%.2f %.2f %.2f\n", vp.focus[0], vp.focus[1], vp.focus[2]);
             if (true)
             {
-                // This should move vp.focus so that the model remains close to the center of the window.
-                // Does not work yet.
-                const auto pk=Projection*View*vec4(K[0], 1);
-                const auto wo=recenter(View, Projection, frameinfo.viewport, pk);
-                // vp.focus=vec3(0.9, 0.9, 0.9)*vp.focus+vec3(0.1, 0.1, 0.1)*wo;
-                const auto focusneu=wo;
-                // printf("%.2f %.2f %.2f\n", wo[0], wo[1], wo[2]);
-                // printf("%.2f %.2f %.2f\n", vp.focus[0], vp.focus[1], vp.focus[2]);
-                if (true)
+                static unsigned current=0;
+                Trace[current]={vec4(focusneu[0],bb.first[1],focusneu[2],1), {1.0,1.0,1.0,1.0}};
+                for (unsigned j=0; j<tlen; ++j)
                 {
-                    static unsigned current=0;
-                    Trace[current]={vec4(focusneu[0],bb.first[1],focusneu[2],1), {1.0,1.0,1.0,1.0}};
-                    for (unsigned j=0; j<tlen; ++j)
-                    {
-                        const float k=1.0-j*0.5/tlen;
-                        Trace[(current+j)%tlen].color=vec4 {k,k,k,1};
-                    }
-                    current=(current+1)%tlen;
-                    glBindBuffer(GL_ARRAY_BUFFER, VBTrace);
-                    glBufferData(GL_ARRAY_BUFFER, tlen*sizeof vertex, &Trace[0], GL_STATIC_DRAW);
-                    rendertrace=[num=current](){ glDrawArrays(GL_POINTS, 0, current); glDrawArrays(GL_POINTS, current, tlen-current); };
+                    const float k=1.0-j*0.5/tlen;
+                    Trace[(current+j)%tlen].color=vec4 {k,k,k,1};
                 }
+                current=(current+1)%tlen;
+                glBindBuffer(GL_ARRAY_BUFFER, VBTrace);
+                glBufferData(GL_ARRAY_BUFFER, tlen*sizeof vertex, &Trace[0], GL_STATIC_DRAW);
+                rendertrace=[num=current](){ glDrawArrays(GL_POINTS, 0, current); glDrawArrays(GL_POINTS, current, tlen-current); };
             }
-            const float x0=0;
-            glm::vec3 eye {x0*cos(vp.azim)+vp.dist*sin(vp.azim), vp.elev, -x0*sin(vp.azim)+cos(vp.azim)*vp.dist}, up {0,1,0};
-            Projection=glm::perspective(0.7f, 1.2f, 0.2f*vp.dist, 3.f*vp.dist);
-            View=glm::lookAt(eye, vp.focus, up);
-            glUniformMatrix4fv(prog.UnifProjection, 1, GL_FALSE, &Projection[0][0]);
-            glUniformMatrix4fv(prog.UnifViewMatrix, 1, GL_FALSE, &View[0][0]);
-            bind_model(); rendermodel();
-            bind_boundingbox(); renderboundingbox();
-            bind_trace(); rendertrace();
         }
+        const float x0=0;
+        glm::vec3 eye {x0*cos(vp.azim)+vp.dist*sin(vp.azim), vp.elev, -x0*sin(vp.azim)+cos(vp.azim)*vp.dist}, up {0,1,0};
+        Projection=glm::perspective(0.7f, 1.2f, 0.2f*vp.dist, 3.f*vp.dist);
+        View=glm::lookAt(eye, vp.focus, up);
+        glUniformMatrix4fv(prog.UnifProjection, 1, GL_FALSE, &Projection[0][0]);
+        glUniformMatrix4fv(prog.UnifViewMatrix, 1, GL_FALSE, &View[0][0]);
+        bind_model(); rendermodel();
+        bind_boundingbox(); renderboundingbox();
+        bind_trace(); rendertrace();
     }
 };
 
@@ -315,7 +343,7 @@ ModelWindow::ModelWindow(int x, int y, int w, int h): Fl_Gl_Window(x, y, w, h)
     mode(FL_RGB8|FL_DOUBLE|FL_OPENGL3);
 }
 
-void ModelWindow::draw(void)
+void ModelWindow::draw()
 {
     static unsigned nc=0;
     ++nc;
@@ -329,13 +357,13 @@ void ModelWindow::draw(void)
         glViewport(0, 0, w, h);
     }
     if (VAOTrace==0) inittrace();
-    if (VAOBox==0) initdummy();
+    if (VAOBox==0) initbox();
+    if (VAOModel==0) initgeom();
     switch (frameinfo.state)
     {
-        case frameinfo.initdummy: initdummy(); frameinfo.state=frameinfo.animatedummy; break;
-        case frameinfo.initmodel: initmodel(); frameinfo.state=frameinfo.animatemodel; break;
-        case frameinfo.animatedummy: animatedummy(); break;
-        case frameinfo.animatemodel: animatemodel(); break;
+        case frameinfo.init: initmodel(); frameinfo.state=frameinfo.animate; break;
+        case frameinfo.animate: animatemodel(); break;
+        case frameinfo.step: animatemodel(); break;
     }
     Fl_Gl_Window::draw();
 }

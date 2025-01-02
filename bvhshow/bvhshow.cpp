@@ -54,45 +54,27 @@ static void cbredraw(void*)
 {
     switch (frameinfo.state)
     {
-        case frameinfo.initdummy:
+        case frameinfo.init:
         {
-            GE.progress->label("dummy");
+            GE.progress->label(GE.arg_filename.empty()?"dummy":"loading");
             GE.progress->value(0);
             GE.modelview->draw();
             Fl::repeat_timeout(frameinfo.dt, cbredraw, nullptr);
             break;
         }
-        case frameinfo.initmodel:
+        case frameinfo.animate:
+        case frameinfo.step:
         {
-            GE.progress->label("loading");
-            GE.progress->value(0);
-            GE.modelview->draw();
-            Fl::repeat_timeout(frameinfo.dt, cbredraw, nullptr);
-            break;
-        }
-        case frameinfo.animatedummy:
-        {
-            GE.modelview->draw();
-            Fl::repeat_timeout(frameinfo.dt, cbredraw, nullptr);
-            break;
-        }
-        case frameinfo.animatemodel:
-        {
-            const int step=frameinfo.animmode==frameinfo.back?-1:1;
+            const int step=frameinfo.animdir==frameinfo.back?-1:1;
             frameinfo.f=frameinfo.dt>=frameinfo.num?0:(frameinfo.f+step)%frameinfo.num;
             sprintf(GE.pad_progress, "%.1fs %u/%u", frameinfo.f*frameinfo.dt, frameinfo.f+1, frameinfo.num);
             GE.progress->label(GE.pad_progress);
             GE.progress->value(frameinfo.f);
             GE.modelview->draw();
-            if (frameinfo.animmode==frameinfo.run) Fl::repeat_timeout(frameinfo.dt, cbredraw, nullptr);
+            if (frameinfo.state==frameinfo.animate) Fl::repeat_timeout(frameinfo.dt, cbredraw, nullptr);
             break;
         }
-        case frameinfo.stop:
-        {
-            // GE.progress->label("stopped");
-            // GE.progress->value(0);
-            break;
-        }
+        case frameinfo.stop: break;
     }
 }
 
@@ -110,7 +92,7 @@ static void bvhload(string_view filename)
         frameinfo.num=LoadedScene->M.size();
         frameinfo.dt=LoadedScene->totaltime/LoadedScene->M.size();
         frameinfo.f=frameinfo.num;
-        frameinfo.state=frameinfo.initmodel;
+        frameinfo.state=frameinfo.init;
         delete LoadedScene;
         GE.topwin->copy_label(filename.data());
         GE.progress->minimum(0);
@@ -142,8 +124,8 @@ static void cbbuttons(Fl_Widget*widget, void*ctx)
     }
     else if (str=="@>")
     {
-        frameinfo.state=frameinfo.animatemodel;
-        frameinfo.animmode=frameinfo.run;
+        frameinfo.state=frameinfo.animate;
+        frameinfo.animdir=frameinfo.forward;
         widget->label("@||");
         GE.stepper->hide();
         Fl::repeat_timeout(frameinfo.dt, cbredraw, &GE.topwin);
@@ -162,14 +144,14 @@ static void cbtoolbox(Fl_Widget*widget, void*)
 {
     if (0==strcmp(widget->label(), "@->"))
     {
-        frameinfo.animmode=frameinfo.forward;
-        frameinfo.state=frameinfo.animatemodel;
+        frameinfo.animdir=frameinfo.forward;
+        frameinfo.state=frameinfo.step;
         Fl::repeat_timeout(frameinfo.dt, cbredraw, &GE.topwin);
     }
     else if (0==strcmp(widget->label(), "@<-"))
     {
-        frameinfo.animmode=frameinfo.back;
-        frameinfo.state=frameinfo.animatemodel;
+        frameinfo.animdir=frameinfo.back;
+        frameinfo.state=frameinfo.step;
         Fl::repeat_timeout(frameinfo.dt, cbredraw, &GE.topwin);
     }
 }
@@ -180,7 +162,6 @@ int mainwindow::handle(int event)
     static bool firstcall=true;
     if (firstcall && event==FL_SHOW && shown())
     {
-//      fmtoutput("mainwindow %d handle %d: %s\n", rc, event, GE.arg_filename.c_str());
         firstcall=false;
         if (!GE.arg_filename.empty()) bvhload(GE.arg_filename);
     }
@@ -198,7 +179,7 @@ int main(int argc, char**argv)
     GE.fileselect=new Fl_File_Chooser(nullptr, "*", Fl_File_Chooser::SINGLE, "Select bvh file");
     // GE.fileselect->callback(fc_callback);
 
-    frameinfo.state=frameinfo.initdummy;
+    frameinfo.state=frameinfo.init;
 
     GE.topwin=new mainwindow(800, 400);
     GE.topwin->callback(cbtop);
@@ -210,7 +191,6 @@ int main(int argc, char**argv)
         p->color(0x88888800);               // background color
         p->selection_color(0x4444ff00);     // progress bar color
         p->labelcolor(FL_WHITE);            // text color
-    //  p->label("0/100");                  // update progress bar's label
         GE.progress=p;
     }
  

@@ -12,8 +12,9 @@ extern struct GlewInfo
 extern struct FrameInfo
 {
     glm::vec4 viewport;
-    enum {stop, initmodel, initdummy, animatedummy, animatemodel} state;
-    enum {run, back, forward} animmode;
+    enum {stop, init, animate, step} state;
+    static const enum class dir {a,b} forward=dir::a, back=dir::b;
+    dir animdir;
     Hierarchy Hier;
     MotionTable Motion;
     std::vector<std::pair<unsigned,unsigned>> Segments;
