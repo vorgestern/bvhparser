@@ -259,22 +259,6 @@ vp.azim=0.2;
         #undef ROT
         #undef WE
     }
-    void animatedummy()
-    {
-        glClearColor(0.08f, 0.08f, 0.08f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        vp.azim+=0.002;
-        const float x0=0;
-        glm::vec3 eye {x0*cos(vp.azim)+vp.dist*sin(vp.azim), vp.elev, -x0*sin(vp.azim)+cos(vp.azim)*vp.dist}, center {0,1,0}, up {0,1,0};
-        glm::mat4
-            P=glm::perspective(0.7f, 1.2f, 0.5f*vp.dist, 2.f*vp.dist),
-            V=glm::lookAt(eye, center, up);
-        glUniformMatrix4fv(prog.UnifProjection, 1, GL_FALSE, &P[0][0]);
-        glUniformMatrix4fv(prog.UnifViewMatrix, 1, GL_FALSE, &V[0][0]);
-        // =================================================
-        bind_model(); rendermodel();
-        bind_boundingbox(); renderboundingbox();
-    }
     void animatemodel()
     {
         vec3 K0={0,0,0};
