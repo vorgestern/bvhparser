@@ -120,13 +120,14 @@ GLuint linkshaderprogram(GLint vs, GLint fs, vector<string_view>fragdataloc)
     return p;
 }
 
-GLuint mkvertexshader(const char source[])
+GLuint mkvertexshader(string_view source)
 {
     GLint err;
     GLsizei length;
     GLchar CLOG[1000];
+    const char*src=source.data();
     GLuint vs=glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vs, 1, &source, NULL);
+    glShaderSource(vs, 1, &src, NULL);
     glCompileShader(vs);
     glGetShaderiv(vs, GL_COMPILE_STATUS, &err);
     if (err!=GL_TRUE)
@@ -137,13 +138,14 @@ GLuint mkvertexshader(const char source[])
     return vs;
 }
 
-GLuint mkfragmentshader(const char source[])
+GLuint mkfragmentshader(string_view source)
 {
     GLint err;
     GLsizei length;
     GLchar CLOG[1000];
+    const char*src=source.data();
     GLuint fs=glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fs, 1, &source, NULL);
+    glShaderSource(fs, 1, &src, NULL);
     glCompileShader(fs);
     glGetShaderiv(fs, GL_COMPILE_STATUS, &err);
     if (err!=GL_TRUE)

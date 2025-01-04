@@ -39,10 +39,11 @@ static function<void()>rendertrace=[](){ glDrawArrays(GL_LINE_STRIP, 0, 100); };
 
 struct vertex { vec4 pos, color; };
 
-static const char*mkvertexshadersource()
-{
-    static char pad[512];
-    sprintf_s(pad, sizeof pad, R"__(#version 330
+static struct {
+    string_view vs, fs;
+} source={
+
+R"__(#version 330
 layout(location=0) in vec3 XPosition;
 layout(location=1) in vec3 XColor;
 out vec4 FrontColor;
@@ -54,14 +55,9 @@ void main()
     FrontColor=clamp(vec4(XColor,1), 0, 1);
     BackColor=FrontColor;
     gl_Position=Projection*ViewMatrix*vec4(XPosition,1);
-})__");
-    return pad;
-}
+})__",
 
-static const char*mkfragmentshadersource()
-{
-    static char pad[512];
-    sprintf_s(pad, sizeof pad, R"__(#version 330
+R"__(#version 330
 in vec4 FrontColor;
 in vec4 BackColor;
 layout(location=0) out vec4 FinalColor;
@@ -70,9 +66,8 @@ void main()
   if (gl_FrontFacing) FinalColor=FrontColor;
   else                FinalColor=BackColor;
 }
-)__");
-    return pad;
-}
+)__"
+};
 
 pair<vec3,vec3> bb;
 
@@ -92,8 +87,8 @@ struct proginfo
 
 static proginfo build_program()
 {
-    const auto vs=mkvertexshader(mkvertexshadersource());
-    const auto fs=mkfragmentshader(mkfragmentshadersource());
+    const auto vs=mkvertexshader(source.vs);
+    const auto fs=mkfragmentshader(source.fs);
     const auto p=linkshaderprogram(vs, fs, {"FinalColor"});
     glDeleteShader(vs);
     glDeleteShader(fs);
@@ -184,25 +179,21 @@ public:
     {
         #define WE 1,1,1,1
         #define ROT 1,0,0,1
-        if (true)
+        glGenVertexArrays(1, &VAOModel); glBindVertexArray(VAOModel);
+        glGenBuffers(1, &VBModel);       glBindBuffer(GL_ARRAY_BUFFER, VBModel);
+        const GLfloat a=0.2, b=2;
+        const GLfloat VertexData[]=
         {
-            glGenVertexArrays(1, &VAOModel); glBindVertexArray(VAOModel);
-            glGenBuffers(1, &VBModel);       glBindBuffer(GL_ARRAY_BUFFER, VBModel);
-            const GLfloat a=0.2, b=2;
-            const GLfloat VertexData[]=
-            {
-                0, b, 0, 1, ROT,
-                -a, 0,-a, 1, WE,
-                -a, 0, a, 1, WE,
-                0, b, 0, 1, ROT,
-                a, 0,-a, 1, WE,
-                a, 0, a, 1, WE,
-                0, b, 0, 1, ROT
-            };
-            glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
-            prog.activate();
-            frameinfo.vp.dist=10;
-        }
+            0, b, 0, 1, ROT,
+            -a, 0,-a, 1, WE,
+            -a, 0, a, 1, WE,
+            0, b, 0, 1, ROT,
+            a, 0,-a, 1, WE,
+            a, 0, a, 1, WE,
+            0, b, 0, 1, ROT
+        };
+        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
+        prog.activate();
         #undef WE
         #undef ROT
     }
