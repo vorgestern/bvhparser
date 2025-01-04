@@ -10,7 +10,7 @@ using fspath=filesystem::path;
 // http://research.cs.wisc.edu/graphics/Courses/cs-838-1999/Jeff/Example1.bvh
 
 static enum class OutputType {ffregular, ffmix, fflexeroutput, fftext, ffboundingbox} func=OutputType::ffregular;
-static OutputOptions Opts {SegmentForms::cylinder, true, true};
+static OutputOptions Opts {SegmentForms::line, true, true};
 
 int main(int argc, const char*argv[])
 {
@@ -23,7 +23,6 @@ int main(int argc, const char*argv[])
         else if (arg=="-mix") func=OutputType::ffmix;      // Mix output from lexer and parser.
         else if (arg=="-t") func=OutputType::fftext;
         else if (arg=="-b") func=OutputType::ffboundingbox;
-        else if (arg=="-f" && a<argc-1) fninput=argv[++a];
         else if (arg=="-s0") Opts.segmentshape=SegmentForms::none;
         else if (arg=="-s1") Opts.segmentshape=SegmentForms::line;
         else if (arg=="-s2") Opts.segmentshape=SegmentForms::cylinder;

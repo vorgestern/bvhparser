@@ -6,4 +6,4 @@ virtual reality file .x3d.
 
 Usage
 
-    ./bvhparser < demo.bvh > demo.x3d
+    ./bvhparser demo.bvh > demo.x3d
