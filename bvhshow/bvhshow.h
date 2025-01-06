@@ -26,7 +26,7 @@ extern struct FrameInfo
     MotionTable Motion;
     std::vector<std::pair<unsigned,unsigned>> Segments;
     unsigned f, num;
-    double dt;
+    double timestep;
     vpstruct vp;
 } frameinfo;
 

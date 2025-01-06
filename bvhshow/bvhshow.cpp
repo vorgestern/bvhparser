@@ -59,7 +59,7 @@ static void cbredraw(void*)
             GE.progress->label(GE.arg_filename.empty()?"dummy":"loading");
             GE.progress->value(0);
             GE.modelview->draw();
-            Fl::repeat_timeout(frameinfo.dt, cbredraw, nullptr);
+            Fl::repeat_timeout(frameinfo.timestep, cbredraw, nullptr);
             break;
         }
         case frameinfo.animate:
@@ -67,12 +67,12 @@ static void cbredraw(void*)
         {
             frameinfo.vp.azim+=0.006;
             const int step=frameinfo.animdir==frameinfo.back?-1:1;
-            frameinfo.f=frameinfo.dt>=frameinfo.num?0:(frameinfo.f+step)%frameinfo.num;
-            sprintf(GE.pad_progress, "%.1fs %u/%u", frameinfo.f*frameinfo.dt, frameinfo.f+1, frameinfo.num);
+            frameinfo.f=frameinfo.timestep>=frameinfo.num?0:(frameinfo.f+step)%frameinfo.num;
+            sprintf(GE.pad_progress, "%.1fs %u/%u", frameinfo.f*frameinfo.timestep, frameinfo.f+1, frameinfo.num);
             GE.progress->label(GE.pad_progress);
             GE.progress->value(frameinfo.f);
             GE.modelview->draw();
-            if (frameinfo.state==frameinfo.animate) Fl::repeat_timeout(frameinfo.dt, cbredraw, nullptr);
+            if (frameinfo.state==frameinfo.animate) Fl::repeat_timeout(frameinfo.timestep, cbredraw, nullptr);
             break;
         }
         case frameinfo.stop: break;
@@ -91,7 +91,7 @@ static void bvhload(string_view filename)
         frameinfo.Segments=segments(frameinfo.Hier);
         frameinfo.Motion=LoadedScene->M;
         frameinfo.num=LoadedScene->M.size();
-        frameinfo.dt=LoadedScene->totaltime/LoadedScene->M.size();
+        frameinfo.timestep=LoadedScene->totaltime/LoadedScene->M.size();
         frameinfo.f=frameinfo.num;
         frameinfo.state=frameinfo.init;
         delete LoadedScene;
@@ -129,7 +129,7 @@ static void cbbuttons(Fl_Widget*widget, void*ctx)
         frameinfo.animdir=frameinfo.forward;
         widget->label("@||");
         GE.stepper->hide();
-        Fl::repeat_timeout(frameinfo.dt, cbredraw, &GE.topwin);
+        Fl::repeat_timeout(frameinfo.timestep, cbredraw, &GE.topwin);
     }
     else fmtoutput("Run callback for %s\n", str);
 }
@@ -147,13 +147,13 @@ static void cbtoolbox(Fl_Widget*widget, void*)
     {
         frameinfo.animdir=frameinfo.forward;
         frameinfo.state=frameinfo.step;
-        Fl::repeat_timeout(frameinfo.dt, cbredraw, &GE.topwin);
+        Fl::repeat_timeout(frameinfo.timestep, cbredraw, &GE.topwin);
     }
     else if (0==strcmp(widget->label(), "@<-"))
     {
         frameinfo.animdir=frameinfo.back;
         frameinfo.state=frameinfo.step;
-        Fl::repeat_timeout(frameinfo.dt, cbredraw, &GE.topwin);
+        Fl::repeat_timeout(frameinfo.timestep, cbredraw, &GE.topwin);
     }
 }
 
