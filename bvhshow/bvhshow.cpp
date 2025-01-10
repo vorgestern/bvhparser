@@ -58,7 +58,7 @@ static void cbredraw(void*)
         {
             GE.progress->label(GE.arg_filename.empty()?"dummy":"loading");
             GE.progress->value(0);
-            GE.modelview->draw();
+            GE.modelview->redraw();
             Fl::repeat_timeout(frameinfo.timestep, cbredraw, nullptr);
             break;
         }
@@ -71,7 +71,7 @@ static void cbredraw(void*)
             sprintf(GE.pad_progress, "%.1fs %u/%u", frameinfo.f*frameinfo.timestep, frameinfo.f+1, frameinfo.num);
             GE.progress->label(GE.pad_progress);
             GE.progress->value(frameinfo.f);
-            GE.modelview->draw();
+            GE.modelview->redraw();
             if (frameinfo.state==frameinfo.animate) Fl::repeat_timeout(frameinfo.timestep, cbredraw, nullptr);
             break;
         }
