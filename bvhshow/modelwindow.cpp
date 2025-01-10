@@ -224,7 +224,7 @@ public:
             frameinfo.vp.bbcenter=vec3(.5,.5,.5)*(a+b);
             frameinfo.vp.focus=frameinfo.vp.bbcenter;
             frameinfo.vp.elev=b[1];
-            frameinfo.vp.dist=0.8*glm::length(b-a);
+            frameinfo.vp.dist=1.4*glm::length(b-a);
             bb={a,b};
         }
         else
