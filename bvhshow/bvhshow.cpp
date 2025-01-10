@@ -23,6 +23,7 @@
 using namespace std;
 
 FrameInfo frameinfo;
+const auto delay_idle=1./30.;
 
 struct {
     string arg_filename;
@@ -46,7 +47,7 @@ void fmtoutput(const char*format, ...)
     GE.textwidget->redraw();
 }
 
-static void cbredraw(void*)
+static void cbredraw(void*data)
 {
     switch (frameinfo.state)
     {
@@ -55,24 +56,44 @@ static void cbredraw(void*)
             GE.progress->label(GE.arg_filename.empty()?"dummy":"loading");
             GE.progress->value(0);
             GE.modelview->redraw();
-            Fl::repeat_timeout(frameinfo.timestep, cbredraw, nullptr);
+            Fl::repeat_timeout(frameinfo.timestep, cbredraw, data);
             break;
         }
         case frameinfo.animate:
-        case frameinfo.step:
         {
             frameinfo.vp.azim+=0.006;
-            const int step=frameinfo.animdir==frameinfo.back?-1:1;
-            frameinfo.f=frameinfo.timestep>=frameinfo.num?0:(frameinfo.f+step)%frameinfo.num;
+            frameinfo.f=frameinfo.num>0?(frameinfo.f+1)%frameinfo.num:0;
             static char pad[100];
-            sprintf(pad, "%.1fs %u/%u", frameinfo.f*frameinfo.timestep, frameinfo.f+1, frameinfo.num);
+            sprintf(pad, "%.1fs     %u/%u", frameinfo.f*frameinfo.timestep, frameinfo.f+1, frameinfo.num);
             GE.progress->label(pad);
             GE.progress->value(frameinfo.f);
             GE.modelview->redraw();
-            if (frameinfo.state==frameinfo.animate) Fl::repeat_timeout(frameinfo.timestep, cbredraw, nullptr);
+            Fl::repeat_timeout(frameinfo.timestep, cbredraw, data);
             break;
         }
-        case frameinfo.stop: break;
+        case frameinfo.step:
+        {
+            if (frameinfo.num>0)
+            {
+                // frameinfo.vp.azim+=0.006;
+                const int step=frameinfo.animdir==frameinfo.back?-1:1;
+                frameinfo.f=(frameinfo.f+step)%frameinfo.num;
+                static char pad[100];
+                sprintf(pad, "%.1fs     %u/%u", frameinfo.f*frameinfo.timestep, frameinfo.f+1, frameinfo.num);
+                GE.progress->label(pad);
+                GE.progress->value(frameinfo.f);
+                GE.modelview->redraw();
+            }
+            frameinfo.state=frameinfo.stop;
+            Fl::repeat_timeout(delay_idle, cbredraw, data);
+            break;
+        }
+        case frameinfo.stop:
+        {
+            GE.modelview->redraw();
+            Fl::repeat_timeout(delay_idle, cbredraw, data);
+            break;
+        }
     }
 }
 
@@ -96,7 +117,6 @@ static void bvhload(string_view filename)
         GE.progress->minimum(0);
         GE.progress->maximum(frameinfo.num);
         GE.stepper->hide();
-        Fl::repeat_timeout(0.1, cbredraw, (void*)GE.topwin);
     }
 }
 
@@ -126,7 +146,6 @@ static void cbbuttons(Fl_Widget*widget, void*ctx)
         frameinfo.animdir=frameinfo.forward;
         widget->label("@||");
         GE.stepper->hide();
-        Fl::repeat_timeout(frameinfo.timestep, cbredraw, &GE.topwin);
     }
     else fmtoutput("Run callback for %s\n", str);
 }
@@ -144,13 +163,11 @@ static void cbtoolbox(Fl_Widget*widget, void*)
     {
         frameinfo.animdir=frameinfo.forward;
         frameinfo.state=frameinfo.step;
-        Fl::repeat_timeout(frameinfo.timestep, cbredraw, &GE.topwin);
     }
     else if (0==strcmp(widget->label(), "@<-"))
     {
         frameinfo.animdir=frameinfo.back;
         frameinfo.state=frameinfo.step;
-        Fl::repeat_timeout(frameinfo.timestep, cbredraw, &GE.topwin);
     }
 }
 
@@ -243,6 +260,6 @@ int main(int argc, char**argv)
     GE.topwin->resizable(GE.modelview);
     GE.topwin->label("(No File) BVHShow");
     GE.topwin->show();
-    Fl::repeat_timeout(0.1, cbredraw, (void*)GE.topwin);
+    Fl::add_timeout(0.1, cbredraw, (void*)GE.topwin);
     Fl::run();
 }

@@ -341,6 +341,7 @@ void ModelWindow::draw()
         case frameinfo.init: initmodel(); frameinfo.state=frameinfo.animate; break;
         case frameinfo.animate: animatemodel(); break;
         case frameinfo.step: animatemodel(); break;
+        case frameinfo.stop: animatemodel(); break;
     }
     Fl_Gl_Window::draw();
 }
