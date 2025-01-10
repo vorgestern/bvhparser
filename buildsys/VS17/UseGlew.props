@@ -4,7 +4,7 @@
     <ItemDefinitionGroup>
         <ClCompile>
             <!-- Headers are found unter include/GL, because they are included as "GL/glew.h" etc -->
-            <PreprocessorDefinitions>GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>GLEW_STATIC=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
         </ClCompile>
         <Link>
             <AdditionalDependencies>glew32s.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
