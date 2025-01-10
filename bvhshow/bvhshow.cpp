@@ -17,15 +17,12 @@
 #include <GL/glew.h>
 #include "bvhshow.h"
 
+// Using OpenGL in fltk (mostly old OpenGL)
+// https://fltk.gitlab.io/fltk/opengl.html
+
 using namespace std;
 
 FrameInfo frameinfo;
-
-struct mainwindow: public Fl_Window
-{
-    mainwindow(int w, int h): Fl_Window(w, h){}
-    int handle(int event) override;
-};
 
 struct {
     string arg_filename;
@@ -35,7 +32,6 @@ struct {
     Fl_File_Chooser*fileselect {nullptr};
     Fl_Pack*stepper {nullptr};
     Fl_Progress*progress {nullptr};
-    char pad_progress[100];
 } GE;
 
 void fmtoutput(const char*format, ...)
@@ -68,8 +64,9 @@ static void cbredraw(void*)
             frameinfo.vp.azim+=0.006;
             const int step=frameinfo.animdir==frameinfo.back?-1:1;
             frameinfo.f=frameinfo.timestep>=frameinfo.num?0:(frameinfo.f+step)%frameinfo.num;
-            sprintf(GE.pad_progress, "%.1fs %u/%u", frameinfo.f*frameinfo.timestep, frameinfo.f+1, frameinfo.num);
-            GE.progress->label(GE.pad_progress);
+            static char pad[100];
+            sprintf(pad, "%.1fs %u/%u", frameinfo.f*frameinfo.timestep, frameinfo.f+1, frameinfo.num);
+            GE.progress->label(pad);
             GE.progress->value(frameinfo.f);
             GE.modelview->redraw();
             if (frameinfo.state==frameinfo.animate) Fl::repeat_timeout(frameinfo.timestep, cbredraw, nullptr);
@@ -157,17 +154,22 @@ static void cbtoolbox(Fl_Widget*widget, void*)
     }
 }
 
-int mainwindow::handle(int event)
+struct mainwindow: public Fl_Window
 {
-    const auto rc=Fl_Window::handle(event);
-    static bool firstcall=true;
-    if (firstcall && event==FL_SHOW && shown())
+    mainwindow(int w, int h): Fl_Window(w, h){}
+    int handle(int event) override
     {
-        firstcall=false;
-        if (!GE.arg_filename.empty()) bvhload(GE.arg_filename);
+        // Override to process command line after creation of user interface.
+        const auto rc=Fl_Window::handle(event);
+        static bool firstcall=true;
+        if (firstcall && event==FL_SHOW && shown())
+        {
+            firstcall=false;
+            if (!GE.arg_filename.empty()) bvhload(GE.arg_filename);
+        }
+        return rc;
     }
-    return rc;
-}
+};
 
 int main(int argc, char**argv)
 {
@@ -181,6 +183,7 @@ int main(int argc, char**argv)
     // GE.fileselect->callback(fc_callback);
 
     frameinfo.state=frameinfo.init;
+    frameinfo.timestep=1.0/30.0;
 
     GE.topwin=new mainwindow(800, 400);
     GE.topwin->callback(cbtop);
