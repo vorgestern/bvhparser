@@ -1,0 +1,11 @@
+
+# Libraries expected here (Release configuration)
+
+fltk.lib
+fltk_forms.lib
+fltk_gl.lib
+fltk_images.lib
+fltk_jpeg.lib
+fltk_png.lib
+fltk_z.lib
+glew32s.lib
