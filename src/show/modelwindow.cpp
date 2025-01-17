@@ -100,19 +100,15 @@ void proginfo::activate()const
 class ModelWindow: public Fl_Gl_Window
 {
     proginfo prog {};
-    GLuint VAOModel, VAOBox, VAOTrace;
-    GLuint VBModel,  VBBox,  VBTrace;
+    VAOBuffer VAOModel;
+    GLuint VAOBox, VAOTrace;
+    GLuint VBBox,  VBTrace;
 
 public:
     ModelWindow(int x, int y, int w, int h);
     void draw(void) override;
     int handle(int event) override;
     void reset();
-    void bind_model()const
-    {
-        glBindVertexArray(VAOModel);
-        glBindBuffer(GL_ARRAY_BUFFER, VBModel);
-    }
     void bind_boundingbox()const
     {
         glBindVertexArray(VAOBox);
@@ -166,8 +162,7 @@ public:
     {
         #define WE 1,1,1,1
         #define ROT 1,0,0,1
-        glGenVertexArrays(1, &VAOModel); glBindVertexArray(VAOModel);
-        glGenBuffers(1, &VBModel);       glBindBuffer(GL_ARRAY_BUFFER, VBModel);
+        VAOModel.generate();
         const GLfloat a=0.2, b=2;
         const GLfloat VertexData[]=
         {
@@ -254,7 +249,7 @@ public:
                 VertexData.push_back({vec4(b,1.0), white});
                 ++j;
             }
-            glBindBuffer(GL_ARRAY_BUFFER, VBModel);
+            VAOModel.bind();
             glBufferData(GL_ARRAY_BUFFER, VertexData.size()*sizeof(vertex), &VertexData[0], GL_STATIC_DRAW);
             rendermodel=[num=VertexData.size()](){ glDrawArrays(GL_LINES, 0, num); };
         }
@@ -296,7 +291,7 @@ public:
         View=glm::lookAt(eye, frameinfo.vp.focus, vec3 {0,1,0});
         glUniformMatrix4fv(prog.UnifProjection, 1, GL_FALSE, &Projection[0][0]);
         glUniformMatrix4fv(prog.UnifViewMatrix, 1, GL_FALSE, &View[0][0]);
-        bind_model(); rendermodel();
+        VAOModel.bind(); rendermodel();
         bind_boundingbox(); renderboundingbox();
         bind_trace(); rendertrace();
     }
@@ -327,7 +322,7 @@ void ModelWindow::draw()
     }
     if (VAOTrace==0) inittrace();
     if (VAOBox==0) initbox();
-    if (VAOModel==0) initgeom();
+    if (!VAOModel) initgeom();
     switch (frameinfo.state)
     {
         case frameinfo.init: initmodel(); frameinfo.state=frameinfo.animate; break;

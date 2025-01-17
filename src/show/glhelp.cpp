@@ -159,3 +159,17 @@ GLuint build_program(string_view vssource, string_view fssource)
     glDeleteShader(fs);
     return p;
 }
+
+// ====================================================================
+
+void VAOBuffer::generate()
+{
+    glGenVertexArrays(1, &VAO); glBindVertexArray(VAO);
+    glGenBuffers(1, &VB);       glBindBuffer(GL_ARRAY_BUFFER, VB);
+}
+
+void VAOBuffer::bind()
+{
+    glBindBuffer(GL_ARRAY_BUFFER, VB);
+    glBindVertexArray(VAO);
+}
