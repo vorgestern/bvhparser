@@ -31,7 +31,7 @@ class hanimjoint
     friend int parent(const hanimjoint&X){ return X.parent; }
 public:
     glm::dvec3 offset;
-    hanimjoint(int p, unsigned level1=0): parent(p), channelnum(0), level(level1), firstchannelindex(0xffffffff), offset({0,0,0}){}
+    hanimjoint(int p, unsigned level1=0): channelnum(0), parent(p), level(level1), firstchannelindex(0xffffffff), offset({0,0,0}){}
     unsigned char operator[](int n)const{ return n<0?0:n<(int)channelnum?channels[n]:0; }
     void setchannels(unsigned start, unsigned char c0, unsigned char c1, unsigned char c2);
     void setchannels(unsigned start, unsigned char c0, unsigned char c1, unsigned char c2, unsigned char c3, unsigned char c4, unsigned char c5);

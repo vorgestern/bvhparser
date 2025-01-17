@@ -1,27 +1,53 @@
 
-XFILES := hanimjoint main tools x3d euler_to_axisangle
-CPPFLAGS := -I src
-CXXFLAGS := -std=c++20 -Wall -Werror
+CPPFLAGS := -I include
+CXXFLAGS := -std=c++20 -Wall -Werror -Wno-unused-function -Wno-unused-but-set-variable
 
-.PHONY: all clean
+.PHONY: all clean dirs
 
-all: dirs bvhparser
-clean:
-	rm -rf b ./bvhparser
-dirs:
-	mkdir -p b
+all: dirs xxbvhtox3d xxbvhshow
+clean:; rm -rf b ./bvhparser.a
+dirs:; mkdir -p b/bvhparser b/bvhtox3d b/bvhshow
 
-b/bison-bvhconv.cpp: src/bvhconv.y
-	bison --defines=b/bvhconv.h --output=$@ -Wcounterexamples $<
+# ======================================================================
 
-b/lex-bvhconv.cpp: src/bvhconv.l
-	flex -8 --nounistd --prefix=xx -t > $@ $<
+PFILES := parser parsercontext utilities hanimjoint
+bvhparser.a: $(PFILES:%=b/bvhparser/%.o) b/bvhparser/bison-bvhconv.o b/bvhparser/lex-bvhconv.o
+	@echo $@
+	@ar -crs $@ $^
+b/bvhparser/bison-bvhconv.cpp b/bvhparser/bvhconv.h: parser/bvhconv.y
+	@echo $<
+	@bison --defines=b/bvhparser/bvhconv.h --output=b/bvhparser/bison-bvhconv.cpp -Wcounterexamples $<
+b/bvhparser/lex-bvhconv.cpp: parser/bvhconv.l b/bvhparser/bvhconv.h
+	@echo $<
+	@flex -8 --nounistd --prefix=xx -t > $@ $<
+b/bvhparser/%.o: parser/%.cpp parser/parsercontext.h b/bvhparser/bvhconv.h
+	@echo $<
+	@g++ $(CXXFLAGS) $(CPPFLAGS) -I parser -I b/bvhparser -c $< -o $@
+b/bvhparser/%.o: b/bvhparser/%.cpp parser/parsercontext.h b/bvhparser/bvhconv.h
+	@echo $<
+	@g++ $(CXXFLAGS) $(CPPFLAGS) -I parser -I b/bvhparser -c $< -o $@
 
-b/%.o: src/%.cpp src/bvhhelp.h
-	g++ $(CXXFLAGS) -Werror $(CPPFLAGS) -c $< -o $@
+# ======================================================================
 
-b/%.o: b/%.cpp src/bvhhelp.h
-	g++ $(CXXFLAGS) -Wno-unused-function $(CPPFLAGS) -c $< -o $@
-
-bvhparser: $(XFILES:%=b/%.o) b/bison-bvhconv.o b/lex-bvhconv.o
+AFILES := main bbox output x3d
+xxbvhtox3d: $(AFILES:%=b/bvhtox3d/%.o) bvhparser.a
 	g++ -o $@ $^
+b/bvhtox3d/%.o: bvhtox3d/%.cpp parser/parsercontext.h b/bvhparser/bvhconv.h
+	@echo $<
+	@g++ $(CXXFLAGS) $(CPPFLAGS) -I b/bvhparser -I bvhtox3d -c $< -o $@
+
+# ======================================================================
+
+SFILES   := bvhshow glhelp modelwindow
+MYLDFLAGS := -L/home/josef/source/fltk-1.4.1/bb/lib -L/usr/lib/x86_64-linux-gnu -Wl,-rpath,/home/josef/source/fltk-1.4.1/bb/lib
+MYCPPFLAGS := -I/usr/include/cairo -I/home/josef/source/fltk-1.4.1/bb -I/home/josef/source/fltk-1.4.1
+b/bvhshow/%.o: bvhshow/%.cpp bvhshow/bvhshow.h include/parser.h
+	@echo $<
+	@g++ $(CXXFLAGS) $(CPPFLAGS) $(MYCPPFLAGS) -I b/bvhparser -I bvhshow  -c $< -o $@
+xxbvhshow: $(SFILES:%=b/bvhshow/%.o) bvhparser.a
+	g++ -o $@ $^ $(MYLDFLAGS) -lfltk -lfltk_forms -lfltk_gl -lfltk_images -lGL -lGLU -lGLEW -lX11 -lcairo
+
+#  -lfltk_jpeg -lfltk_png -lfltk_z
+#  -lfltk_gl -lfltk_forms
+
+# fltk-config
