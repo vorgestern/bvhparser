@@ -10,3 +10,5 @@ extern struct GlewInfo
 bool glewinitialise();
 std::pair<int,int> glversion();
 std::pair<int,int> glslversion();
+
+GLuint build_program(std::string_view vssource, std::string_view fssource);

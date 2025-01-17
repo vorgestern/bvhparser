@@ -86,20 +86,6 @@ struct proginfo
     void activate()const;
 };
 
-static proginfo build_program()
-{
-    const auto vs=mkvertexshader(source.vs);
-    const auto fs=mkfragmentshader(source.fs);
-    const auto p=linkshaderprogram(vs, fs, {"FinalColor"});
-    glDeleteShader(vs);
-    glDeleteShader(fs);
-    return {
-        p,
-        glGetUniformLocation(p, "Projection"), glGetUniformLocation(p, "ViewMatrix"),
-        glGetAttribLocation(p, "XPosition"), glGetAttribLocation(p, "XColor")
-    };
-}
-
 void proginfo::activate()const
 {
     glEnableVertexAttribArray((GLuint)AttrPosition);
@@ -328,7 +314,12 @@ void ModelWindow::draw()
     const auto w=pixel_w(), h=pixel_h();
     if (glewinfo.glversion.first>=3 && !prog)
     {
-        prog=build_program();
+        const auto p=build_program(source.vs, source.fs);
+        prog={
+            p,
+            glGetUniformLocation(p, "Projection"), glGetUniformLocation(p, "ViewMatrix"),
+            glGetAttribLocation(p, "XPosition"), glGetAttribLocation(p, "XColor")
+        };
     }
     else if (!valid())
     {

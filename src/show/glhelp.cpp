@@ -102,27 +102,7 @@ bool glewinitialise()
     return true;
 }
 
-GLuint linkshaderprogram(GLint vs, GLint fs, vector<string_view>fragdataloc)
-{
-    GLint err;
-    GLsizei length;
-    GLchar CLOG[1000];
-    GLuint p=glCreateProgram();
-    glAttachShader(p, vs);
-    glAttachShader(p, fs);
-    unsigned num=0;
-    for (auto s: fragdataloc) glBindFragDataLocation(p, num++, s.data()); // "fragcolour"
-    glLinkProgram(p);
-    glGetProgramiv(p, GL_LINK_STATUS, &err);
-    if (err!=GL_TRUE)
-    {
-        glGetProgramInfoLog(p, sizeof(CLOG), &length, CLOG);
-        fmtoutput("link log=%s\n", CLOG);
-    }
-    return p;
-}
-
-GLuint mkvertexshader(string_view source)
+static GLuint mkvertexshader(string_view source)
 {
     const GLuint vs=glCreateShader(GL_VERTEX_SHADER);
     const char*src[]={source.data()};
@@ -140,7 +120,7 @@ GLuint mkvertexshader(string_view source)
     return vs;
 }
 
-GLuint mkfragmentshader(string_view source)
+static GLuint mkfragmentshader(string_view source)
 {
     const GLuint fs=glCreateShader(GL_FRAGMENT_SHADER);
     const char*src[]={source.data()};
@@ -156,4 +136,26 @@ GLuint mkfragmentshader(string_view source)
         fmtoutput("fs ShaderInfoLog=%s\n", CLOG);
     }
     return fs;
+}
+
+GLuint build_program(string_view vssource, string_view fssource)
+{
+    const auto vs=mkvertexshader(vssource);
+    const auto fs=mkfragmentshader(fssource);
+    const GLuint p=glCreateProgram();
+    glAttachShader(p, vs);
+    glAttachShader(p, fs);
+    glLinkProgram(p);
+    GLint err;
+    glGetProgramiv(p, GL_LINK_STATUS, &err);
+    if (err!=GL_TRUE)
+    {
+        GLchar CLOG[1000];
+        GLsizei length;
+        glGetProgramInfoLog(p, sizeof(CLOG), &length, CLOG);
+        fmtoutput("Link Log=%s\n", CLOG);
+    }
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+    return p;
 }
