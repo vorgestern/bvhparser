@@ -78,12 +78,12 @@
   </PropertyGroup>
   <ItemDefinitionGroup/>
   <ItemGroup>
-    <CustomBuild Include="..\..\parser\bvhconv.l">
+    <CustomBuild Include="..\..\src\parser\bvhconv.l">
       <Command>$(FLEX) -8 --nounistd --prefix=xx %(Identity)</Command>
       <Message>Generating lexer source from %(Identity)</Message>
       <Outputs>$(ProjectDir)lex-%(Filename).cpp</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\parser\bvhconv.y">
+    <CustomBuild Include="..\..\src\parser\bvhconv.y">
       <Command>$(BISON) --defines="%(Filename).h" --output=bison-%(Filename).cpp %(Identity)</Command>
       <Message>Generating parser source from %(Identity)</Message>
       <Outputs>$(ProjectDir)bison-%(Filename).cpp</Outputs>
@@ -91,7 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bvhconv.h" />
-    <ClInclude Include="..\..\parser\parsercontext.h" />
+    <ClInclude Include="..\..\src\parser\parsercontext.h" />
     <ClInclude Include="..\..\include\parser.h" />
   </ItemGroup>
   <ItemGroup>
@@ -99,10 +99,10 @@
       <DisableSpecificWarnings>4065;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lex-bvhconv.cpp" />
-    <ClCompile Include="..\..\parser\hanimjoint.cpp" />
-    <ClCompile Include="..\..\parser\parsercontext.cpp" />
-    <ClCompile Include="..\..\parser\parser.cpp" />
-    <ClCompile Include="..\..\parser\utilities.cpp" />
+    <ClCompile Include="..\..\src\parser\hanimjoint.cpp" />
+    <ClCompile Include="..\..\src\parser\parsercontext.cpp" />
+    <ClCompile Include="..\..\src\parser\parser.cpp" />
+    <ClCompile Include="..\..\src\parser\utilities.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

@@ -14,25 +14,25 @@ PFILES := parser parsercontext utilities hanimjoint
 bvhparser.a: $(PFILES:%=b/bvhparser/%.o) b/bvhparser/bison-bvhconv.o b/bvhparser/lex-bvhconv.o
 	@echo $@
 	@ar -crs $@ $^
-b/bvhparser/bison-bvhconv.cpp b/bvhparser/bvhconv.h: parser/bvhconv.y
+b/bvhparser/bison-bvhconv.cpp b/bvhparser/bvhconv.h: src/parser/bvhconv.y
 	@echo $<
 	@bison --defines=b/bvhparser/bvhconv.h --output=b/bvhparser/bison-bvhconv.cpp -Wcounterexamples $<
-b/bvhparser/lex-bvhconv.cpp: parser/bvhconv.l b/bvhparser/bvhconv.h
+b/bvhparser/lex-bvhconv.cpp: src/parser/bvhconv.l b/bvhparser/bvhconv.h
 	@echo $<
 	@flex -8 --nounistd --prefix=xx -t > $@ $<
-b/bvhparser/%.o: parser/%.cpp parser/parsercontext.h b/bvhparser/bvhconv.h
+b/bvhparser/%.o: src/parser/%.cpp src/parser/parsercontext.h b/bvhparser/bvhconv.h
 	@echo $<
-	@g++ $(CXXFLAGS) $(CPPFLAGS) -I parser -I b/bvhparser -c $< -o $@
-b/bvhparser/%.o: b/bvhparser/%.cpp parser/parsercontext.h b/bvhparser/bvhconv.h
+	@g++ $(CXXFLAGS) $(CPPFLAGS) -I src/parser -I b/bvhparser -c $< -o $@
+b/bvhparser/%.o: b/bvhparser/%.cpp src/parser/parsercontext.h b/bvhparser/bvhconv.h
 	@echo $<
-	@g++ $(CXXFLAGS) $(CPPFLAGS) -I parser -I b/bvhparser -c $< -o $@
+	@g++ $(CXXFLAGS) $(CPPFLAGS) -I src/parser -I b/bvhparser -c $< -o $@
 
 # ======================================================================
 
 AFILES := main bbox output x3d
 xxbvhtox3d: $(AFILES:%=b/bvhtox3d/%.o) bvhparser.a
 	g++ -o $@ $^
-b/bvhtox3d/%.o: bvhtox3d/%.cpp parser/parsercontext.h b/bvhparser/bvhconv.h
+b/bvhtox3d/%.o: bvhtox3d/%.cpp src/parser/parsercontext.h b/bvhparser/bvhconv.h
 	@echo $<
 	@g++ $(CXXFLAGS) $(CPPFLAGS) -I b/bvhparser -I bvhtox3d -c $< -o $@
 
