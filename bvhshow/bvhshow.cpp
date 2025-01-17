@@ -12,7 +12,7 @@
 #include <FL/Fl_File_Chooser.H>
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_Progress.H>
-#include <FL/Fl_Widget.h>
+#include <FL/Fl_Widget.H>
 #include <FL/Fl_Pack.H>
 #include <GL/glew.h>
 #include "bvhshow.h"
@@ -122,7 +122,7 @@ static void bvhload(string_view filename)
 
 static void cbbuttons(Fl_Widget*widget, void*ctx)
 {
-    auto str=ctx==nullptr?widget->label():(const char*)ctx;
+    const string_view str=ctx==nullptr?widget->label():(const char*)ctx;
     if (str=="select_bvh")
     {
         GE.fileselect->filter("*.bvh");

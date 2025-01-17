@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "bvhshow.h"
+#include <functional>
 
 // Probleme:
 // cmu 15.02-15.04
@@ -141,12 +142,12 @@ public:
         // static_assert(sizeof Trace==tlen*sizeof vertex);
         glGenVertexArrays(1, &VAOTrace); glBindVertexArray(VAOTrace);
         glGenBuffers(1, &VBTrace);       glBindBuffer(GL_ARRAY_BUFFER, VBTrace);
-        for (auto j=0; j<tlen; ++j)
+        for (auto j=0u; j<tlen; ++j)
         {
             const float k=0.5+j*0.5/100.0;
             Trace[j]={vec4 {-10+j*20.0/tlen, 0, 0, 1}, vec4 {k,k,k,1}};
         }
-        glBufferData(GL_ARRAY_BUFFER, tlen*sizeof vertex, &Trace[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, tlen*sizeof(vertex), &Trace[0], GL_STATIC_DRAW);
         prog.activate();
         rendertrace=[num=current](){ glDrawArrays(GL_LINES, 0, 100); };
     }
@@ -256,7 +257,7 @@ public:
         {
             const auto K=flatten(frameinfo.Hier, frameinfo.Motion[frameinfo.f]);
             if (K.size()>0) K0=K[0];
-            static_assert(32==sizeof vertex);
+            static_assert(32==sizeof(vertex));
             vector<vertex>VertexData;
             unsigned j=0;
             const vec4 white(1,1,1,1);
@@ -268,7 +269,7 @@ public:
                 ++j;
             }
             glBindBuffer(GL_ARRAY_BUFFER, VBModel);
-            glBufferData(GL_ARRAY_BUFFER, VertexData.size()*sizeof vertex, &VertexData[0], GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, VertexData.size()*sizeof(vertex), &VertexData[0], GL_STATIC_DRAW);
             rendermodel=[num=VertexData.size()](){ glDrawArrays(GL_LINES, 0, num); };
         }
         // =================================================
@@ -298,7 +299,7 @@ public:
                 }
                 current=(current+1)%tlen;
                 glBindBuffer(GL_ARRAY_BUFFER, VBTrace);
-                glBufferData(GL_ARRAY_BUFFER, tlen*sizeof vertex, &Trace[0], GL_STATIC_DRAW);
+                glBufferData(GL_ARRAY_BUFFER, tlen*sizeof(vertex), &Trace[0], GL_STATIC_DRAW);
                 rendertrace=[num=current](){ glDrawArrays(GL_POINTS, 0, current); glDrawArrays(GL_POINTS, current, tlen-current); };
             }
 // fmtoutput("K0 %.2g %.2g %.2g pk %.2g %.2g %.2g\n", K0[0], K0[1], K0[2], pk[0], pk[1], pk[2]);
