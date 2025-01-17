@@ -5,8 +5,8 @@ CXXFLAGS := -std=c++20 -Wall -Werror -Wno-unused-function -Wno-unused-but-set-va
 .PHONY: all clean dirs
 
 all: dirs bvhtox3d bvhshow
-clean:; rm -rf b ./bvhparser.a
-dirs:; mkdir -p b/bvhparser b/tox3d b/show
+clean:; @rm -rf b ./bvhparser.a
+dirs:; @mkdir -p b/bvhparser b/tox3d b/show
 
 # ======================================================================
 
