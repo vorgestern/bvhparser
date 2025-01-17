@@ -81,12 +81,12 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\bvhshow\bvhshow.cpp" />
-    <ClCompile Include="..\..\bvhshow\glhelp.cpp" />
-    <ClCompile Include="..\..\bvhshow\modelwindow.cpp" />
+    <ClCompile Include="..\..\src\show\bvhshow.cpp" />
+    <ClCompile Include="..\..\src\show\glhelp.cpp" />
+    <ClCompile Include="..\..\src\show\modelwindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\bvhshow\bvhshow.h" />
+    <ClInclude Include="..\..\src\show\bvhshow.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="bvhparser.vcxproj">
