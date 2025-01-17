@@ -354,7 +354,7 @@ int ModelWindow::handle(int event)
     {
         firstcall=false;
         make_current();
-        initialise_glew();
+        glewinitialise();
         if (glewinfo.glversion.first<3) mode(mode() & ~FL_OPENGL3);
     }
     return Fl_Gl_Window::handle(event);

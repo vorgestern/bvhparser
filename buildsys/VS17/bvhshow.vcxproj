@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\show\bvhshow.h" />
+    <ClInclude Include="..\..\src\show\glhelp.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="bvhparser.vcxproj">

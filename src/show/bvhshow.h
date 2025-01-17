@@ -3,11 +3,7 @@
 #include <vector>
 #include <string_view>
 #include <parser.h>
-
-extern struct GlewInfo
-{
-    std::pair<int,int> glewversion, glversion, glslversion; // major, minor
-} glewinfo;
+#include "glhelp.h"
 
 struct vpstruct {
     float dist, elev, azim;
@@ -30,7 +26,6 @@ extern struct FrameInfo
     vpstruct vp;
 } frameinfo;
 
-void initialise_glew();
 void fmtoutput(const char*format, ...);
 Fl_Window*NewGlWindow(int x, int y, int w, int h);
 Fl_Window*NewModelWindow(int x, int y, int w, int h);

@@ -2,7 +2,9 @@
 #include <FL/Fl_Gl_Window.H>
 #include <GL/glew.h>
 #include <FL/gl.h> // for gl_texture_reset()
-#include "bvhshow.h"
+#include "glhelp.h"
+
+void fmtoutput(const char*format, ...);
 
 using namespace std;
 
@@ -53,12 +55,12 @@ static pair<int,int>glslversion()
     }
 }
 
-void initialise_glew()
+bool glewinitialise()
 {
-    if (glewinfo.glewversion.first!=0) return;
+    static pair<int,int> glewversion;
+    if (glewversion.first!=0) return true;
 
     GLenum err=glewInit(); // Defines pointers to functions of OpenGL V 1.2 and above
-
 #ifdef FLTK_USE_WAYLAND
     // glewInit returns GLEW_ERROR_NO_GLX_DISPLAY with Wayland
     // see https://github.com/nigels-com/glew/issues/273
@@ -68,7 +70,7 @@ void initialise_glew()
     if (err!=GLEW_OK)
     {
         Fl::warning("glewInit() failed returning %u", err);
-        return;
+        return false;
     }
 
     auto str=(const char*)glewGetString(GLEW_VERSION);
@@ -76,21 +78,20 @@ void initialise_glew()
     const int nr=sscanf(str, "%d.%d", &major, &minor);
     if (nr==2)
     {
-        fmtoutput("Using Glew version '%s'\n", str);
-        glewinfo.glewversion={major, minor};
+        fmtoutput("Using Glew version %s.\n", str);
+        glewversion={major, minor};
     }
     else if (nr==1)
     {
-        fmtoutput("Using Glew version '%s' (Cannot retrieve minor)\n", str);
-        glewinfo.glewversion={major,0};
+        fmtoutput("Using Glew version %d (Cannot retrieve minor from '%s')\n", major, str);
+        glewversion={major,0};
     }
     else
     {
         fmtoutput("Using Glew version '%s' (Cannot retrieve major.minor)\n", str);
-        glewinfo.glewversion={};
+        glewversion={};
     }
-
-    if (glewinfo.glewversion.first>0)
+    if (glewversion.first>0)
     {
         glewinfo.glversion=glversion();
         glewinfo.glslversion=glslversion();
@@ -98,6 +99,7 @@ void initialise_glew()
             "FLTK widgets will appear but the programmed "
             "rendering pipeline will not run.\n");
     }
+    return true;
 }
 
 GLuint linkshaderprogram(GLint vs, GLint fs, vector<string_view>fragdataloc)
@@ -122,16 +124,16 @@ GLuint linkshaderprogram(GLint vs, GLint fs, vector<string_view>fragdataloc)
 
 GLuint mkvertexshader(string_view source)
 {
-    GLint err;
-    GLsizei length;
-    GLchar CLOG[1000];
-    const char*src=source.data();
-    GLuint vs=glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vs, 1, &src, NULL);
+    const GLuint vs=glCreateShader(GL_VERTEX_SHADER);
+    const char*src[]={source.data()};
+    glShaderSource(vs, 1, src, NULL);
     glCompileShader(vs);
+    GLint err;
     glGetShaderiv(vs, GL_COMPILE_STATUS, &err);
     if (err!=GL_TRUE)
     {
+        GLchar CLOG[1000];
+        GLsizei length;
         glGetShaderInfoLog(vs, sizeof(CLOG), &length, CLOG);
         fmtoutput("vs ShaderInfoLog=%s\n", CLOG);
     }
@@ -140,16 +142,16 @@ GLuint mkvertexshader(string_view source)
 
 GLuint mkfragmentshader(string_view source)
 {
-    GLint err;
-    GLsizei length;
-    GLchar CLOG[1000];
-    const char*src=source.data();
-    GLuint fs=glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fs, 1, &src, NULL);
+    const GLuint fs=glCreateShader(GL_FRAGMENT_SHADER);
+    const char*src[]={source.data()};
+    glShaderSource(fs, 1, src, NULL);
     glCompileShader(fs);
+    GLint err;
     glGetShaderiv(fs, GL_COMPILE_STATUS, &err);
     if (err!=GL_TRUE)
     {
+        GLchar CLOG[1000];
+        GLsizei length;
         glGetShaderInfoLog(fs, sizeof(CLOG), &length, CLOG);
         fmtoutput("fs ShaderInfoLog=%s\n", CLOG);
     }
