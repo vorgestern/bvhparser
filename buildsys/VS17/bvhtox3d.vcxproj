@@ -45,13 +45,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\bvhtox3d\bvhhelp.h" />
+    <ClInclude Include="..\..\src\tox3d\bvhhelp.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\bvhtox3d\bbox.cpp" />
-    <ClCompile Include="..\..\bvhtox3d\main.cpp" />
-    <ClCompile Include="..\..\bvhtox3d\output.cpp" />
-    <ClCompile Include="..\..\bvhtox3d\x3d.cpp" />
+    <ClCompile Include="..\..\src\tox3d\bbox.cpp" />
+    <ClCompile Include="..\..\src\tox3d\main.cpp" />
+    <ClCompile Include="..\..\src\tox3d\output.cpp" />
+    <ClCompile Include="..\..\src\tox3d\x3d.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="bvhparser.vcxproj">

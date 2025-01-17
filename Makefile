@@ -4,9 +4,9 @@ CXXFLAGS := -std=c++20 -Wall -Werror -Wno-unused-function -Wno-unused-but-set-va
 
 .PHONY: all clean dirs
 
-all: dirs xxbvhtox3d xxbvhshow
+all: dirs bvhtox3d xxbvhshow
 clean:; rm -rf b ./bvhparser.a
-dirs:; mkdir -p b/bvhparser b/bvhtox3d b/bvhshow
+dirs:; mkdir -p b/bvhparser b/tox3d b/bvhshow
 
 # ======================================================================
 
@@ -30,11 +30,11 @@ b/bvhparser/%.o: b/bvhparser/%.cpp src/parser/parsercontext.h b/bvhparser/bvhcon
 # ======================================================================
 
 AFILES := main bbox output x3d
-xxbvhtox3d: $(AFILES:%=b/bvhtox3d/%.o) bvhparser.a
+bvhtox3d: $(AFILES:%=b/tox3d/%.o) bvhparser.a
 	g++ -o $@ $^
-b/bvhtox3d/%.o: bvhtox3d/%.cpp src/parser/parsercontext.h b/bvhparser/bvhconv.h
+b/tox3d/%.o: src/tox3d/%.cpp src/parser/parsercontext.h b/bvhparser/bvhconv.h
 	@echo $<
-	@g++ $(CXXFLAGS) $(CPPFLAGS) -I b/bvhparser -I bvhtox3d -c $< -o $@
+	@g++ $(CXXFLAGS) $(CPPFLAGS) -I b/bvhparser -I src/tox3d -c $< -o $@
 
 # ======================================================================
 
