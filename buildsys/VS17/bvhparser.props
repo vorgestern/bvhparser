@@ -13,7 +13,7 @@
     <ItemDefinitionGroup>
         <ClCompile>
             <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-            <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\parser;..\..\include\glm;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+            <AdditionalIncludeDirectories>..\..\src\parser;..\..\include;..\..\include\glm;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
             <LanguageStandard>stdcpp20</LanguageStandard>
             <WarningLevel>Level3</WarningLevel>
         </ClCompile>
