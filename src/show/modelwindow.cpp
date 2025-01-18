@@ -34,9 +34,9 @@ vec3 recenter(const mat4&V, const mat4&P, const vec4&viewport, const vec3&eyepoi
     return wo;
 }
 
-static function<void()>rendermodel=[](){ glDrawArrays(GL_LINE_STRIP, 0, 7); };
-static function<void()>renderboundingbox=[](){ glDrawArrays(GL_LINE_STRIP, 0, 10); };
-static function<void()>rendertrace=[](){ glDrawArrays(GL_LINE_STRIP, 0, 100); };
+static function<void()>rendermodel=[](){};
+static function<void()>renderboundingbox=[](){};
+static function<void()>rendertrace=[](){};
 
 struct vertex { vec4 pos, color; };
 
@@ -79,10 +79,9 @@ mat4 Projection, View;
 
 struct proginfo
 {
-    GLuint progname {0};
+    GLuint program {0};
     GLint UnifProjection {-1}, UnifViewMatrix {-2};
     GLint AttrPosition {-1}, AttrColour {-1};
-    operator bool()const{ return progname!=0; }
     void activate()const;
 };
 
@@ -92,7 +91,7 @@ void proginfo::activate()const
     glEnableVertexAttribArray((GLuint)AttrColour);
     glVertexAttribPointer((GLuint)AttrPosition, 4, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), 0);
     glVertexAttribPointer((GLuint)AttrColour,   4, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), (char*)0+4*sizeof(GLfloat));
-    glUseProgram(progname);
+    glUseProgram(program);
 }
 
 // =========================================================
@@ -106,7 +105,6 @@ public:
     ModelWindow(int x, int y, int w, int h);
     void draw(void) override;
     int handle(int event) override;
-    void reset();
     void inittrace()
     {
         // static_assert(sizeof Trace==tlen*sizeof vertex);
@@ -118,7 +116,7 @@ public:
         }
         glBufferData(GL_ARRAY_BUFFER, tlen*sizeof(vertex), &Trace[0], GL_STATIC_DRAW);
         prog.activate();
-        rendertrace=[num=current](){ glDrawArrays(GL_LINES, 0, 100); };
+        rendertrace=[prog=this->prog](){ useprog(prog); glDrawArrays(GL_POINTS, 0, tlen); };
     }
     void initbox()
     {
@@ -141,6 +139,7 @@ public:
         };
         glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
         prog.activate();
+        renderboundingbox=[prog=this->prog](){ useprog(prog); glDrawArrays(GL_LINE_STRIP, 0, 10); };
         #undef WE
         #undef ROT
     }
@@ -235,7 +234,7 @@ public:
             }
             VAOModel.bind();
             glBufferData(GL_ARRAY_BUFFER, VertexData.size()*sizeof(vertex), &VertexData[0], GL_STATIC_DRAW);
-            rendermodel=[num=VertexData.size()](){ glDrawArrays(GL_LINES, 0, num); };
+            rendermodel=[num=VertexData.size(), prog=this->prog](){ useprog(prog); glDrawArrays(GL_LINES, 0, num); };
         }
         // =================================================
         glClearColor(0.08f, 0.08f, 0.08f, 1.0f);
@@ -265,7 +264,6 @@ public:
                 current=(current+1)%tlen;
                 VAOTrace.bind();
                 glBufferData(GL_ARRAY_BUFFER, tlen*sizeof(vertex), &Trace[0], GL_STATIC_DRAW);
-                rendertrace=[num=current](){ glDrawArrays(GL_POINTS, 0, current); glDrawArrays(GL_POINTS, current, tlen-current); };
             }
 // fmtoutput("K0 %.2g %.2g %.2g pk %.2g %.2g %.2g\n", K0[0], K0[1], K0[2], pk[0], pk[1], pk[2]);
 // fmtoutput("K0 %.2f %.2f %.2f ==> %.2f %.2f %.2f\n", K0[0], K0[1], K0[2], wo[0], wo[1], wo[2]);
@@ -291,7 +289,7 @@ void ModelWindow::draw()
     static unsigned nc=0;
     ++nc;
     const auto w=pixel_w(), h=pixel_h();
-    if (glewinfo.glversion.first>=3 && !prog)
+    if (glewinfo.glversion.first>=3 && !isvalidprog(prog))
     {
         const auto p=build_program(source.vs, source.fs);
         prog={
@@ -328,12 +326,6 @@ int ModelWindow::handle(int event)
         if (glewinfo.glversion.first<3) mode(mode() & ~FL_OPENGL3);
     }
     return Fl_Gl_Window::handle(event);
-}
-
-void ModelWindow::reset()
-{
-    prog={0,0,0,0};
-    gl_texture_reset();
 }
 
 } // anon
