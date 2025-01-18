@@ -22,6 +22,39 @@ vec3 eyevector(const vpstruct&X)
     return {x0*cos(X.azim)+X.dist*sin(X.azim), X.elev, -x0*sin(X.azim)+cos(X.azim)*X.dist};
 }
 
+const GLfloat a=0.2, b=2;
+const vec3 ROT={1,0,0}, WE={1,1,1};
+const vector<vertex>Pyramid=
+{
+    {{ 0, b, 0}, ROT},
+    {{-a, 0,-a}, WE},
+    {{-a, 0, a}, WE},
+    {{ 0, b, 0}, ROT},
+    {{ a, 0,-a}, WE},
+    {{ a, 0, a}, WE},
+    {{ 0, b, 0}, ROT}
+};
+
+namespace BoundingBox
+{
+    const vector<vertex>&from_min_max(const vec3&a, const vec3&b)
+    {
+        static vector<vertex>X(10);
+        const vec3 C={1,0,0};
+        X[0]={{a[0], a[1], a[2]}, C};
+        X[1]={{a[0], a[1], b[2]}, C};
+        X[2]={{b[0], a[1], b[2]}, C};
+        X[3]={{b[0], a[1], a[2]}, C};
+        X[4]={{a[0], a[1], a[2]}, C};
+        X[5]={{a[0], b[1], a[2]}, C};
+        X[6]={{a[0], b[1], b[2]}, C};
+        X[7]={{b[0], b[1], b[2]}, C};
+        X[8]={{b[0], b[1], a[2]}, C};
+        X[9]={{a[0], b[1], a[2]}, C};
+        return X;
+    }
+};
+
 namespace ProgVC {
 
 const string_view vs=R"__(#version 330
@@ -62,26 +95,14 @@ NeuProg<vertex> buildprog()
 
 namespace {
 
-vec3 recenter(const mat4&V, const mat4&P, const vec4&viewport, const vec3&eyepoint)
-{
-    const vec2 winpoint={
-        viewport[0]+0.5*(eyepoint.x+1)*viewport[2],
-        viewport[1]+0.5*(eyepoint.y+1)*viewport[3]
-    };
-    const vec3 a=glm::unProject({winpoint[0],winpoint[1],-1}, V, P, viewport);
-    const vec3 b=glm::unProject({winpoint[0],winpoint[1],+1}, V, P, viewport);
-    const auto wo=b+(eyepoint.z-b[1])/(a[1]-b[1])*(a-b);
-    return wo;
-}
+pair<vec3,vec3> bb;
+const size_t tlen=1000;
+vector<vertex> Trace;
+mat4 Projection, View;
 
 static function<void()>rendermodel=[](){};
 static function<void()>renderboundingbox=[](){};
 static function<void()>rendertrace=[](){};
-
-pair<vec3,vec3> bb;
-const size_t tlen=1000;
-vector<vertex> Trace(tlen);
-mat4 Projection, View;
 
 // =========================================================
 
@@ -121,62 +142,26 @@ void ModelWindow::draw()
     }
     if (!VAOTrace)
     {
-        // static_assert(sizeof Trace==tlen*sizeof vertex);
         VAOTrace.generate();
         vertexspec(prog);
-        for (auto j=0u; j<tlen; ++j)
-        {
-            const float k=0.5+j*0.5/100.0;
-            Trace[j]={{-10+j*20.0/tlen, 0, 0}, {k,k,k}};
-        }
+        Trace=vector<vertex>(tlen, {{0,0,0},{1,1,1}});
         glBufferData(GL_ARRAY_BUFFER, tlen*sizeof(vertex), &Trace[0], GL_STATIC_DRAW);
         rendertrace=[prog=this->prog](){ useprog(prog); glDrawArrays(GL_POINTS, 0, tlen); };
     }
     if (!VAOBox)
     {
-        #define WE 1,1,1
-        #define ROT 1,0,0
         VAOBox.generate();
         vertexspec(prog);
-        const float a=20, b=30;
-        const GLfloat VertexData[]=
-        {
-            -a, 0, -a, ROT,
-            -a, 0,  a, ROT,
-            a, 0,  a, ROT,
-            a, 0, -a, ROT,
-            -a, 0, -a, ROT,
-            -a, b, -a, ROT,
-            -a, b,  a, ROT,
-            a, b,  a, ROT,
-            a, b, -a, ROT,
-            -a, b, -a, ROT,
-        };
-        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
-        renderboundingbox=[prog=this->prog](){ useprog(prog); glDrawArrays(GL_LINE_STRIP, 0, 10); };
-        #undef WE
-        #undef ROT
+        const vec3 a={-2, 0, -2}, b={2, 3, 2};
+        const auto V=BoundingBox::from_min_max(a,b);
+        glBufferData(GL_ARRAY_BUFFER, V.size()*sizeof(vertex), &V[0], GL_STATIC_DRAW);
+        renderboundingbox=[prog=this->prog, num=V.size()](){ useprog(prog); glDrawArrays(GL_LINE_STRIP, 0, num); };
     }
     if (!VAOModel)
     {
-        #define WE 1,1,1
-        #define ROT 1,0,0
+        // fmtoutput("draw init VAOModel\n");
         VAOModel.generate();
         vertexspec(prog);
-        const GLfloat a=0.2, b=2;
-        const GLfloat VertexData[]=
-        {
-            0, b, 0, ROT,
-            -a, 0,-a, WE,
-            -a, 0, a, WE,
-            0, b, 0, ROT,
-            a, 0,-a, WE,
-            a, 0, a, WE,
-            0, b, 0, ROT
-        };
-        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
-        #undef WE
-        #undef ROT
     }
     switch (frameinfo.state)
     {
@@ -203,51 +188,27 @@ int ModelWindow::handle(int event)
 
 void ModelWindow::initmodel()
 {
-#define ROT 1,0,0
-#define WE 1,1,1
     if (frameinfo.Hier.size()>0)
     {
-        const auto [a,b]=boundingbox(frameinfo.Hier, frameinfo.Motion);
-        const GLfloat VertexData[]=
-        {
-            a[0], a[1], a[2], ROT,
-            a[0], a[1], b[2], ROT,
-            b[0], a[1], b[2], ROT,
-            b[0], a[1], a[2], ROT,
-            a[0], a[1], a[2], ROT,
-            a[0], b[1], a[2], ROT,
-            a[0], b[1], b[2], ROT,
-            b[0], b[1], b[2], ROT,
-            b[0], b[1], a[2], ROT,
-            a[0], b[1], a[2], ROT,
-        };
         VAOBox.bind();
-        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
+        const auto [a,b]=boundingbox(frameinfo.Hier, frameinfo.Motion);
+        const auto V=BoundingBox::from_min_max(a,b);
+        glBufferData(GL_ARRAY_BUFFER, V.size()*sizeof(vertex), &V[0], GL_STATIC_DRAW);
+        rendermodel=[prog=this->prog, num=V.size()](){ useprog(prog); glDrawArrays(GL_LINES, 0, num); };
         frameinfo.vp.bbcenter=vec3(.5,.5,.5)*(a+b);
         frameinfo.vp.focus=frameinfo.vp.bbcenter;
-        frameinfo.vp.elev=b[1];
+        frameinfo.vp.elev=a[1]+1.1*(b[1]-a[1]);
         frameinfo.vp.dist=1.4*glm::length(b-a);
         bb={a,b};
     }
     else
     {
-        const GLfloat a=0.2, b=2;
-        const GLfloat VertexData[]=
-        {
-            0, b, 0, ROT,
-            -a, 0,-a, WE,
-            -a, 0, a, WE,
-            0, b, 0, ROT,
-            a, 0,-a, WE,
-            a, 0, a, WE,
-            0, b, 0, ROT
-        };
-        VAOBox.bind();
-        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
+        VAOModel.bind();
+        glBufferData(GL_ARRAY_BUFFER, Pyramid.size()*sizeof(vertex), &Pyramid[0], GL_STATIC_DRAW);
+        rendermodel=[prog=this->prog](){ useprog(prog); glDrawArrays(GL_LINE_STRIP, 0, 7); };
+        frameinfo.vp.elev=Pyramid[0].pos.y+0.1*(Pyramid[0].pos.y-Pyramid[1].pos.y);
         frameinfo.vp.dist=10;
     }
-#undef ROT
-#undef WE
 }
 
 void ModelWindow::animatemodel()
@@ -278,12 +239,8 @@ void ModelWindow::animatemodel()
     {
         vec3 K0a={K0[0],bb.first[1],K0[2]};
         // This moves vp.focus so that the model remains close to the center of the window.
-        auto pk=Projection*View*vec4(K0, 1);
-        pk[1]=bb.first[1];
-        const auto wo=recenter(View, Projection, frameinfo.viewport, pk);
-        const auto focusneu=K0a;
         frameinfo.vp.focus=vec3(0.2, 0.2, 0.2)*frameinfo.vp.focus+vec3(0.8, 0.8, 0.8)*K0a;
-        if (true)
+        if (Trace.size()>=tlen)
         {
             static unsigned current=0;
             Trace[current]={K0a, {1.0,1.0,1.0}};

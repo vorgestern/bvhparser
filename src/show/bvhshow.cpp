@@ -100,7 +100,6 @@ static void cbredraw(void*data)
 static void bvhload(string_view filename)
 {
     BVHScene*LoadedScene=parse(filename.data());
-    fmtoutput("bvhload %p '%s'\n", LoadedScene, filename.data());
     if (LoadedScene!=nullptr)
     {
         fmtoutput("Duration: %.1f sec (%.0f fps)\n", LoadedScene->totaltime, LoadedScene->M.size()/LoadedScene->totaltime);
