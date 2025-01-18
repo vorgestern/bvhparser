@@ -20,6 +20,27 @@ template<typename P> requires HasGlProgram<P> inline void useprog(const P&a){ gl
 template<typename P> requires HasGlProgram<P> inline void resetprog(const P&a){ void gl_texture_reset(); a.program=0; gl_texture_reset(); }
 template<typename P> requires HasGlProgram<P> inline bool isvalidprog(const P&a){ return a.program!=0; }
 
+struct neuprog
+{
+    struct attrspec
+    {
+        GLuint compnum;    // {3}
+        unsigned comptype; // {GL_FLOAT}
+        bool norm;         // {GL_TRUE}
+        GLuint stride;     // {VertexSize}
+        size_t attroffset; // {3*sizeof(float)}
+    };
+    GLuint program;
+    std::vector<attrspec>specs;
+};
+
+void vertexspec(const neuprog&);
+
+template<typename V>struct NeuProg: public neuprog
+{
+    using VertexType=V;
+};
+
 // ====================================================================
 
 struct VAOBuffer

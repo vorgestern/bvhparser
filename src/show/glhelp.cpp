@@ -173,3 +173,14 @@ void VAOBuffer::bind()
     glBindBuffer(GL_ARRAY_BUFFER, VB);
     glBindVertexArray(VAO);
 }
+
+// ====================================================================
+
+void vertexspec(const neuprog&X)
+{
+    for (auto a=0u; a<X.specs.size(); ++a)
+    {
+        glEnableVertexAttribArray(a);
+        glVertexAttribPointer(a, X.specs[a].compnum, X.specs[a].comptype, X.specs[a].norm, X.specs[a].stride, (char*)X.specs[a].attroffset);
+    }
+}

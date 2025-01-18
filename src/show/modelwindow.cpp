@@ -77,28 +77,23 @@ vector<vertex> Trace(tlen);
 
 mat4 Projection, View;
 
-struct proginfo
-{
-    GLuint program {0};
-    GLint UnifProjection {-1}, UnifViewMatrix {-2};
-    GLint AttrPosition {-1}, AttrColour {-1};
-    void activate()const;
-};
+typedef struct { GLfloat V[4], C[4]; } VertexTypeVC;
 
-void proginfo::activate()const
+NeuProg<VertexTypeVC> buildprog()
 {
-    glEnableVertexAttribArray((GLuint)AttrPosition);
-    glEnableVertexAttribArray((GLuint)AttrColour);
-    glVertexAttribPointer((GLuint)AttrPosition, 4, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), 0);
-    glVertexAttribPointer((GLuint)AttrColour,   4, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), (char*)0+4*sizeof(GLfloat));
-    glUseProgram(program);
+    static_assert(sizeof(VertexTypeVC)==8*sizeof(GLfloat));
+    return {build_program(source.vs, source.fs), {
+        {4,GL_FLOAT,GL_FALSE,sizeof(VertexTypeVC),0},
+        {4,GL_FLOAT,GL_FALSE,sizeof(VertexTypeVC),4*sizeof(GLfloat)}
+    }};
 }
 
 // =========================================================
 
 class ModelWindow: public Fl_Gl_Window
 {
-    proginfo prog {};
+    NeuProg<VertexTypeVC> prog;
+    GLint UnifProjection {-1}, UnifViewMatrix {-2};
     VAOBuffer VAOModel, VAOBox, VAOTrace;
 
 public:
@@ -109,13 +104,13 @@ public:
     {
         // static_assert(sizeof Trace==tlen*sizeof vertex);
         VAOTrace.generate();
+        vertexspec(prog);
         for (auto j=0u; j<tlen; ++j)
         {
             const float k=0.5+j*0.5/100.0;
             Trace[j]={vec4 {-10+j*20.0/tlen, 0, 0, 1}, vec4 {k,k,k,1}};
         }
         glBufferData(GL_ARRAY_BUFFER, tlen*sizeof(vertex), &Trace[0], GL_STATIC_DRAW);
-        prog.activate();
         rendertrace=[prog=this->prog](){ useprog(prog); glDrawArrays(GL_POINTS, 0, tlen); };
     }
     void initbox()
@@ -123,6 +118,7 @@ public:
         #define WE 1,1,1,1
         #define ROT 1,0,0,1
         VAOBox.generate();
+        vertexspec(prog);
         const float a=20, b=30;
         const GLfloat VertexData[]=
         {
@@ -138,7 +134,6 @@ public:
             -a, b, -a, 1, ROT,
         };
         glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
-        prog.activate();
         renderboundingbox=[prog=this->prog](){ useprog(prog); glDrawArrays(GL_LINE_STRIP, 0, 10); };
         #undef WE
         #undef ROT
@@ -148,6 +143,7 @@ public:
         #define WE 1,1,1,1
         #define ROT 1,0,0,1
         VAOModel.generate();
+        vertexspec(prog);
         const GLfloat a=0.2, b=2;
         const GLfloat VertexData[]=
         {
@@ -160,7 +156,6 @@ public:
             0, b, 0, 1, ROT
         };
         glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
-        prog.activate();
         #undef WE
         #undef ROT
     }
@@ -186,7 +181,6 @@ public:
             };
             VAOBox.bind();
             glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
-            prog.activate();
             frameinfo.vp.bbcenter=vec3(.5,.5,.5)*(a+b);
             frameinfo.vp.focus=frameinfo.vp.bbcenter;
             frameinfo.vp.elev=b[1];
@@ -208,7 +202,6 @@ public:
             };
             VAOBox.bind();
             glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
-            prog.activate();
             frameinfo.vp.dist=10;
         }
         #undef ROT
@@ -271,8 +264,8 @@ public:
         const auto eye=eyevector(frameinfo.vp);
         Projection=glm::perspective(0.7f, 1.2f, 0.2f*frameinfo.vp.dist, 3.f*frameinfo.vp.dist);
         View=glm::lookAt(eye, frameinfo.vp.focus, vec3 {0,1,0});
-        glUniformMatrix4fv(prog.UnifProjection, 1, GL_FALSE, &Projection[0][0]);
-        glUniformMatrix4fv(prog.UnifViewMatrix, 1, GL_FALSE, &View[0][0]);
+        glUniformMatrix4fv(UnifProjection, 1, GL_FALSE, &Projection[0][0]);
+        glUniformMatrix4fv(UnifViewMatrix, 1, GL_FALSE, &View[0][0]);
         VAOModel.bind(); rendermodel();
         VAOBox.bind(); renderboundingbox();
         VAOTrace.bind(); rendertrace();
@@ -291,12 +284,9 @@ void ModelWindow::draw()
     const auto w=pixel_w(), h=pixel_h();
     if (glewinfo.glversion.first>=3 && !isvalidprog(prog))
     {
-        const auto p=build_program(source.vs, source.fs);
-        prog={
-            p,
-            glGetUniformLocation(p, "Projection"), glGetUniformLocation(p, "ViewMatrix"),
-            glGetAttribLocation(p, "XPosition"), glGetAttribLocation(p, "XColor")
-        };
+        prog=buildprog();
+        UnifProjection=glGetUniformLocation(prog.program, "Projection");
+        UnifViewMatrix=glGetUniformLocation(prog.program, "ViewMatrix");
     }
     else if (!valid())
     {
