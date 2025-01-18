@@ -100,65 +100,6 @@ public:
     ModelWindow(int x, int y, int w, int h);
     void draw(void) override;
     int handle(int event) override;
-    void inittrace()
-    {
-        // static_assert(sizeof Trace==tlen*sizeof vertex);
-        VAOTrace.generate();
-        vertexspec(prog);
-        for (auto j=0u; j<tlen; ++j)
-        {
-            const float k=0.5+j*0.5/100.0;
-            Trace[j]={vec4 {-10+j*20.0/tlen, 0, 0, 1}, vec4 {k,k,k,1}};
-        }
-        glBufferData(GL_ARRAY_BUFFER, tlen*sizeof(vertex), &Trace[0], GL_STATIC_DRAW);
-        rendertrace=[prog=this->prog](){ useprog(prog); glDrawArrays(GL_POINTS, 0, tlen); };
-    }
-    void initbox()
-    {
-        #define WE 1,1,1,1
-        #define ROT 1,0,0,1
-        VAOBox.generate();
-        vertexspec(prog);
-        const float a=20, b=30;
-        const GLfloat VertexData[]=
-        {
-            -a, 0, -a, 1, ROT,
-            -a, 0,  a, 1, ROT,
-            a, 0,  a, 1, ROT,
-            a, 0, -a, 1, ROT,
-            -a, 0, -a, 1, ROT,
-            -a, b, -a, 1, ROT,
-            -a, b,  a, 1, ROT,
-            a, b,  a, 1, ROT,
-            a, b, -a, 1, ROT,
-            -a, b, -a, 1, ROT,
-        };
-        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
-        renderboundingbox=[prog=this->prog](){ useprog(prog); glDrawArrays(GL_LINE_STRIP, 0, 10); };
-        #undef WE
-        #undef ROT
-    }
-    void initgeom()
-    {
-        #define WE 1,1,1,1
-        #define ROT 1,0,0,1
-        VAOModel.generate();
-        vertexspec(prog);
-        const GLfloat a=0.2, b=2;
-        const GLfloat VertexData[]=
-        {
-            0, b, 0, 1, ROT,
-            -a, 0,-a, 1, WE,
-            -a, 0, a, 1, WE,
-            0, b, 0, 1, ROT,
-            a, 0,-a, 1, WE,
-            a, 0, a, 1, WE,
-            0, b, 0, 1, ROT
-        };
-        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
-        #undef WE
-        #undef ROT
-    }
     void initmodel()
     {
         #define ROT 1,0,0,1
@@ -292,9 +233,65 @@ void ModelWindow::draw()
     {
         glViewport(0, 0, w, h);
     }
-    if (!VAOTrace) inittrace();
-    if (!VAOBox) initbox();
-    if (!VAOModel) initgeom();
+    if (!VAOTrace)
+    {
+        // static_assert(sizeof Trace==tlen*sizeof vertex);
+        VAOTrace.generate();
+        vertexspec(prog);
+        for (auto j=0u; j<tlen; ++j)
+        {
+            const float k=0.5+j*0.5/100.0;
+            Trace[j]={vec4 {-10+j*20.0/tlen, 0, 0, 1}, vec4 {k,k,k,1}};
+        }
+        glBufferData(GL_ARRAY_BUFFER, tlen*sizeof(vertex), &Trace[0], GL_STATIC_DRAW);
+        rendertrace=[prog=this->prog](){ useprog(prog); glDrawArrays(GL_POINTS, 0, tlen); };
+    }
+    if (!VAOBox)
+    {
+        #define WE 1,1,1,1
+        #define ROT 1,0,0,1
+        VAOBox.generate();
+        vertexspec(prog);
+        const float a=20, b=30;
+        const GLfloat VertexData[]=
+        {
+            -a, 0, -a, 1, ROT,
+            -a, 0,  a, 1, ROT,
+            a, 0,  a, 1, ROT,
+            a, 0, -a, 1, ROT,
+            -a, 0, -a, 1, ROT,
+            -a, b, -a, 1, ROT,
+            -a, b,  a, 1, ROT,
+            a, b,  a, 1, ROT,
+            a, b, -a, 1, ROT,
+            -a, b, -a, 1, ROT,
+        };
+        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
+        renderboundingbox=[prog=this->prog](){ useprog(prog); glDrawArrays(GL_LINE_STRIP, 0, 10); };
+        #undef WE
+        #undef ROT
+    }
+    if (!VAOModel)
+    {
+        #define WE 1,1,1,1
+        #define ROT 1,0,0,1
+        VAOModel.generate();
+        vertexspec(prog);
+        const GLfloat a=0.2, b=2;
+        const GLfloat VertexData[]=
+        {
+            0, b, 0, 1, ROT,
+            -a, 0,-a, 1, WE,
+            -a, 0, a, 1, WE,
+            0, b, 0, 1, ROT,
+            a, 0,-a, 1, WE,
+            a, 0, a, 1, WE,
+            0, b, 0, 1, ROT
+        };
+        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
+        #undef WE
+        #undef ROT
+    }
     switch (frameinfo.state)
     {
         case frameinfo.init: initmodel(); frameinfo.state=frameinfo.animate; break;
