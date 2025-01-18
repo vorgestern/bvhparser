@@ -14,13 +14,12 @@
 using namespace std;
 using namespace glm;
 
-struct vertex { vec4 pos, color; };
-typedef struct { GLfloat V[4], C[4]; } VertexTypeVC;
+struct vertex { vec3 pos, color; };
 
 vec3 eyevector(const vpstruct&X)
 {
     const float x0=0;
-    return vec3 {x0*cos(X.azim)+X.dist*sin(X.azim), X.elev, -x0*sin(X.azim)+cos(X.azim)*X.dist};
+    return {x0*cos(X.azim)+X.dist*sin(X.azim), X.elev, -x0*sin(X.azim)+cos(X.azim)*X.dist};
 }
 
 namespace ProgVC {
@@ -50,16 +49,16 @@ void main()
 }
 )__";
 
-NeuProg<VertexTypeVC> buildprog()
+NeuProg<vertex> buildprog()
 {
-    static_assert(sizeof(VertexTypeVC)==8*sizeof(GLfloat));
+    static_assert(sizeof(vertex)==6*sizeof(GLfloat));
     return {build_program(vs, fs), {
-        {4,GL_FLOAT,GL_FALSE,sizeof(VertexTypeVC),0},
-        {4,GL_FLOAT,GL_FALSE,sizeof(VertexTypeVC),4*sizeof(GLfloat)}
+        {3,GL_FLOAT,GL_FALSE,sizeof(vertex),0},
+        {3,GL_FLOAT,GL_FALSE,sizeof(vertex),3*sizeof(GLfloat)}
     }};
 }
 
-}
+} // ProgVC
 
 namespace {
 
@@ -80,17 +79,15 @@ static function<void()>renderboundingbox=[](){};
 static function<void()>rendertrace=[](){};
 
 pair<vec3,vec3> bb;
-
 const size_t tlen=1000;
 vector<vertex> Trace(tlen);
-
 mat4 Projection, View;
 
 // =========================================================
 
 class ModelWindow: public Fl_Gl_Window
 {
-    NeuProg<VertexTypeVC> prog;
+    NeuProg<vertex> prog;
     GLint UnifProjection {-1}, UnifViewMatrix {-2};
     VAOBuffer VAOModel, VAOBox, VAOTrace;
 
@@ -100,23 +97,23 @@ public:
     int handle(int event) override;
     void initmodel()
     {
-        #define ROT 1,0,0,1
-        #define WE 1,1,1,1
+        #define ROT 1,0,0
+        #define WE 1,1,1
         if (frameinfo.Hier.size()>0)
         {
             const auto [a,b]=boundingbox(frameinfo.Hier, frameinfo.Motion);
             const GLfloat VertexData[]=
             {
-                a[0], a[1], a[2], 1, ROT,
-                a[0], a[1], b[2], 1, ROT,
-                b[0], a[1], b[2], 1, ROT,
-                b[0], a[1], a[2], 1, ROT,
-                a[0], a[1], a[2], 1, ROT,
-                a[0], b[1], a[2], 1, ROT,
-                a[0], b[1], b[2], 1, ROT,
-                b[0], b[1], b[2], 1, ROT,
-                b[0], b[1], a[2], 1, ROT,
-                a[0], b[1], a[2], 1, ROT,
+                a[0], a[1], a[2], ROT,
+                a[0], a[1], b[2], ROT,
+                b[0], a[1], b[2], ROT,
+                b[0], a[1], a[2], ROT,
+                a[0], a[1], a[2], ROT,
+                a[0], b[1], a[2], ROT,
+                a[0], b[1], b[2], ROT,
+                b[0], b[1], b[2], ROT,
+                b[0], b[1], a[2], ROT,
+                a[0], b[1], a[2], ROT,
             };
             VAOBox.bind();
             glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
@@ -131,13 +128,13 @@ public:
             const GLfloat a=0.2, b=2;
             const GLfloat VertexData[]=
             {
-                0, b, 0, 1, ROT,
-                -a, 0,-a, 1, WE,
-                -a, 0, a, 1, WE,
-                0, b, 0, 1, ROT,
-                a, 0,-a, 1, WE,
-                a, 0, a, 1, WE,
-                0, b, 0, 1, ROT
+                0, b, 0, ROT,
+                -a, 0,-a, WE,
+                -a, 0, a, WE,
+                0, b, 0, ROT,
+                a, 0,-a, WE,
+                a, 0, a, WE,
+                0, b, 0, ROT
             };
             VAOBox.bind();
             glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
@@ -153,15 +150,14 @@ public:
         {
             const auto K=flatten(frameinfo.Hier, frameinfo.Motion[frameinfo.f]);
             if (K.size()>0) K0=K[0];
-            static_assert(32==sizeof(vertex));
+            static_assert(24==sizeof(vertex));
             vector<vertex>VertexData;
             unsigned j=0;
             const vec4 white(1,1,1,1);
             for (auto&s: frameinfo.Segments)
             {
-                const auto a=K[s.first], b=K[s.second];
-                VertexData.push_back({vec4(a,1.0), white});
-                VertexData.push_back({vec4(b,1.0), white});
+                VertexData.push_back({K[s.first], white});
+                VertexData.push_back({K[s.second], white});
                 ++j;
             }
             VAOModel.bind();
@@ -174,24 +170,20 @@ public:
         if (true)
         {
             vec3 K0a={K0[0],bb.first[1],K0[2]};
-            // This should move vp.focus so that the model remains close to the center of the window.
-            // Does not work yet.
+            // This moves vp.focus so that the model remains close to the center of the window.
             auto pk=Projection*View*vec4(K0, 1);
             pk[1]=bb.first[1];
             const auto wo=recenter(View, Projection, frameinfo.viewport, pk);
-            // vp.focus=vec3(0.9, 0.9, 0.9)*vp.focus+vec3(0.1, 0.1, 0.1)*wo;
-            const auto focusneu=K0a; // vec3(0.6, 0.6, 0.6)*frameinfo.vp.focus+vec3(0.4, 0.4, 0.4)*K0a;
+            const auto focusneu=K0a;
             frameinfo.vp.focus=vec3(0.2, 0.2, 0.2)*frameinfo.vp.focus+vec3(0.8, 0.8, 0.8)*K0a;
-            // printf("%.2f %.2f %.2f\n", wo[0], wo[1], wo[2]);
-            // printf("%.2f %.2f %.2f\n", vp.focus[0], vp.focus[1], vp.focus[2]);
             if (true)
             {
                 static unsigned current=0;
-                Trace[current]={vec4(K0a,1), {1.0,1.0,1.0,1.0}};
+                Trace[current]={K0a, {1.0,1.0,1.0}};
                 for (unsigned j=0; j<tlen; ++j)
                 {
                     const float k=1.0-j*0.5/tlen;
-                    Trace[(current+j)%tlen].color=vec4 {k,k,k,1};
+                    Trace[(current+j)%tlen].color={k,k,k};
                 }
                 current=(current+1)%tlen;
                 VAOTrace.bind();
@@ -200,7 +192,7 @@ public:
         }
         const auto eye=eyevector(frameinfo.vp);
         Projection=glm::perspective(0.7f, 1.2f, 0.2f*frameinfo.vp.dist, 3.f*frameinfo.vp.dist);
-        View=glm::lookAt(eye, frameinfo.vp.focus, vec3 {0,1,0});
+        View=glm::lookAt(eye, frameinfo.vp.focus, {0,1,0});
         glUniformMatrix4fv(UnifProjection, 1, GL_FALSE, &Projection[0][0]);
         glUniformMatrix4fv(UnifViewMatrix, 1, GL_FALSE, &View[0][0]);
         VAOModel.bind(); rendermodel();
@@ -237,30 +229,30 @@ void ModelWindow::draw()
         for (auto j=0u; j<tlen; ++j)
         {
             const float k=0.5+j*0.5/100.0;
-            Trace[j]={vec4 {-10+j*20.0/tlen, 0, 0, 1}, vec4 {k,k,k,1}};
+            Trace[j]={{-10+j*20.0/tlen, 0, 0}, {k,k,k}};
         }
         glBufferData(GL_ARRAY_BUFFER, tlen*sizeof(vertex), &Trace[0], GL_STATIC_DRAW);
         rendertrace=[prog=this->prog](){ useprog(prog); glDrawArrays(GL_POINTS, 0, tlen); };
     }
     if (!VAOBox)
     {
-        #define WE 1,1,1,1
-        #define ROT 1,0,0,1
+        #define WE 1,1,1
+        #define ROT 1,0,0
         VAOBox.generate();
         vertexspec(prog);
         const float a=20, b=30;
         const GLfloat VertexData[]=
         {
-            -a, 0, -a, 1, ROT,
-            -a, 0,  a, 1, ROT,
-            a, 0,  a, 1, ROT,
-            a, 0, -a, 1, ROT,
-            -a, 0, -a, 1, ROT,
-            -a, b, -a, 1, ROT,
-            -a, b,  a, 1, ROT,
-            a, b,  a, 1, ROT,
-            a, b, -a, 1, ROT,
-            -a, b, -a, 1, ROT,
+            -a, 0, -a, ROT,
+            -a, 0,  a, ROT,
+            a, 0,  a, ROT,
+            a, 0, -a, ROT,
+            -a, 0, -a, ROT,
+            -a, b, -a, ROT,
+            -a, b,  a, ROT,
+            a, b,  a, ROT,
+            a, b, -a, ROT,
+            -a, b, -a, ROT,
         };
         glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
         renderboundingbox=[prog=this->prog](){ useprog(prog); glDrawArrays(GL_LINE_STRIP, 0, 10); };
@@ -269,20 +261,20 @@ void ModelWindow::draw()
     }
     if (!VAOModel)
     {
-        #define WE 1,1,1,1
-        #define ROT 1,0,0,1
+        #define WE 1,1,1
+        #define ROT 1,0,0
         VAOModel.generate();
         vertexspec(prog);
         const GLfloat a=0.2, b=2;
         const GLfloat VertexData[]=
         {
-            0, b, 0, 1, ROT,
-            -a, 0,-a, 1, WE,
-            -a, 0, a, 1, WE,
-            0, b, 0, 1, ROT,
-            a, 0,-a, 1, WE,
-            a, 0, a, 1, WE,
-            0, b, 0, 1, ROT
+            0, b, 0, ROT,
+            -a, 0,-a, WE,
+            -a, 0, a, WE,
+            0, b, 0, ROT,
+            a, 0,-a, WE,
+            a, 0, a, WE,
+            0, b, 0, ROT
         };
         glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
         #undef WE
@@ -316,7 +308,6 @@ int ModelWindow::handle(int event)
 Fl_Window*NewModelWindow(int x, int y, int w, int h)
 {
     auto*glwin=new ModelWindow(x,y,w,h);
-    // Fl::set_color(FL_FREE_COLOR, 255, 255, 255, 140); // partially transparent white
     glwin->end();
     return glwin;
 }
