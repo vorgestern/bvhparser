@@ -100,30 +100,17 @@ void proginfo::activate()const
 class ModelWindow: public Fl_Gl_Window
 {
     proginfo prog {};
-    VAOBuffer VAOModel;
-    GLuint VAOBox, VAOTrace;
-    GLuint VBBox,  VBTrace;
+    VAOBuffer VAOModel, VAOBox, VAOTrace;
 
 public:
     ModelWindow(int x, int y, int w, int h);
     void draw(void) override;
     int handle(int event) override;
     void reset();
-    void bind_boundingbox()const
-    {
-        glBindVertexArray(VAOBox);
-        glBindBuffer(GL_ARRAY_BUFFER, VBBox);
-    }
-    void bind_trace()const
-    {
-        glBindVertexArray(VAOTrace);
-        glBindBuffer(GL_ARRAY_BUFFER, VBTrace);
-    }
     void inittrace()
     {
         // static_assert(sizeof Trace==tlen*sizeof vertex);
-        glGenVertexArrays(1, &VAOTrace); glBindVertexArray(VAOTrace);
-        glGenBuffers(1, &VBTrace);       glBindBuffer(GL_ARRAY_BUFFER, VBTrace);
+        VAOTrace.generate();
         for (auto j=0u; j<tlen; ++j)
         {
             const float k=0.5+j*0.5/100.0;
@@ -137,8 +124,7 @@ public:
     {
         #define WE 1,1,1,1
         #define ROT 1,0,0,1
-        glGenVertexArrays(1, &VAOBox); glBindVertexArray(VAOBox);
-        glGenBuffers(1, &VBBox);       glBindBuffer(GL_ARRAY_BUFFER, VBBox);
+        VAOBox.generate();
         const float a=20, b=30;
         const GLfloat VertexData[]=
         {
@@ -199,8 +185,7 @@ public:
                 b[0], b[1], a[2], 1, ROT,
                 a[0], b[1], a[2], 1, ROT,
             };
-            glBindVertexArray(VAOBox);
-            glBindBuffer(GL_ARRAY_BUFFER, VBBox);
+            VAOBox.bind();
             glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
             prog.activate();
             frameinfo.vp.bbcenter=vec3(.5,.5,.5)*(a+b);
@@ -222,8 +207,7 @@ public:
                 a, 0, a, 1, WE,
                 0, b, 0, 1, ROT
             };
-            glBindVertexArray(VAOBox);
-            glBindBuffer(GL_ARRAY_BUFFER, VBBox);
+            VAOBox.bind();
             glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData), VertexData, GL_STATIC_DRAW);
             prog.activate();
             frameinfo.vp.dist=10;
@@ -279,7 +263,7 @@ public:
                     Trace[(current+j)%tlen].color=vec4 {k,k,k,1};
                 }
                 current=(current+1)%tlen;
-                glBindBuffer(GL_ARRAY_BUFFER, VBTrace);
+                VAOTrace.bind();
                 glBufferData(GL_ARRAY_BUFFER, tlen*sizeof(vertex), &Trace[0], GL_STATIC_DRAW);
                 rendertrace=[num=current](){ glDrawArrays(GL_POINTS, 0, current); glDrawArrays(GL_POINTS, current, tlen-current); };
             }
@@ -292,8 +276,8 @@ public:
         glUniformMatrix4fv(prog.UnifProjection, 1, GL_FALSE, &Projection[0][0]);
         glUniformMatrix4fv(prog.UnifViewMatrix, 1, GL_FALSE, &View[0][0]);
         VAOModel.bind(); rendermodel();
-        bind_boundingbox(); renderboundingbox();
-        bind_trace(); rendertrace();
+        VAOBox.bind(); renderboundingbox();
+        VAOTrace.bind(); rendertrace();
     }
 };
 
@@ -320,8 +304,8 @@ void ModelWindow::draw()
     {
         glViewport(0, 0, w, h);
     }
-    if (VAOTrace==0) inittrace();
-    if (VAOBox==0) initbox();
+    if (!VAOTrace) inittrace();
+    if (!VAOBox) initbox();
     if (!VAOModel) initgeom();
     switch (frameinfo.state)
     {
