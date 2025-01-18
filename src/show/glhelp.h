@@ -8,8 +8,6 @@ extern struct GlewInfo
 } glewinfo;
 
 bool glewinitialise();
-std::pair<int,int> glversion();
-std::pair<int,int> glslversion();
 
 // ====================================================================
 
