@@ -14,10 +14,51 @@
 using namespace std;
 using namespace glm;
 
+struct vertex { vec4 pos, color; };
+typedef struct { GLfloat V[4], C[4]; } VertexTypeVC;
+
 vec3 eyevector(const vpstruct&X)
 {
     const float x0=0;
     return vec3 {x0*cos(X.azim)+X.dist*sin(X.azim), X.elev, -x0*sin(X.azim)+cos(X.azim)*X.dist};
+}
+
+namespace ProgVC {
+
+const string_view vs=R"__(#version 330
+layout(location=0) in vec3 XPosition;
+layout(location=1) in vec3 XColor;
+out vec4 FrontColor;
+out vec4 BackColor;
+uniform mat4 Projection;
+uniform mat4 ViewMatrix;
+void main()
+{
+    FrontColor=clamp(vec4(XColor,1), 0, 1);
+    BackColor=FrontColor;
+    gl_Position=Projection*ViewMatrix*vec4(XPosition,1);
+})__";
+
+const string_view fs=R"__(#version 330
+in vec4 FrontColor;
+in vec4 BackColor;
+layout(location=0) out vec4 FinalColor;
+void main()
+{
+  if (gl_FrontFacing) FinalColor=FrontColor;
+  else                FinalColor=BackColor;
+}
+)__";
+
+NeuProg<VertexTypeVC> buildprog()
+{
+    static_assert(sizeof(VertexTypeVC)==8*sizeof(GLfloat));
+    return {build_program(vs, fs), {
+        {4,GL_FLOAT,GL_FALSE,sizeof(VertexTypeVC),0},
+        {4,GL_FLOAT,GL_FALSE,sizeof(VertexTypeVC),4*sizeof(GLfloat)}
+    }};
+}
+
 }
 
 namespace {
@@ -38,55 +79,12 @@ static function<void()>rendermodel=[](){};
 static function<void()>renderboundingbox=[](){};
 static function<void()>rendertrace=[](){};
 
-struct vertex { vec4 pos, color; };
-
-static struct {
-    string_view vs, fs;
-} source={
-
-R"__(#version 330
-layout(location=0) in vec3 XPosition;
-layout(location=1) in vec3 XColor;
-out vec4 FrontColor;
-out vec4 BackColor;
-uniform mat4 Projection;
-uniform mat4 ViewMatrix;
-void main()
-{
-    FrontColor=clamp(vec4(XColor,1), 0, 1);
-    BackColor=FrontColor;
-    gl_Position=Projection*ViewMatrix*vec4(XPosition,1);
-})__",
-
-R"__(#version 330
-in vec4 FrontColor;
-in vec4 BackColor;
-layout(location=0) out vec4 FinalColor;
-void main()
-{
-  if (gl_FrontFacing) FinalColor=FrontColor;
-  else                FinalColor=BackColor;
-}
-)__"
-};
-
 pair<vec3,vec3> bb;
 
 const size_t tlen=1000;
 vector<vertex> Trace(tlen);
 
 mat4 Projection, View;
-
-typedef struct { GLfloat V[4], C[4]; } VertexTypeVC;
-
-NeuProg<VertexTypeVC> buildprog()
-{
-    static_assert(sizeof(VertexTypeVC)==8*sizeof(GLfloat));
-    return {build_program(source.vs, source.fs), {
-        {4,GL_FLOAT,GL_FALSE,sizeof(VertexTypeVC),0},
-        {4,GL_FLOAT,GL_FALSE,sizeof(VertexTypeVC),4*sizeof(GLfloat)}
-    }};
-}
 
 // =========================================================
 
@@ -199,8 +197,6 @@ public:
                 VAOTrace.bind();
                 glBufferData(GL_ARRAY_BUFFER, tlen*sizeof(vertex), &Trace[0], GL_STATIC_DRAW);
             }
-// fmtoutput("K0 %.2g %.2g %.2g pk %.2g %.2g %.2g\n", K0[0], K0[1], K0[2], pk[0], pk[1], pk[2]);
-// fmtoutput("K0 %.2f %.2f %.2f ==> %.2f %.2f %.2f\n", K0[0], K0[1], K0[2], wo[0], wo[1], wo[2]);
         }
         const auto eye=eyevector(frameinfo.vp);
         Projection=glm::perspective(0.7f, 1.2f, 0.2f*frameinfo.vp.dist, 3.f*frameinfo.vp.dist);
@@ -225,7 +221,7 @@ void ModelWindow::draw()
     const auto w=pixel_w(), h=pixel_h();
     if (glewinfo.glversion.first>=3 && !isvalidprog(prog))
     {
-        prog=buildprog();
+        prog=ProgVC::buildprog();
         UnifProjection=glGetUniformLocation(prog.program, "Projection");
         UnifViewMatrix=glGetUniformLocation(prog.program, "ViewMatrix");
     }
