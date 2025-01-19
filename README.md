@@ -9,6 +9,8 @@ Two applications are included:
 - **bvhtox3d** is a command line tool converts a .bvh file to a virtual reality file .x3d.
 - **bvhshow** is a GUI application that reads .bvh-files and shows the animated skeleton.
 
+![bvhshow](buildsys/screenshot.png)
+
 # Requirements (for bvhshow)
 
 - **flex** and **bison** tools for parser generation
