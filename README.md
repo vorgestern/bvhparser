@@ -23,8 +23,22 @@ Two applications are included:
 
 - Install **flex** and **bison**: ```sudo apt-get install flex bison``` or equivalent
 - Make sure **glew** is installed
-- Provide development files for fltk.
-  If fltk 1.4.1 is not installed already, use the submodule included in this repository.
+- Provide development files for fltk 1.4.1.
+  If fltk 1.4.1 is not installed already, build from source:
+
+    ```
+    cd somewhere
+    git clone https://github.com/fltk/fltk
+    cmake -S fltk -B fltkbuild \
+        -D CMAKE_CONFIGURATION_TYPES="Debug;Release" \
+        -D FLTK_BUILD_EXAMPLES=0 \
+        -D FLTK_BUILD_FLTK_OPTIONS=0 \
+        -D FLTK_BUILD_TEST=0 \
+        -D FLTK_OPTION_FILESYSTEM_SUPPORT=0 \
+        -D FLTK_OPTION_SVG=0 \
+        -D FLTK_BUILD_FLUID=0
+    ```
+- make all
 
 ## .. or else on Windows (using Visual Studio 2022 (VS17))
  

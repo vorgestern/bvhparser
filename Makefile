@@ -2,6 +2,8 @@
 CPPFLAGS := -I include
 CXXFLAGS := -std=c++20 -Wall -Werror -Wno-unused-function -Wno-unused-but-set-variable
 
+# bison -Wcounterexamples
+
 .PHONY: all clean dirs
 
 all: dirs bvhtox3d bvhshow
@@ -16,7 +18,7 @@ bvhparser.a: $(PFILES:%=b/bvhparser/%.o) b/bvhparser/bison-bvhconv.o b/bvhparser
 	@ar -crs $@ $^
 b/bvhparser/bison-bvhconv.cpp b/bvhparser/bvhconv.h: src/parser/bvhconv.y
 	@echo $<
-	@bison --defines=b/bvhparser/bvhconv.h --output=b/bvhparser/bison-bvhconv.cpp -Wcounterexamples $<
+	@bison --defines=b/bvhparser/bvhconv.h --output=b/bvhparser/bison-bvhconv.cpp $<
 b/bvhparser/lex-bvhconv.cpp: src/parser/bvhconv.l b/bvhparser/bvhconv.h
 	@echo $<
 	@flex -8 --nounistd --prefix=xx -t > $@ $<
